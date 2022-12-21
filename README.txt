@@ -1,0 +1,24 @@
+
+                                - Details of file structure -
+
+Within your base directory, have three folders named: Area_Function, Indent_Data, Load_Function. 
+
+Inside the Area_Function folder you should have a single file created from the tip calibration
+on the Hysitron Triboscan software. Change the file extension of this file from .ara to .txt. 
+This file can have any name.
+
+If using mapping data, within the Indent_Data folder you should have the output text files from 
+the XPM analysis tab in the Hysitron Triboscan software. These files have the depth and load data 
+for each indent. Make sure these are the only files in this folder. These files can have any name, 
+but make sure alphabetical order corresponds to the indent order.
+
+If using basic automated grid array data, within the Indent_Data folder you should have the output
+dynamic (with suffix DYN) text files after multiple curve fitting in the quasi analysis tab in the 
+Hysitron Triboscan software. These files have the depth and load data for each indent, along with
+the software's own calculated values for hardness and modulus. Make sure these are the only files 
+in this folder. These files can have any name, but make sure alphabetical order corresponds to the 
+indent order.
+
+Within the Load_Function folder you should copy across the load function file that was created
+when setting up the XPM indents. Change the file extension from .ldf to .txt. Again the file
+can have any name. 

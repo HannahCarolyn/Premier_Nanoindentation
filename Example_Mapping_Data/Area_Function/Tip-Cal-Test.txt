@@ -1,0 +1,50 @@
+Hysitron Area Function Coefficients, File Version: 4.00
+C0
+24.5
+C1
+2460.555732
+C2
+-185073.933454
+C3
+2197392.23639
+C4
+-5682984.151049
+C5
+3678718.2292
+B
+0.0
+C0 Uncertainty
+0.0
+C1 Uncertainty
+8762.316263
+C2 Uncertainty
+1097798.313305
+C3 Uncertainty
+14456683.367312
+C4 Uncertainty
+41353231.26827
+C5 Uncertainty
+28439007.080077
+B Uncertainty
+0.0
+Tip Poisson's Ratio
+0.07
+Tip Modulus (N/mm^2)
+1140.0
+Tip Types: Berkovich=0 Cono-spherical=1, Cube-Corner=2, Flat-Punch=3, Knoop=4, Vickers=5, Other=99
+Tip Type
+0
+Max Events Between Cal
+100
+Events Since Last Cal
+0
+Total Events
+0
+Tip Serial Number
+Tip-Cal-Test
+Tip Radius (nm)
+150.0
+Tip Total Angle
+142.35
+Tip Usuable Depth (µm)
+13.0

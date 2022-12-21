@@ -1,0 +1,6 @@
+clear
+
+
+
+
+[test1,test2] = Premier_Nanoindenter_Mapping_Data_Import(3)
