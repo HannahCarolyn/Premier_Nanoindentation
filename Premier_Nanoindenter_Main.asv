@@ -5,9 +5,9 @@ close all
 addpath src
 
 % The aim of this script is to input all Bruker Premier nanoindentation data, 
-% provide basic plots of hardness, modulus, etc. using custom methods and provide
-% an output format of data that can be used directly into Chris Magazzeni's 
-% XPCorrelate EBSD MATLAB script
+% provide basic plots of hardness, modulus, etc. using Oliver and Parr methods 
+% and provide an output format of data that can be used directly into Chris 
+% Magazzeni's XPCorrelate EBSD MATLAB script
 
 %% This is the main input deck - users: please edit inputs here only
 
@@ -41,6 +41,14 @@ bundle_spacing = 45;
 % overlap did not occur enter 0; if XPM mapping was not used, also enter 0
 row_overlap = 0;
 column_overlap = 0;
+
+% If there are dodgy indents (due to rubbish on the surface or porosity),
+% do you want these to be automatically excluded? Enter "yes" or "no". If
+% these are excluded, an average of the surrounding indents will be used
+% when plotting any data. If these are not excluded, you will need to
+% manually edit the colour bar on the output figures so they are not
+% swamped with these outlier results.
+exclude_dodgy = "yes";
 
 %% From here, different functions are called in order and if needed - users: do not edit
 

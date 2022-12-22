@@ -12,8 +12,8 @@ addpath src
 %% This is the main input deck - users: please edit inputs here only
 
 % Enter the base file directory for your sample here - see README.txt for
-% how to structure your base file directory
-base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\Example_Mapping_Data";
+% how to structure your base file directory; use a \ on the end of the name
+base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\Example_Mapping_Data\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
@@ -42,14 +42,22 @@ bundle_spacing = 45;
 row_overlap = 0;
 column_overlap = 0;
 
+% If there are dodgy indents (due to rubbish on the surface or porosity),
+% do you want these to be automatically excluded? Enter "yes" or "no". If
+% these are excluded, an average of the surrounding indents will be used
+% when plotting any data. If these are not excluded, you will need to
+% manually edit the colour bar on the output figures so they are not
+% swamped with these outlier results.
+exclude_dodgy = "yes";
+
 %% From here, different functions are called in order and if needed - users: do not edit
 
 % Calling main data import function
 if mapping_type == "xpm_indentation_map"
-    [data_import_struct] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,xpm_pattern,rows,columns,bundle_spacing,row_overlap,column_overlap);
+    [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,xpm_pattern,rows,columns,bundle_spacing,row_overlap,column_overlap,exclude_dodgy);
     disp("XPM Indentation Data Successfully Imported")
 else if mapping_type == "automated_indentation_grid_array"
-        [data_import_struct] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,bundle_spacing);
+        [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,bundle_spacing,exclude_dodgy);
         disp("Automated Grid Array Indentation Data Successfully Imported")
     end
 end
