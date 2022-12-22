@@ -8,8 +8,8 @@ initial_number_of_data = size(folder_info,1); % Counts number of files in the fo
 progress_bar = waitbar(0,"Importing Indentation Data"); % Creates a progress bar
 
 for file_loop = 1:initial_number_of_data % For count through number of indents in folder
-    completion_fraction = file_loop/initial_number_of_data; % Calculates fraction for progress bar
-    waitbar(completion_fraction); % Updates progress bar
+    completion_fraction = file_loop/initial_number_of_data; % Calculates fraction for waitbar
+    progress_bar(completion_fraction); % Updates progress bar
     file_name = folder_info(file_loop).name; % Extract file name of indent
     full_file_name = fullfile(indent_file_locations, file_name); % Extract file name (including path) for each indent
     full_input = importdata(full_file_name); % Extracts contents of file as struct depending on data structure
@@ -20,7 +20,7 @@ for file_loop = 1:initial_number_of_data % For count through number of indents i
     original_load_displacment.(struct_indent_name) = raw_input; % Appends the displacement-load table into struct
 end
 
-close(progress_bar) % Closes progress bar
+close(progress_bar)
 
 %need to convert serpentine to lateral
 %then convert lateral to full grid
