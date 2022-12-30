@@ -20,9 +20,6 @@ the software's own calculated values for hardness and modulus. Make sure these a
 in this folder. These files can have any name, but make sure alphabetical order corresponds to the 
 indent order.
 
-The Coordinate_Data folder should only be present if using mapping data. Need to check how Hannah
-got these files. 
-
 Within the Load_Function folder you should copy across the load function file that was created
 when setting up the XPM indents. Change the file extension from .ldf to .txt. Again the file
 can have any name. 
