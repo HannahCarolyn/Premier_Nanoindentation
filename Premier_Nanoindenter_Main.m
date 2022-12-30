@@ -19,21 +19,11 @@ base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Do
 % "automated_indentation_grid_array"
 mapping_type = "xpm_indentation_map";
 
-% If xpm mapping was used, specify whether serpentine or lateral pattern
-% was used
-xpm_pattern = "lateral";
-
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
 rows = 3;
 columns = 3;
-
-% Enter the spacing in um between the data dimensions above: since the motor 
-% movement is in accurate, enter the actual measured spacing (via a microscope) 
-% used to avoid indent overlap; enter indent spacing if using an automated
-% indentation array
-bundle_spacing = 45;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -54,10 +44,10 @@ exclude_dodgy = "yes";
 
 % Calling main data import function
 if mapping_type == "xpm_indentation_map"
-    [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,xpm_pattern,rows,columns,bundle_spacing,row_overlap,column_overlap,exclude_dodgy);
+    [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,row_overlap,column_overlap,exclude_dodgy);
     disp("XPM Indentation Data Successfully Imported")
 else if mapping_type == "automated_indentation_grid_array"
-        [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,bundle_spacing,exclude_dodgy);
+        [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,exclude_dodgy);
         disp("Automated Grid Array Indentation Data Successfully Imported")
     end
 end
