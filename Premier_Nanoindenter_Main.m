@@ -25,10 +25,16 @@ mapping_type = "xpm_indentation_map";
 rows = 3;
 columns = 3;
 
+% Give the spacing entered on the "Array Patterns" section of the
+% automation tab regardless of the mapping type in um
+spacing = 45;
+
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
 % the first set of indents at the given overlap location will be used); if
-% overlap did not occur enter 0; if XPM mapping was not used, also enter 0
+% overlap did not occur enter 0; if XPM mapping was not used, also enter 0;
+% if there is a gap between xpm bundles instead, enter a negative number
+% corresponding to how many lines of indents would fit in that gap
 row_overlap = 0;
 column_overlap = 0;
 
@@ -44,10 +50,10 @@ exclude_dodgy = "yes";
 
 % Calling main data import function
 if mapping_type == "xpm_indentation_map"
-    [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,row_overlap,column_overlap,exclude_dodgy);
+    [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,exclude_dodgy);
     disp("XPM Indentation Data Successfully Imported")
 else if mapping_type == "automated_indentation_grid_array"
-        [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,exclude_dodgy);
+        [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy);
         disp("Automated Grid Array Indentation Data Successfully Imported")
     end
 end
