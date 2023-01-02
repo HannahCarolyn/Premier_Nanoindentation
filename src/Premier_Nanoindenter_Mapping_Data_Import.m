@@ -103,7 +103,171 @@ end
 waitbar(1) % Updates wait bar when done
 close(progress_bar) % Closes wait bar
 
-%% Exclude overlap (shift x,y as needed)
+%% Exclude bundle column overlap and take into account bundle gaps (shift x as needed)
+
+progress_bar = waitbar(0,"Removing user defined overlapping indents"); % Creates a progress bar
+
+bundle_x_coordinate_start = []; % Create empty list for storing bundle x start coordinates
+
+for column_loop = 1:columns % For loop each bundle column (x direction)
+    bundle_x_coordinate_start(end+1) = ((column_loop-1)*bundle_dimensions) + ((column_loop-1)*indent_spacing); % Work out bundle starting x coordinate
+end
+
+bundle_x_coordinate_start(1) = []; % Remove first bundle coordinate since this won't be overlapping
+
+bundle_x_coordinate_overlap = []; % Create empty list for overlapping x coordinates
+
+if column_overlap >= 0 % Check if user entered negative column overlap, i.e. a gap (process this differently below)
+    
+    % Identifying overlapping indent
+    
+    for coordinate_loop = [bundle_x_coordinate_start] % For loop each bundle starting overlapping coordinate
+        for overlap_loop = 0:column_overlap % For loop through overlapping columns per bundle
+            if overlap_loop == 0 % If no column overlap, do nothing
+                % Do nothing
+            else % Otherwise do this
+                bundle_x_coordinate_overlap(end+1) = coordinate_loop + (overlap_loop-1)*indent_spacing; % Gets all overlapping x coordinates (of repeated indent)
+            end
+        end
+    end
+    struct_x_coordinate_list = [original_load_displacement.X_Coordinate]; % Gets x coordinates from struct in order of entries
+    overlapping_x_coordinate_indices = []; % Creates empty list for storing the indices (i.e. struct number)
+    for overlapping_coordinate_loop = [bundle_x_coordinate_overlap] % For each overlapping x coordinate
+        logical_x_coordinate_find = []; % Creates empty list for logical array (where 1 will give a find of the coordindate, 0 is other)
+        single_x_coordinate_find_index = []; % Creates empty list for storing the index of where the logical array returns a 1
+        logical_x_coordinate_find = struct_x_coordinate_list == overlapping_coordinate_loop; % Returns logical array for the coordinate being checked in this loop run through
+        single_x_coordinate_find_index = find(logical_x_coordinate_find); % Returns indices of where logical array shows a find for the coordinate being checked in this loop
+        for append_index_loop = [single_x_coordinate_find_index] % For each index found for this coordinate
+            overlapping_x_coordinate_indices(end+1) = append_index_loop; % Appends indices for all overlapping x coordinates (each run through the loop)
+        end
+    end
+    for x_index_loop = [overlapping_x_coordinate_indices] % For each index for overlapping x coordinate - note index corresponds to the struct indexing beggining at 1
+        original_load_displacement(x_index_loop).X_Coordinate = -0.1; % These 2 lines change the overlapping indent coordinates in struct to -0.1 (unique as not integer) so may be identified when writing new struct below
+        original_load_displacement(x_index_loop).Y_Coordinate = -0.1;
+    end
+
+    % Shifting x coordinates so it is continuous again
+
+    struct_x_coordinate_list_updated = [original_load_displacement.X_Coordinate]; % Gets updated x coordinates from struct into list
+    x_coordinate_list_once = unique(struct_x_coordinate_list_updated); % Finds unique value of updated x coordinates in sorted order
+    x_coordinate_list_once(1) = []; % Removes the -0.1 value so not effect the below
+    new_x_dimension = length(x_coordinate_list_once); % Finds new total x dimension (number of indents, i.e. number of unique columns left)
+    new_x_coordinate_list_once = [0:indent_spacing:(new_x_dimension-1)*indent_spacing]; % Create list which will have alterations applied and compared to original later on
+    for new_x_coordinate_loop = 1:new_x_dimension % For going through indices of each x coordinate value once
+        if x_coordinate_list_once(new_x_coordinate_loop) == new_x_coordinate_list_once(new_x_coordinate_loop) % If value unchanged, do nothing
+            % Do nothing
+        else
+            logical_x_coordinate_find_to_change = []; % Creates empty list for logical array (where 1 will give a find of the coordindate, 0 is other)
+            single_x_coordinate_find_index_to_change = []; % Creates empty list for storing the index of where the logical array returns a 1
+            logical_x_coordinate_find_to_change = struct_x_coordinate_list_updated == x_coordinate_list_once(new_x_coordinate_loop); % Returns logical array for the original coordinate being checked in this loop run through that needs to be shifted to new value
+            single_x_coordinate_find_index_to_change = find(logical_x_coordinate_find_to_change); % Returns indices of where logical array shows a find for the coordinate being checked in this loop
+            for change_index_loop = [single_x_coordinate_find_index_to_change] % For each index found for this coordinate
+                original_load_displacement(change_index_loop).X_Coordinate = new_x_coordinate_list_once(new_x_coordinate_loop); % Changes old x coordinate to new x coordinate
+            end
+        end
+    end
+end
+
+%% Exclude bundle row overlap and take into account bundle gaps (shift y as needed)
+
+waitbar(0.5) % Updates wait bar halfway
+
+bundle_y_coordinate_start = []; % Create empty list for storing bundle y start coordinates
+
+for row_loop = 1:rows % For loop each bundle row (y direction)
+    bundle_y_coordinate_start(end+1) = ((row_loop-1)*bundle_dimensions) + ((row_loop-1)*indent_spacing); % Work out bundle starting y coordinate
+end
+
+bundle_y_coordinate_start(1) = []; % Remove first bundle coordinate since this won't be overlapping
+
+bundle_y_coordinate_overlap = []; % Create empty list for overlapping y coordinates
+
+if row_overlap >= 0 % Check if user entered negative row overlap, i.e. a gap (process this differently below)
+    
+    % Identifying overlapping indent
+    
+    for coordinate_loop = [bundle_y_coordinate_start] % For loop each bundle starting overlapping coordinate
+        for overlap_loop = 0:row_overlap % For loop through overlapping rows per bundle
+            if overlap_loop == 0 % If no row overlap, do nothing
+                % Do nothing
+            else % Otherwise do this
+                bundle_y_coordinate_overlap(end+1) = coordinate_loop + (overlap_loop-1)*indent_spacing; % Gets all overlapping y coordinates (of repeated indent)
+            end
+        end
+    end
+    struct_y_coordinate_list = [original_load_displacement.Y_Coordinate]; % Gets y coordinates from struct in order of entries
+    overlapping_y_coordinate_indices = []; % Creates empty list for storing the indices (i.e. struct number)
+    for overlapping_coordinate_loop = [bundle_y_coordinate_overlap] % For each overlapping y coordinate
+        logical_y_coordinate_find = []; % Creates empty list for logical array (where 1 will give a find of the coordindate, 0 is other)
+        single_y_coordinate_find_index = []; % Creates empty list for storing the index of where the logical array returns a 1
+        logical_y_coordinate_find = struct_y_coordinate_list == overlapping_coordinate_loop; % Returns logical array for the coordinate being checked in this loop run through
+        single_y_coordinate_find_index = find(logical_y_coordinate_find); % Returns indices of where logical array shows a find for the coordinate being checked in this loop
+        for append_index_loop = [single_y_coordinate_find_index] % For each index found for this coordinate
+            overlapping_y_coordinate_indices(end+1) = append_index_loop; % Appends indices for all overlapping y coordinates (each run through the loop)
+        end
+    end
+    for y_index_loop = [overlapping_y_coordinate_indices] % For each index for overlapping y coordinate - note index corresponds to the struct indexing beggining at 1
+        original_load_displacement(y_index_loop).X_Coordinate = -0.1; % These 2 lines change the overlapping indent coordinates in struct to -0.1 (unique as not integer) so may be identified when writing new struct below
+        original_load_displacement(y_index_loop).Y_Coordinate = -0.1;
+    end
+
+    % Shifting y coordinates so it is continuous again
+
+    struct_y_coordinate_list_updated = [original_load_displacement.Y_Coordinate]; % Gets updated y coordinates from struct into list
+    y_coordinate_list_once = unique(struct_y_coordinate_list_updated); % Finds unique value of updated y coordinates in sorted order
+    y_coordinate_list_once(1) = []; % Removes the -0.1 value so not effect the below
+    new_y_dimension = length(y_coordinate_list_once); % Finds new total y dimension (number of indents, i.e. number of unique rows left)
+    new_y_coordinate_list_once = [0:indent_spacing:(new_y_dimension-1)*indent_spacing]; % Create list which will have alterations applied and compared to original later on
+    for new_y_coordinate_loop = 1:new_y_dimension % For going through indices of each y coordinate value once
+        if y_coordinate_list_once(new_y_coordinate_loop) == new_y_coordinate_list_once(new_y_coordinate_loop) % If value unchanged, do nothing
+            % Do nothing
+        else
+            logical_y_coordinate_find_to_change = []; % Creates empty list for logical array (where 1 will give a find of the coordindate, 0 is other)
+            single_y_coordinate_find_index_to_change = []; % Creates empty list for storing the index of where the logical array returns a 1
+            logical_y_coordinate_find_to_change = struct_y_coordinate_list_updated == y_coordinate_list_once(new_y_coordinate_loop); % Returns logical array for the original coordinate being checked in this loop run through that needs to be shifted to new value
+            single_y_coordinate_find_index_to_change = find(logical_y_coordinate_find_to_change); % Returns indices of where logical array shows a find for the coordinate being checked in this loop
+            for change_index_loop = [single_y_coordinate_find_index_to_change] % For each index found for this coordinate
+                original_load_displacement(change_index_loop).Y_Cooordinate = new_y_coordinate_list_once(new_y_coordinate_loop); % Changes old y coordinate to new y coordinate
+            end
+        end
+    end
+end
+
+waitbar(1) % Updates wait bar when done
+close(progress_bar) % Closes wait bar
+
+%% Rewrite new struct with overlapping indents removed
+
+progress_bar = waitbar(0,"Tidying Up Data Structure"); % Creates a progress bar
+
+% Find required size of struct
+struct_x_coordinate_list_shifted = [original_load_displacement.X_Coordinate]; % Gets newest list of x coordinates
+number_of_overlap_indents_index = count(string(struct_x_coordinate_list_shifted),string(-0.1)); % Gives logical array of where the x coordinates have value -0.1
+number_of_overlap_indents = sum(number_of_overlap_indents_index); % Sums up logical array to give total number of overlapping indents
+number_of_non_overlapping_indents = length(struct_x_coordinate_list_shifted) - number_of_overlap_indents; % Gives number of non-overlapping indents
+
+% Create new struct
+non_overlapping_load_displacement = struct("Indent_Index",cell(number_of_non_overlapping_indents,1),"Displacement_Load_Data",cell(number_of_non_overlapping_indents,1),"X_Coordinate",cell(number_of_non_overlapping_indents,1),"Y_Coordinate",cell(number_of_non_overlapping_indents,1)); % Creates new empty struct
+new_struct_count = 0; % Will be used below to keep track of which row to write to in new struct
+
+% Transfer data
+for original_struct_loop = 1:initial_number_of_data % For count through each indent in original struct
+    completion_fraction = original_struct_loop/initial_number_of_data; % Calculates fraction for progress bar
+    waitbar(completion_fraction); % Updates progress bar
+    if original_load_displacement(original_struct_loop).X_Coordinate == -0.1 % If an overlapping indent
+        % Do nothing
+    else % If not overlapping indent, write to new struct
+        new_struct_count = new_struct_count + 1; % Keeps track of row writing to in new struct (data written across in below 4 lines)
+        non_overlapping_load_displacement(new_struct_count).Indent_Index = original_load_displacement(original_struct_loop).Indent_Index;
+        non_overlapping_load_displacement(new_struct_count).Displacement_Load_Data = original_load_displacement(original_struct_loop).Displacement_Load_Data;
+        non_overlapping_load_displacement(new_struct_count).X_Coordinate = original_load_displacement(original_struct_loop).X_Coordinate;
+        non_overlapping_load_displacement(new_struct_count).Y_Coordinate = original_load_displacement(original_struct_loop).Y_Coordinate;
+    end
+end
+
+close(progress_bar)
+    
+%% Adjust for gaps - will have to take into account previous shift when working out bundle start coordinates
 
 %% Check for problem indents
 
@@ -117,7 +281,6 @@ close(progress_bar) % Closes wait bar
 
 
 load_displacement_data = 1;
-indent_positions = 1;
 bad_indents_list = 1;
 
 
