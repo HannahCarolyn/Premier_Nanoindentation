@@ -1,4 +1,4 @@
-function [load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,exclude_dodgy)
+function [final_load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,exclude_dodgy,dodgy_tolerance)
     
 %% Importing all indentation data
 
@@ -103,6 +103,14 @@ end
 waitbar(1) % Updates wait bar when done
 close(progress_bar) % Closes wait bar
 
+%% Make coordinates continuous in case user used bigger bundle spacing than needed
+
+% Shift x
+original_load_displacement = Coordinate_Shift("X_Coordinate",original_load_displacement,indent_spacing,"continuous",0);
+
+% Shift y
+original_load_displacement = Coordinate_Shift("Y_Coordinate",original_load_displacement,indent_spacing,"continuous",0);
+
 %% Exclude bundle column overlap and take into account bundle gaps (shift x as needed)
 
 progress_bar = waitbar(0,"Removing user defined overlapping indents"); % Creates a progress bar
@@ -114,7 +122,6 @@ for column_loop = 1:columns % For loop each bundle column (x direction)
 end
 
 bundle_x_coordinate_start(1) = []; % Remove first bundle coordinate since this won't be overlapping
-
 bundle_x_coordinate_overlap = []; % Create empty list for overlapping x coordinates
 
 if column_overlap >= 0 % Check if user entered negative column overlap, i.e. a gap (process this differently below)
@@ -141,31 +148,17 @@ if column_overlap >= 0 % Check if user entered negative column overlap, i.e. a g
             overlapping_x_coordinate_indices(end+1) = append_index_loop; % Appends indices for all overlapping x coordinates (each run through the loop)
         end
     end
+
+    % Removing overlapping indent from dataset
+
     for x_index_loop = [overlapping_x_coordinate_indices] % For each index for overlapping x coordinate - note index corresponds to the struct indexing beggining at 1
         original_load_displacement(x_index_loop).X_Coordinate = -0.1; % These 2 lines change the overlapping indent coordinates in struct to -0.1 (unique as not integer) so may be identified when writing new struct below
         original_load_displacement(x_index_loop).Y_Coordinate = -0.1;
     end
 
-    % Shifting x coordinates so it is continuous again
+    % Shifting x coordinates so it is continuous again (calls function)
 
-    struct_x_coordinate_list_updated = [original_load_displacement.X_Coordinate]; % Gets updated x coordinates from struct into list
-    x_coordinate_list_once = unique(struct_x_coordinate_list_updated); % Finds unique value of updated x coordinates in sorted order
-    x_coordinate_list_once(1) = []; % Removes the -0.1 value so not effect the below
-    new_x_dimension = length(x_coordinate_list_once); % Finds new total x dimension (number of indents, i.e. number of unique columns left)
-    new_x_coordinate_list_once = [0:indent_spacing:(new_x_dimension-1)*indent_spacing]; % Create list which will have alterations applied and compared to original later on
-    for new_x_coordinate_loop = 1:new_x_dimension % For going through indices of each x coordinate value once
-        if x_coordinate_list_once(new_x_coordinate_loop) == new_x_coordinate_list_once(new_x_coordinate_loop) % If value unchanged, do nothing
-            % Do nothing
-        else
-            logical_x_coordinate_find_to_change = []; % Creates empty list for logical array (where 1 will give a find of the coordindate, 0 is other)
-            single_x_coordinate_find_index_to_change = []; % Creates empty list for storing the index of where the logical array returns a 1
-            logical_x_coordinate_find_to_change = struct_x_coordinate_list_updated == x_coordinate_list_once(new_x_coordinate_loop); % Returns logical array for the original coordinate being checked in this loop run through that needs to be shifted to new value
-            single_x_coordinate_find_index_to_change = find(logical_x_coordinate_find_to_change); % Returns indices of where logical array shows a find for the coordinate being checked in this loop
-            for change_index_loop = [single_x_coordinate_find_index_to_change] % For each index found for this coordinate
-                original_load_displacement(change_index_loop).X_Coordinate = new_x_coordinate_list_once(new_x_coordinate_loop); % Changes old x coordinate to new x coordinate
-            end
-        end
-    end
+    original_load_displacement = Coordinate_Shift("X_Coordinate",original_load_displacement,indent_spacing,"continuous",0);
 end
 
 %% Exclude bundle row overlap and take into account bundle gaps (shift y as needed)
@@ -173,14 +166,13 @@ end
 waitbar(0.5) % Updates wait bar halfway
 
 bundle_y_coordinate_start = []; % Create empty list for storing bundle y start coordinates
+bundle_y_coordinate_overlap = []; % Create empty list for overlapping y coordinates
 
 for row_loop = 1:rows % For loop each bundle row (y direction)
     bundle_y_coordinate_start(end+1) = ((row_loop-1)*bundle_dimensions) + ((row_loop-1)*indent_spacing); % Work out bundle starting y coordinate
 end
 
 bundle_y_coordinate_start(1) = []; % Remove first bundle coordinate since this won't be overlapping
-
-bundle_y_coordinate_overlap = []; % Create empty list for overlapping y coordinates
 
 if row_overlap >= 0 % Check if user entered negative row overlap, i.e. a gap (process this differently below)
     
@@ -206,31 +198,18 @@ if row_overlap >= 0 % Check if user entered negative row overlap, i.e. a gap (pr
             overlapping_y_coordinate_indices(end+1) = append_index_loop; % Appends indices for all overlapping y coordinates (each run through the loop)
         end
     end
+
+    % Removing overlapping indent from dataset
+
     for y_index_loop = [overlapping_y_coordinate_indices] % For each index for overlapping y coordinate - note index corresponds to the struct indexing beggining at 1
         original_load_displacement(y_index_loop).X_Coordinate = -0.1; % These 2 lines change the overlapping indent coordinates in struct to -0.1 (unique as not integer) so may be identified when writing new struct below
         original_load_displacement(y_index_loop).Y_Coordinate = -0.1;
     end
 
-    % Shifting y coordinates so it is continuous again
+    % Shifting y coordinates so it is continuous again (calls function)
 
-    struct_y_coordinate_list_updated = [original_load_displacement.Y_Coordinate]; % Gets updated y coordinates from struct into list
-    y_coordinate_list_once = unique(struct_y_coordinate_list_updated); % Finds unique value of updated y coordinates in sorted order
-    y_coordinate_list_once(1) = []; % Removes the -0.1 value so not effect the below
-    new_y_dimension = length(y_coordinate_list_once); % Finds new total y dimension (number of indents, i.e. number of unique rows left)
-    new_y_coordinate_list_once = [0:indent_spacing:(new_y_dimension-1)*indent_spacing]; % Create list which will have alterations applied and compared to original later on
-    for new_y_coordinate_loop = 1:new_y_dimension % For going through indices of each y coordinate value once
-        if y_coordinate_list_once(new_y_coordinate_loop) == new_y_coordinate_list_once(new_y_coordinate_loop) % If value unchanged, do nothing
-            % Do nothing
-        else
-            logical_y_coordinate_find_to_change = []; % Creates empty list for logical array (where 1 will give a find of the coordindate, 0 is other)
-            single_y_coordinate_find_index_to_change = []; % Creates empty list for storing the index of where the logical array returns a 1
-            logical_y_coordinate_find_to_change = struct_y_coordinate_list_updated == y_coordinate_list_once(new_y_coordinate_loop); % Returns logical array for the original coordinate being checked in this loop run through that needs to be shifted to new value
-            single_y_coordinate_find_index_to_change = find(logical_y_coordinate_find_to_change); % Returns indices of where logical array shows a find for the coordinate being checked in this loop
-            for change_index_loop = [single_y_coordinate_find_index_to_change] % For each index found for this coordinate
-                original_load_displacement(change_index_loop).Y_Cooordinate = new_y_coordinate_list_once(new_y_coordinate_loop); % Changes old y coordinate to new y coordinate
-            end
-        end
-    end
+    original_load_displacement = Coordinate_Shift("Y_Coordinate",original_load_displacement,indent_spacing,"continuous",0);
+
 end
 
 waitbar(1) % Updates wait bar when done
@@ -267,22 +246,131 @@ end
 
 close(progress_bar)
     
-%% Adjust for gaps - will have to take into account previous shift when working out bundle start coordinates
+%% Adjust for gaps (i.e. negative overlap)
+%  Will have to take into account previous shift when working out bundle start coordinates
+
+progress_bar = waitbar(0,"Accounting for gaps between bundles"); % Creates a progress bar
+
+if columns > 1 % Only run if more than one column
+    if column_overlap < -0.1 % Only run if no overlap and user defines space with negative integer
+        column_space = column_overlap*-1; % Convert to positive number for simplicity
+        new_bundle_x_start_coordinates = []; % Create list for new bundle x start coordinates
+        new_bundle_x_start_coordinates(1) = 0; % First bundle starts at 0
+        for column_loop = 2:columns % For loop through remaining number of columns
+            new_bundle_x_start_coordinates(end+1) = bundle_x_coordinate_start(column_loop-1) + (column_loop-1)*(indent_spacing*column_space); % Shift starting bundle coordinate by relevant amount
+        end
+        new_bundle_x_coordinates = []; % Create list for all new x coordinates
+        for bundle_column_loop = [new_bundle_x_start_coordinates] % For each bundle column
+            for indent_column_loop = 1:bundle_length % For each indent column in a bundle
+                new_bundle_x_coordinates(end+1) = bundle_column_loop + (indent_column_loop-1)*indent_spacing; % Writes new x coordinates to list
+            end
+        end
+        % Re-write coordinates
+        non_overlapping_load_displacement = Coordinate_Shift("X_Coordinate",non_overlapping_load_displacement,indent_spacing,"not_continuous",new_bundle_x_coordinates);
+    end
+end
+
+waitbar(0.5)
+
+if rows > 1 % Only run if more than one row
+    if row_overlap < -0.1 % Only run if no overlap and user defines space with negative integer
+        row_space = row_overlap*-1; % Convert to positive number for simplicity
+        new_bundle_y_start_coordinates = []; % Create list for new bundle y start coordinates
+        new_bundle_y_start_coordinates(1) = 0; % First bundle starts at 0
+        for row_loop = 2:rows % For loop through remaining number of rows
+            new_bundle_y_start_coordinates(end+1) = bundle_y_coordinate_start(row_loop-1) + (row_loop-1)*(indent_spacing*row_space); % Shift starting bundle coordinate by relevant amount
+        end
+        new_bundle_y_coordinates = []; % Create list for all new y coordinates
+        for bundle_row_loop = [new_bundle_y_start_coordinates] % For each bundle row
+            for indent_row_loop = 1:bundle_length % For each indent row in a bundle
+                new_bundle_y_coordinates(end+1) = bundle_row_loop + (indent_row_loop-1)*indent_spacing; % Writes new y coordinates to list
+            end
+        end
+        % Re-write coordinates
+        non_overlapping_load_displacement = Coordinate_Shift("Y_Coordinate",non_overlapping_load_displacement,indent_spacing,"not_continuous",new_bundle_y_coordinates);
+    end
+end
+
+waitbar(1)
+close(progress_bar)
 
 %% Check for problem indents
+%  Other conditions for excluding indents can be added here at a later date
+
+if exclude_dodgy == "yes" % If user wishes to exclude dodgy indents later, run this
+    non_overlapping_indents_count = length([non_overlapping_load_displacement.Indent_Index]);
+    progress_bar = waitbar(0,"Checking for Problem Indents"); % Creates a progress bar
+    bad_indents_list = []; % List for storing index of dodgy indents
+    for indent_loop = 1:non_overlapping_indents_count % For count through each remaining indent
+        completion_fraction = indent_loop/non_overlapping_indents_count; % Calculates fraction for progress bar
+        waitbar(completion_fraction); % Updates progress bar
+        displacement_data_test = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
+        minimum_displacement_data_test = min(displacement_data_test); % Calculates minimum recorded displacement for indent
+        if minimum_displacement_data_test < (-1*dodgy_tolerance) % If minimum displacement below threshold for bad data
+            bad_indents_list(end+1) = non_overlapping_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
+        end
+    end
+    close(progress_bar)
+    number_dodgy = length(bad_indents_list);
+    disp(strcat("Number of dodgy indents found is ",string(number_dodgy)," out of the original ",string(initial_number_of_data)," indents."))
+end
 
 %% Have even depth spacings (split into loading and unloading)
 
+progress_bar = waitbar(0,"Creating Continuous Displacement Dataset"); % Creates a progress bar
+interpolated_load_displacement = non_overlapping_load_displacement;
+for indent_loop = 1:non_overlapping_indents_count % For count through each remaining indent
+    completion_fraction = indent_loop/non_overlapping_indents_count; % Calculates fraction for progress bar
+    waitbar(completion_fraction); % Updates progress bar
+    indent_displacement_data = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
+    indent_load_data = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all displacement data for indent
+    maximum_indent_displacement = max(indent_displacement_data); % Finds maximum displacement for indent
+    maximum_index = find(indent_displacement_data == maximum_indent_displacement); % Finds index in list where maximum displacement occured
+    indent_displacement_data_loading = indent_displacement_data(1:maximum_index); % Appends loading displacement values
+    indent_displacement_data_unloading = indent_displacement_data(maximum_index:length(indent_displacement_data)); % Appends unloading displacement values
+    indent_load_data_loading = indent_load_data(1:maximum_index); % Appends laoding load values
+    indent_load_data_unloading = indent_load_data(maximum_index:length(indent_displacement_data)); % Appends unloading load values
+    new_displacement_data = []; % List for storing new displacement data
+    new_load_data = []; % List for storing corresponding load data
+    new_data = []; % Create list for storing new displacement_load_data
+    maximum_indent_displacement = floor(maximum_indent_displacement); % Round maximum displacement down so able to interp
+    minimum_indent_displacement_loading = ceil(min(indent_displacement_data_loading)); % Round mimimum loading displacement up so able to interp
+    if minimum_indent_displacement_loading <0 % Set mimimum loading displacement as 0 if contains non-zero values
+        minimum_indent_displacement_loading = 0;
+    end
+    minimum_indent_displacement_unloading = ceil(min(indent_displacement_data_unloading)); % Round minimum unloading displacement up so able to interp
+    if minimum_indent_displacement_unloading <0 % Set minimum unloading displacement as 0 if contains non-zero values
+        minimum_indent_displacement_unloading = 0;
+    end
+    for indent_displacement = minimum_indent_displacement_loading:0.1:maximum_indent_displacement % For each displacement step in loading, calculate interpolated values
+        try
+            load_value = interp1(indent_displacement_data_loading,indent_load_data_loading,indent_displacement);
+        catch
+            load_value = NaN;
+        end
+        new_displacement_data(end+1) = indent_displacement; % Append new interpolated values
+        new_load_data(end+1) = load_value;
+    end
+    for indent_displacement = maximum_indent_displacement:-0.1:minimum_indent_displacement_unloading % For each displacement step in unloading, calculate interpolated values
+        try
+            load_value = interp1(indent_displacement_data_unloading,indent_load_data_unloading,indent_displacement);
+        catch
+            load_value = NaN;
+        end
+        new_displacement_data(end+1) = indent_displacement; % Append new interpolated values
+        new_load_data(end+1) = load_value;
+    end
+    new_data(:,1) = new_displacement_data; % Append all new data to new list
+    new_data(:,2) = new_load_data;
+    interpolated_load_displacement(indent_loop).Displacement_Load_Data = []; % Delete old data from struct
+    interpolated_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new interpolated data to struct
+end
 
+close(progress_bar) % Close progress bar
 
+%% Return values from function
 
-
-
-
-
-load_displacement_data = 1;
-bad_indents_list = 1;
-
-
+final_load_displacement_data = interpolated_load_displacement; % Rewrite struct for function output
+bad_indents_list;
 
 end
