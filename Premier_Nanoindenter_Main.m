@@ -26,7 +26,8 @@ rows = 3;
 columns = 3;
 
 % Give the spacing entered on the "Array Patterns" section of the
-% automation tab regardless of the mapping type in um
+% automation tab regardless of the mapping type in um - if using automated
+% indentation grid array you may wish to enter a measured spacing instead
 spacing = 45;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
@@ -43,17 +44,19 @@ column_overlap = 0;
 % these are excluded, an average of the surrounding indents will be used
 % when plotting any data. If these are not excluded, you will need to
 % manually edit the colour bar on the output figures so they are not
-% swamped with these outlier results.
+% swamped with these outlier results; dodgy tolerance is how negative a
+% displacement (in um) needs to go on an indent for it to count as dodgy
 exclude_dodgy = "yes";
+dodgy_tolerance = 20;
 
 %% From here, different functions are called in order and if needed - users: do not edit
 
 % Calling main data import function
 if mapping_type == "xpm_indentation_map"
-    [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,exclude_dodgy);
-    disp("XPM Indentation Data Successfully Imported")
+    [load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,exclude_dodgy,dodgy_tolerance);
+    disp("XPM Indentation Data Successfully Imported.")
 else if mapping_type == "automated_indentation_grid_array"
-        [load_displacement_data,indent_positions,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy);
-        disp("Automated Grid Array Indentation Data Successfully Imported")
+        [load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy,dodgy_tolerance);
+        disp("Automated Grid Array Indentation Data Successfully Imported.")
     end
 end
