@@ -118,7 +118,7 @@ end
 %% Have even depth spacings (split into loading and unloading) with zeroed displacement data
 
 progress_bar = waitbar(0,"Creating Continuous Displacement Dataset"); % Creates a progress bar
-interpolated_load_displacement = original_load_displacement;
+interpolated_load_displacement = non_overlapping_load_displacement;
 for indent_loop = 1:initial_number_of_data % For count through each remaining indent
     completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
     waitbar(completion_fraction); % Updates progress bar
@@ -136,12 +136,13 @@ for indent_loop = 1:initial_number_of_data % For count through each remaining in
     maximum_indent_displacement = floor(maximum_indent_displacement); % Round maximum displacement down so able to interp
     minimum_indent_displacement_loading = ceil(min(indent_displacement_data_loading)); % Round mimimum loading displacement up so able to interp
     minimum_indent_displacement_unloading = ceil(min(indent_displacement_data_unloading)); % Round minimum unloading displacement up so able to interp
-    % Zero all displacement data (next 5 lines)
-    indent_displacement_data_loading = indent_displacement_data_loading - minimum_indent_displacement_loading;
-    indent_displacement_data_unloading = indent_displacement_data_unloading - minimum_indent_displacement_loading;
-    minimum_indent_displacement_unloading = minimum_indent_displacement_unloading - minimum_indent_displacement_loading;
-    maximum_indent_displacement = maximum_indent_displacement - minimum_indent_displacement_loading;
-    minimum_indent_displacement_loading = 0;
+    if minimum_indent_displacement_loading <0 % Zero all displacement data if negative to begin with
+        indent_displacement_data_loading = indent_displacement_data_loading - minimum_indent_displacement_loading;
+        indent_displacement_data_unloading = indent_displacement_data_unloading - minimum_indent_displacement_loading;
+        minimum_indent_displacement_unloading = minimum_indent_displacement_unloading - minimum_indent_displacement_loading;
+        maximum_indent_displacement = maximum_indent_displacement - minimum_indent_displacement_loading;
+        minimum_indent_displacement_loading = 0;
+    end
     if minimum_indent_displacement_unloading <0 % Set minimum unloading displacement as 0 for interp if contains non-zero values
         minimum_indent_displacement_unloading = 0;
     end
@@ -173,9 +174,9 @@ close(progress_bar) % Close progress bar
 
 %% Return values from function
 
-final_load_displacement_data = interpolated_load_displacement; % Rewrite struct for function output
-bad_indents_list;
+
+
+
 
 end
 
-% 179 lines total 04/01/2023
