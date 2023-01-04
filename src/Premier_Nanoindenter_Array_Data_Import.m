@@ -1,4 +1,4 @@
-function [load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy,dodgy_tolerance)
+function [final_load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy,dodgy_tolerance)
 
 %% Importing all indentation data
 
