@@ -339,12 +339,13 @@ for indent_loop = 1:non_overlapping_indents_count % For count through each remai
     maximum_indent_displacement = floor(maximum_indent_displacement); % Round maximum displacement down so able to interp
     minimum_indent_displacement_loading = ceil(min(indent_displacement_data_loading)); % Round mimimum loading displacement up so able to interp
     minimum_indent_displacement_unloading = ceil(min(indent_displacement_data_unloading)); % Round minimum unloading displacement up so able to interp
-    % Zero all displacement data (next 5 lines)
-    indent_displacement_data_loading = indent_displacement_data_loading - minimum_indent_displacement_loading;
-    indent_displacement_data_unloading = indent_displacement_data_unloading - minimum_indent_displacement_loading;
-    minimum_indent_displacement_unloading = minimum_indent_displacement_unloading - minimum_indent_displacement_loading;
-    maximum_indent_displacement = maximum_indent_displacement - minimum_indent_displacement_loading;
-    minimum_indent_displacement_loading = 0;
+    if minimum_indent_displacement_loading <0 % Zero all displacement data if negative to begin with
+        indent_displacement_data_loading = indent_displacement_data_loading - minimum_indent_displacement_loading;
+        indent_displacement_data_unloading = indent_displacement_data_unloading - minimum_indent_displacement_loading;
+        minimum_indent_displacement_unloading = minimum_indent_displacement_unloading - minimum_indent_displacement_loading;
+        maximum_indent_displacement = maximum_indent_displacement - minimum_indent_displacement_loading;
+        minimum_indent_displacement_loading = 0;
+    end
     if minimum_indent_displacement_unloading <0 % Set minimum unloading displacement as 0 for interp if contains non-zero values
         minimum_indent_displacement_unloading = 0;
     end
@@ -381,4 +382,4 @@ bad_indents_list;
 
 end
 
-% 382 lines total 04/01/2023
+% 380 lines total 04/01/2022
