@@ -22,15 +22,11 @@ make sure alphabetical order corresponds to the indent order.
 
 If using mapping data, the Coordinate_Data file should contain the .txt files that are auto-
 generated (with the same name as the raw bundle data files) when loading the multiple data files
-in the XPM analysis sub-tab in the Hysitron Triboscan software. You may rename these if you wish, 
-but ensure the alphabetical order of the files remains the same. These files contain the express 
-mapping coordinates.
+in the XPM analysis sub-tab. You may rename these if you wish, but ensure the alphabetical order
+of the files remains the same. These files contain the express mapping coordinates.
 
 If using basic automated grid array data, the Coordinate_Data file should contain the .txt file
-that is auto-saved (user is asked where it is saved) when loading multiple curve analysis in the
-quasi analysis sub-tab in the Hysitron Triboscan software. This file is not currently used in the 
-input deck as basic automated grid array data coordinates are generated automatically, but save 
-this anyway in case the code is changed and the file is used at a later date.
+that is auto-saved (user is asked where it is saved
 
 Within the Load_Function folder you should copy across the load function file that was created
 when setting up the XPM indents. Change the file extension from .ldf to .txt. Again the file
