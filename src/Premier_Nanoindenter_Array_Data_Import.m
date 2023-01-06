@@ -60,36 +60,36 @@ end
 
 close(progress_bar) % Closes progress bar
 
-%% Crop indent data
+%% Crop indent data - this has been removed as it interferes with Oliver Parr Calculations
 % Remove data when negative load
 
-progress_bar = waitbar(0,"Cropping Negative Load Values"); % Creates a progress bar
-
-for indent_loop = 1:initial_number_of_data % Loop through each indent
-    completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
-    waitbar(completion_fraction); % Updates progress bar
-    displacement_data = []; % List for indent displacement data
-    load_data = []; % List for indent load data
-    displacement_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Get displacement data for indent
-    load_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Get load data for indent
-    displacement_data(1:10) = []; % Remove first 10 data points (sometimes load is positive there)
-    load_data(1:10) = []; % Remove first 10 data points (sometimes load is positive there)
-    cropped_displacement_data = []; % Create list to store cropped displacement data
-    cropped_load_data = []; % Create list to store cropped load data
-    for load_data_loop = 1:length(load_data) % For each load value of indent
-        if load_data(load_data_loop) >= 0 % If load value positive then write to cropped data list
-            cropped_load_data(end+1) = load_data(load_data_loop);
-            cropped_displacement_data(end+1) = displacement_data(load_data_loop);
-        end
-    end
-    cropped_data = []; % Double for both cropped displacement and load data
-    cropped_data(:,1) = cropped_displacement_data;
-    cropped_data(:,2) = cropped_load_data;
-    original_load_displacement(indent_loop).Displacement_Load_Data = []; % Clear original data for indent in struct
-    original_load_displacement(indent_loop).Displacement_Load_Data = cropped_data; % Write cropped data
-end
-
-close(progress_bar) % Closes progress bar
+% progress_bar = waitbar(0,"Cropping Negative Load Values"); % Creates a progress bar
+% 
+% for indent_loop = 1:initial_number_of_data % Loop through each indent
+%     completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
+%     waitbar(completion_fraction); % Updates progress bar
+%     displacement_data = []; % List for indent displacement data
+%     load_data = []; % List for indent load data
+%     displacement_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Get displacement data for indent
+%     load_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Get load data for indent
+%     displacement_data(1:10) = []; % Remove first 10 data points (sometimes load is positive there)
+%     load_data(1:10) = []; % Remove first 10 data points (sometimes load is positive there)
+%     cropped_displacement_data = []; % Create list to store cropped displacement data
+%     cropped_load_data = []; % Create list to store cropped load data
+%     for load_data_loop = 1:length(load_data) % For each load value of indent
+%         if load_data(load_data_loop) >= 0 % If load value positive then write to cropped data list
+%             cropped_load_data(end+1) = load_data(load_data_loop);
+%             cropped_displacement_data(end+1) = displacement_data(load_data_loop);
+%         end
+%     end
+%     cropped_data = []; % Double for both cropped displacement and load data
+%     cropped_data(:,1) = cropped_displacement_data;
+%     cropped_data(:,2) = cropped_load_data;
+%     original_load_displacement(indent_loop).Displacement_Load_Data = []; % Clear original data for indent in struct
+%     original_load_displacement(indent_loop).Displacement_Load_Data = cropped_data; % Write cropped data
+% end
+% 
+% close(progress_bar) % Closes progress bar
 
 %% Check for problem indents
 %  Other conditions for excluding indents can be added here at a later date
