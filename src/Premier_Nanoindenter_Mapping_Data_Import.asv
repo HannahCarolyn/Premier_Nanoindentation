@@ -51,13 +51,9 @@ for file_loop = 1:initial_number_of_data % For count through number of indents i
     raw_displacement_offset = last_displacement_value - last_raw_displacement_value; % Calculates the offset that needs to be added to raw depth values when adding them
     a_sufficiently_large_number = 50; % Finds sufficiently large number for a loop through cropped values at end (should not need to increase this as only need to add a few values - the larger it is, the less efficient the code)
     for end_data_loop = 1:a_sufficiently_large_number % Count up to sufficiently large number
-        if continuous_data_load(last_load_index + end_data_loop - 1) >= 0 % If next load data value (minus 1 so at least one negative is written) is positive, then do this
-            raw_input(end+1,1) = continuous_data_displacement(last_load_index + end_data_loop) + raw_displacement_offset; % Append next corrected displalcement value
-            raw_input(end+1,2) = continuous_data_load(last_load_index + end_data_loop); % Append next load value
-        else % i.e. 2nd negative value onwards
-            % Do nothing
-        end
-    end
+        if continuous_data_load(last_load_index + sufficiently_large_number - 1) >= 0 % If next load data value (minus 1 so at least one negative is written) is positive, then do this
+            raw_input(end+1,1)
+
     original_load_displacement(file_loop).Indent_Index = file_loop-1; % Writes indent number to struct (starting indexing at zero as per files)
     original_load_displacement(file_loop).Displacement_Load_Data = raw_input; % Writes displacement and load data array to struct
 end
