@@ -1,6 +1,8 @@
 
                                 - Details of file structure -
 
+* Need to add note about check of column headers in these files
+
 Within your base directory, have four folders named: Area_Function, Coordinate_Data, Indent_Data,
 Load_Function. 
 
