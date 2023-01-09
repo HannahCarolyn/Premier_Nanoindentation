@@ -6,24 +6,31 @@ indent_file_locations = strcat(base_file_directory,"Indent_Data"); % Gets the fu
 folder_info = dir(fullfile(indent_file_locations, '/*.txt')); % Gets a list of file properties within the folder
 initial_number_of_data = size(folder_info,1); % Counts number of files in the folder
 
-continuous_indent_file_locations = strcat(base_file_directory,"Continuous_Data"); % Gets the full folder path for the indentation data
-continuous_folder_info = dir(fullfile(continuous_indent_file_locations, '/*.txt')); % Gets a list of file properties within the folder
-continuous_number_of_data = size(continuous_folder_info,1); % Counts number of files in the folder
+% continuous_indent_file_locations = strcat(base_file_directory,"Continuous_Data"); % Gets the full folder path for the indentation data
+% continuous_folder_info = dir(fullfile(continuous_indent_file_locations, '/*.txt')); % Gets a list of file properties within the folder
+% continuous_number_of_data = size(continuous_folder_info,1); % Counts number of files in the folder
 
-progress_bar = waitbar(0,"Importing Indentation Data"); % Creates a progress bar
-original_load_displacement = struct("Indent_Index",cell(initial_number_of_data,1),"Displacement_Load_Data",cell(initial_number_of_data,1),"X_Coordinate",cell(initial_number_of_data,1),"Y_Coordinate",cell(initial_number_of_data,1)); % Creates an empty struct with 4 fields for each indent 
+% progress_bar = waitbar(0,"Importing Indentation Data - Continuous"); % Creates a progress bar
+% original_load_displacement = struct("Indent_Index",cell(initial_number_of_data,1),"Displacement_Load_Data",cell(initial_number_of_data,1),"X_Coordinate",cell(initial_number_of_data,1),"Y_Coordinate",cell(initial_number_of_data,1)); % Creates an empty struct with 4 fields for each indent 
 
-continuous_data_displacement = []; % List for storing continuous displacement data stream
-continuous_data_load = []; % List for storing continuous load data stream
+% continuous_data_displacement = []; % List for storing continuous displacement data stream
+% continuous_data_load = []; % List for storing continuous load data stream
 
-for file_loop = 1:continuous_number_of_data % For count through continuous data files (should be one for each bundle)
-    file_name = continuous_folder_info(file_loop).name; % Extract file name of indent
-    full_file_name = fullfile(continuous_indent_file_locations, file_name); % Extract file name (including path) for each indent
-    full_input = importdata(full_file_name); % Extracts contents of file as struct depending on data structure
-    data_input = full_input.data; % Selects only the numerical data
-    continuous_data_displacement(end+1) = data_input(:,2); % Adds bundle continuous displacement data stream to existing continuous data stream of previous bundles
-    continuous_data_load(end+1) = data_input(:,3); % Does the same as above but for load
-end
+% for file_loop = 1:continuous_number_of_data % For count through continuous data files (should be one for each bundle)
+%     completion_fraction = file_loop/continuous_number_of_data; % Calculates fraction for progress bar
+%     waitbar(completion_fraction); 
+%     file_name = continuous_folder_info(file_loop).name; % Extract file name of indent
+%     full_file_name = fullfile(continuous_indent_file_locations, file_name); % Extract file name (including path) for each indent
+%     full_input = importdata(full_file_name); % Extracts contents of file as struct depending on data structure
+%     data_input = full_input.data; % Selects only the numerical data
+%     for continuous_data_input_loop = 1:length(data_input(:,2)) % For each continuous data value
+%         continuous_data_displacement(end+1) = data_input(continuous_data_input_loop,2); % Adds bundle continuous displacement data stream to existing continuous data stream of previous bundles
+%         continuous_data_load(end+1) = data_input(continuous_data_input_loop,3); % Does the same as above but for load
+%     end
+% end
+
+% close(progress_bar) % Closes progress bar
+progress_bar = waitbar(0,"Importing Indentation Data - Seperated"); % Creates a progress bar
 
 for file_loop = 1:initial_number_of_data % For count through number of indents in folder
     completion_fraction = file_loop/initial_number_of_data; % Calculates fraction for progress bar
@@ -40,24 +47,31 @@ for file_loop = 1:initial_number_of_data % For count through number of indents i
     % continuous data stream will be used to add to this for a complete set of
     % data for a given indent so it gets all data until negative load
     
-    last_displacement_value = raw_input(end,1) % Reads last written displacement value
-    last_load_value = raw_input(end,2); % Reads last written load value
-    last_load_find = continuous_data_load == last_load_value; % Returns logical array for the load being found in the continuous data set
-    last_load_index = find(last_load_find); % Returns indices of where logical array shows a find
-    if length(last_load_index) > 1 % If this load value has a twin
-        disp(strcat("ERROR: The last load value for indent ",(initial_number_of_data-1)," is some how not unique! You are more likely to win the lottery than get this error. Recommend abort code if you do get this error."))
-    end
-    last_raw_displacement_value = continuous_data_displacement(last_load_index); % Finds raw equivalent (i.e. not edited) depth for the last_displacement_value
-    raw_displacement_offset = last_displacement_value - last_raw_displacement_value; % Calculates the offset that needs to be added to raw depth values when adding them
-    a_sufficiently_large_number = 50; % Finds sufficiently large number for a loop through cropped values at end (should not need to increase this as only need to add a few values - the larger it is, the less efficient the code)
-    for end_data_loop = 1:a_sufficiently_large_number % Count up to sufficiently large number
-        if continuous_data_load(last_load_index + end_data_loop - 1) >= 0 % If next load data value (minus 1 so at least one negative is written) is positive, then do this
-            raw_input(end+1,1) = continuous_data_displacement(last_load_index + end_data_loop) + raw_displacement_offset; % Append next corrected displalcement value
-            raw_input(end+1,2) = continuous_data_load(last_load_index + end_data_loop); % Append next load value
-        else % i.e. 2nd negative value onwards
-            % Do nothing
-        end
-    end
+%     last_displacement_value = raw_input(end,1); % Reads last written displacement value
+%     last_load_value = raw_input(end,2); % Reads last written load value
+%     last_load_find = continuous_data_load == last_load_value; % Returns logical array for the load being found in the continuous data set
+%     last_load_index = find(last_load_find); % Returns indices of where logical array shows a find
+%     if length(last_load_index) > 1 % If this load value has a twin, try for previous value instead
+%         last_displacement_value = raw_input(end-1,1); % Reads penultimate written displacement value
+%         last_load_value = raw_input(end-1,2); % Reads penultimate written load value
+%         last_load_find = continuous_data_load == last_load_value; % Returns logical array for the load being found in the continuous data set
+%         last_load_index = find(last_load_find); % Returns indices of where logical array shows a find
+%         if length(last_load_index) > 1 % If this load value has a twin again!
+%             disp(strcat("ERROR: The last load value for indent ",string(initial_number_of_data-1)," is some how not unique! You are more likely to win the lottery than get this error. Recommend abort code if you do get this error."))
+%             return
+%         end
+%     end
+%     last_raw_displacement_value = continuous_data_displacement(last_load_index); % Finds raw equivalent (i.e. not edited) depth for the last_displacement_value
+%     raw_displacement_offset = last_displacement_value - last_raw_displacement_value; % Calculates the offset that needs to be added to raw depth values when adding them
+%     a_sufficiently_large_number = 50; % Finds sufficiently large number for a loop through cropped values at end (should not need to increase this as only need to add a few values - the larger it is, the less efficient the code)
+%     for end_data_loop = 1:a_sufficiently_large_number % Count up to sufficiently large number
+%         if continuous_data_load(last_load_index + end_data_loop - 1) >= 0 % If next load data value (minus 1 so at least one negative is written) is positive, then do this
+%             raw_input(end+1,1) = continuous_data_displacement(last_load_index + end_data_loop) + raw_displacement_offset; % Append next corrected displalcement value
+%             raw_input(end+1,2) = continuous_data_load(last_load_index + end_data_loop); % Append next load value
+%         else % i.e. 2nd negative value onwards
+%             % Do nothing
+%         end
+%     end
     original_load_displacement(file_loop).Indent_Index = file_loop-1; % Writes indent number to struct (starting indexing at zero as per files)
     original_load_displacement(file_loop).Displacement_Load_Data = raw_input; % Writes displacement and load data array to struct
 end
@@ -73,6 +87,7 @@ number_of_bundles = size(folder_info,1); % Counts number of files in the folder
 
 if number_of_bundles ~= (rows*columns) % Quick check if rows and columns consistent with files
     disp("WARNING: The user inputted rows and columns does not correspond to the number of bundles saved. Recommend abort.")
+    return
 end
 
 progress_bar = waitbar(0,"Importing Coordinate Data"); % Creates a progress bar
