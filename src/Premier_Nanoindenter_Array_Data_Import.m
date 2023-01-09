@@ -29,6 +29,7 @@ close(progress_bar) % Closes progress bar
 
 if initial_number_of_data ~= (rows*columns) % Quick check if rows and columns consistent with files
     disp("WARNING: The user inputted rows and columns does not correspond to the number of indents saved. Recommend abort.")
+    return
 end
 
 progress_bar = waitbar(0,"Calculating Coordinate Data"); % Creates a progress bar
