@@ -21,7 +21,7 @@ upper_xlim=hist_mean+2*hist_std;
 
 title(['Histogram of' Output_Type '2 standard deviations away from the mean'], 'FontSize', 14) %not sure if Output_Type is string?
 
-file_name=Output_Type; %not sure if Output_Type is string?
+file_name=[Output_Type '_zoom']; %not sure if Output_Type is string?
 savefig(histogram_plot, file_name.fig)
 
 histogram_figs_zoom=openfig('file_name.fig');
