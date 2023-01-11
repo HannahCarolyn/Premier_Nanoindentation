@@ -1,8 +1,8 @@
 function[histogramfigs]=histogramfunction(struct, Output_Type) %not sure about what to put in the_figure
 
 histogram_plot=histogram(struct.Output_Type);
-hist_mean=mean(struct.Output_Type);
-hist_std=std(struct.Output_Type);
+hist_mean=mean(struct.Output_Type, 'omitnan');
+hist_std=std(struct.Output_Type, 'omitnan');
 
 annotation('textbox',...
     [0.1359 0.8175 0.1688 0.09827],... %these are random numbers I got from drawing one on my particle size distributions but might want to change to fit nanoindentation data better
