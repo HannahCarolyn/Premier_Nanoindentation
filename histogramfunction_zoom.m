@@ -1,5 +1,4 @@
-%function[histogram_figs_zoom]=histogramfunction_zoom(struct, Output_Type) %not sure about what to put in the_figure
-Output_Type='Youngs_Modulus'; % remove this after test
+function[histogram_figs_zoom]=histogramfunction_zoom(struct, Output_Type) %not sure about what to put in the_figure
 
 hist_variable=[struct.(Output_Type)];
 
@@ -38,4 +37,4 @@ file_name=strcat(Output_Type, '_zoom.fig'); %not sure if Output_Type is string?
 savefig(histogram_plot, file_name)
 
 histogram_figs_zoom=openfig(file_name);
-%end 
+end 
