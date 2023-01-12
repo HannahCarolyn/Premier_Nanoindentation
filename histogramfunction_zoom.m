@@ -9,7 +9,9 @@ for letter=1:length(Output_Type)
 
 end
 
-histogram_plot=histogram(hist_variable);
+
+nbins=10; %set number of bins in histogram as before MATLAB wasn't doing many!!
+histogram_plot=histogram(hist_variable, nbins);
 hist_mean=mean(hist_variable, 'omitnan');
 hist_std=std(hist_variable, 'omitnan');
 
