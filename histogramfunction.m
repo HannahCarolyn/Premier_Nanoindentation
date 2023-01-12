@@ -1,6 +1,6 @@
-%function[histogramfigs]=histogramfunction(struct, Output_Type) %not sure about what to put in the_figure
-% look at zoom 
-Output_Type='Youngs_Modulus'; % remove this after test
+function[histogramfigs]=histogramfunction(struct, Output_Type) %not sure about what to put in the_figure
+
+%Output_Type='Youngs_Modulus'; % remove this after test
 
 hist_variable=[struct.(Output_Type)];
 
@@ -42,4 +42,5 @@ for letter=1:length(Output_Type) %I feel like we need to rewrite it back at the 
     end
 
 end
-%end 
+
+end 
