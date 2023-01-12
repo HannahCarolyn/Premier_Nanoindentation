@@ -37,4 +37,12 @@ file_name=strcat(Output_Type, '_zoom.fig'); %not sure if Output_Type is string?
 savefig(histogram_plot, file_name)
 
 histogram_figs_zoom=openfig(file_name);
+
+for letter=1:length(Output_Type) %I feel like we need to rewrite it back at the end of the code
+    if Output_Type(letter)== ' '
+        Output_Type(letter)= '_';
+    end
+
+end
+
 end 
