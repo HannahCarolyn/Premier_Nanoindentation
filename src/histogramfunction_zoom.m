@@ -1,4 +1,4 @@
-function[histogram_figs_zoom]=histogramfunction_zoom(struct, Output_Type) %not sure about what to put in the_figure
+function[histogram_figs_zoom]=histogramfunction_zoom(struct, Output_Type, output_file_directory) %not sure about what to put in the_figure
 % Output_Type='Youngs_Modulus'; % for testing
 
 hist_variable=[struct.(Output_Type)];
@@ -33,9 +33,9 @@ xlim([lower_xlim upper_xlim]);
 
 
 
-title(strcat(Output_Type, ' histogram two standard deviations away from the mean'), 'FontSize', 14) %not sure if Output_Type is string?
+title(strcat(Output_Type, ' histogram two standard deviations away from the mean'), 'FontSize', 14)
 
-file_name=strcat(Output_Type, '_zoom.fig'); %not sure if Output_Type is string?
+file_name=strcat(output_file_directory, Output_Type, '_zoom.fig'); %need to check this works
 savefig(histogram_plot, file_name)
 
 histogram_figs_zoom=openfig(file_name);
