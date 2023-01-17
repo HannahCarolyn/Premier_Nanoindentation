@@ -85,6 +85,15 @@ end
 %% Generating outputs and saving them to file
 output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
 mkdir (output_file_directory); % Creates output folder in base path
+
+% Firstly the histograms
 [Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",output_file_directory);
+[Figure2_Youngs_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure3_Reduced_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
+[Figure4_Stiffness_Histogram] = histogramfunction(updated_main_data_struct,"Stiffness",output_file_directory);
+[Figure5_Hardness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Hardness",output_file_directory);
+[Figure6_Youngs_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure7_Reduced_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
+[Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Stiffness",output_file_directory);
 
 
