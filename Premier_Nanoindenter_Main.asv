@@ -83,6 +83,5 @@ else if exclude_dodgy == "no"
 end
 
 %% Generating outputs and saving them to file
-[Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",base_file_directory);
-
+[Figure1]
 
