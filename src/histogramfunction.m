@@ -1,4 +1,4 @@
-function[histogramfigs]=histogramfunction(struct, Output_Type) %not sure about what to put in the_figure
+function[histogramfigs]=histogramfunction(struct, Output_Type, output_file_directory) %not sure about what to put in the_figure
  
 %Output_Type='Youngs_Modulus'; % remove this after test
 
@@ -29,9 +29,9 @@ plot_mean= xline(hist_mean, 'Color', 'r', 'LineWidth', 2);
 xlabel(Output_Type, 'FontSize', 12)
 ylabel('Number of Indents', 'FontSize', 12)
 legend(plot_mean, {'Mean'}, 'FontSize', 10)
-title(strcat(Output_Type, ' Histogram'),'FontSize', 14) %not sure if Output_Type is string?
+title(strcat(Output_Type, ' Histogram'),'FontSize', 14) 
 
-file_name=strcat(Output_Type, '_zoom.fig'); %not sure if Output_Type is string?
+file_name=strcat(output_file_directory, Output_Type, '.fig'); %need to check this works
 savefig(histogram_plot, file_name)
 
 histogramfigs=openfig(file_name);
