@@ -83,6 +83,8 @@ else if exclude_dodgy == "no"
 end
 
 %% Generating outputs and saving them to file
-[Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",base_file_directory);
+output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
+mkdir (output_file_directory); % Creates output folder in base path
+[Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",output_file_directory);
 
 
