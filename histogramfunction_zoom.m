@@ -1,4 +1,5 @@
 function[histogram_figs_zoom]=histogramfunction_zoom(struct, Output_Type) %not sure about what to put in the_figure
+% Output_Type='Youngs_Modulus'; % for testing
 
 hist_variable=[struct.(Output_Type)];
 
@@ -9,9 +10,8 @@ for letter=1:length(Output_Type)
 
 end
 
-
 nbins=10; %set number of bins in histogram as before MATLAB wasn't doing many!!
-histogram_plot=histogram(hist_variable, nbins);
+histogram_plot=histogram(hist_variable,nbins);
 hist_mean=mean(hist_variable, 'omitnan');
 hist_std=std(hist_variable, 'omitnan');
 
@@ -44,7 +44,6 @@ for letter=1:length(Output_Type) %I feel like we need to rewrite it back at the 
     if Output_Type(letter)== ' '
         Output_Type(letter)= '_';
     end
-
 end
 
 end 
