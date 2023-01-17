@@ -1,4 +1,4 @@
-function[heatmapfigs]=heatmaps(struct, Output_Type) %not sure about what to put in the_figure
+function[heatmapfigs]=heatmaps(struct, Output_Type, output_file_directory) %not sure about what to put in the_figure
 % 
 % Output_Type='Youngs_Modulus'; % for testing
 %  X_Coordinate='X_Coordinate';
@@ -62,7 +62,7 @@ set(gca,'DataAspectRatio',[1 1 1])
 title(strcat(Output_Type, ' heat map'), 'FontSize', 14) 
 
 
-file_name=strcat(Output_Type, '_heatmap.fig'); %save it
+file_name=strcat(output_file_directory, Output_Type, '_heatmap.fig'); %save it
 savefig(file_name)
 % 
 heatmapfigs=openfig(file_name); %the function should open it
