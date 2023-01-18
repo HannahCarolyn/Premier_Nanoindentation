@@ -1,4 +1,4 @@
- function[dodgy_indent_plot]=dodgy_indent_find(struct, dodgy_indents,output_file_directory)
+function[dodgy_indent_plot]=dodgy_indent_find(struct, dodgy_indents,output_file_directory)
 % %I believe we need to change dodgy_indents to bad_indents_list and
 % %but don't need NaN info just this list
 
@@ -38,7 +38,8 @@ for i=1:length(dodgy)
     coord_dodgy_y(i,1)=(Y_coord-1)*Y_spacing; 
 end 
 
-plot(coord_dodgy_x, coord_dodgy_y,'x', 'linestyle', 'none', 'MarkerSize',15)
+plot(coord_dodgy_x, coord_dodgy_y,'v', 'linestyle', 'none', 'MarkerSize',10, 'LineWidth', 2, 'Color', 'black', 'MarkerFaceColor', 'black')
+
 
 xlabel('X in microns', 'FontSize', 12)
 ylabel('Y in microns', 'FontSize', 12)
