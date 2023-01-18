@@ -38,7 +38,7 @@ for i=1:length(dodgy)
     coord_dodgy_y(i,1)=(Y_coord-1)*Y_spacing; 
 end 
 
-p=plot(coord_dodgy_x, coord_dodgy_y,'v', 'linestyle', 'none', 'MarkerSize',10, 'LineWidth', 2, 'Color', 'black', 'MarkerFaceColor', 'black')
+plot(coord_dodgy_x, coord_dodgy_y,'v', 'linestyle', 'none', 'MarkerSize',10, 'LineWidth', 2, 'Color', 'black', 'MarkerFaceColor', 'black')
 
 
 xlabel('X in microns', 'FontSize', 12)
