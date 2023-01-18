@@ -8,34 +8,30 @@ Y_Coordinate='Y_Coordinate';
 X=[struct.(X_Coordinate)].'; 
 Y=[struct.(Y_Coordinate)].';
 
-X_spacing=X(2,1)-X(1,1);
-column_number=1+(max(X)/X_spacing); %this calculates the number of indents in x 
-Y_spacing=Y((1+column_number),1)-Y(1,1); %- might need to change as I'm p sure x and y come in columns in the code?
-row_number=1+(max(Y)/Y_spacing); %this calculates the number of indents in y
+spacing=X(2,1)-X(1,1);
+column_number=1+(max(X)/spacing); %this calculates the number of indents in x 
+row_number=1+(max(Y)/spacing); %this calculates the number of indents in y
+indent_number=column_number*row_number; %more of a sense check for me
 
-  X_append=zeros(length(X),1); %for for loops below for speed
-  Y_append=zeros(length(Y),1);
-  order(:,1)=1:1:length(X);
-  
-  for i=1:length(X) % This for loop goes through each indent and normalises its coordinates (so order gives the position in the array)
-      X_append(i,1)=1+(X(i,1)/X_spacing);
-      order(:,2)=X_append; %
-          for j=1:length(Y)
-          Y_append(j,1)=1+(Y(j,1)/Y_spacing);
-          order(:,3)=Y_append; 
-          end 
-  end
+x_coord=[min(X):spacing:max(X)]; %gives the X values needed for contourf
+y_coord=[min(Y):spacing:max(Y)].'; %gives the Y values needed for contourf
+
+X_append=1+(X./spacing); %assigns coordinates to array (row/column) position
+Y_append=1+(Y./spacing);
+grid_coord(:,1)=1:1:length(X); %to give indent number
+grid_coord(:,2)=X_append;
+grid_coord(:,3)=Y_append;
 
  dodgy=dodgy_indents.'; %had to transpose again
  coord_dodgy_x=zeros(length(dodgy),1);
-  coord_dodgy_y=zeros(length(dodgy),1);
+ coord_dodgy_y=zeros(length(dodgy),1);
 
 for i=1:length(dodgy)
     indent_number=dodgy(i,:);
-    X_coord=order(indent_number,2);
-    Y_coord=order(indent_number,3);
-    coord_dodgy_x(i,1)=(X_coord-1)*X_spacing;
-    coord_dodgy_y(i,1)=(Y_coord-1)*Y_spacing; 
+    X_coord=grid_coord(indent_number,2);
+    Y_coord=grid_coord(indent_number,3);
+    coord_dodgy_x(i,1)=(X_coord-1)*spacing;
+    coord_dodgy_y(i,1)=(Y_coord-1)*spacing; 
 end 
 
 plot(coord_dodgy_x, coord_dodgy_y,'v', 'linestyle', 'none', 'MarkerSize',10, 'LineWidth', 2, 'Color', 'black', 'MarkerFaceColor', 'black')
