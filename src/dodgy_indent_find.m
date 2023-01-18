@@ -13,9 +13,6 @@ column_number=1+(max(X)/spacing); %this calculates the number of indents in x
 row_number=1+(max(Y)/spacing); %this calculates the number of indents in y
 indent_number=column_number*row_number; %more of a sense check for me
 
-x_coord=[min(X):spacing:max(X)]; %gives the X values needed for contourf
-y_coord=[min(Y):spacing:max(Y)].'; %gives the Y values needed for contourf
-
 X_append=1+(X./spacing); %assigns coordinates to array (row/column) position
 Y_append=1+(Y./spacing);
 grid_coord(:,1)=1:1:length(X); %to give indent number
