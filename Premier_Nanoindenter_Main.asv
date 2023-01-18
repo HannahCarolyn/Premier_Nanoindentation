@@ -9,8 +9,6 @@ addpath src
 % and provide an output format of data that can be used directly into Chris 
 % Magazzeni's XPCorrelate EBSD MATLAB script
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %% This is the main input deck - users: please edit inputs here only
 
 % Enter the base file directory for your sample here - see README.txt for
@@ -55,9 +53,7 @@ dodgy_tolerance = 20;
 % using "yes" or "no"
 hannah_oliver_parr = "yes";
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% From here, different functions are called in order and if needed - users: do not edit from this point onwards
+%% From here, different functions are called in order and if needed - users: do not edit
 
 %% Calling main data import function
 if mapping_type == "xpm_indentation_map"
@@ -117,5 +113,4 @@ mkdir (output_file_directory); % Creates output folder in base path
 % Thirdly the dodgy indents treasure map
 [Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,bad_indents_list,output_file_directory);
 
-%% Generating output workspace to be compatible with XPCorrelate
-[workspace_output] = conversion(updated_main_data_struct);
+%% 
