@@ -73,7 +73,7 @@ end
 %% Calling Oliver and Parr Methods
 if hannah_oliver_parr == "yes"
     [main_data_struct,output_text_file] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data);
-else if
+else if hannah_oliver_parr == "no"
         [main_data_struct,output_text_file] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
     end
 end
