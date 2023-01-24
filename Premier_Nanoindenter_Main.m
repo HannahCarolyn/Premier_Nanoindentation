@@ -1,4 +1,4 @@
-% Written by Kieran Rivers and Hannah Cole (Oxford Micromechanics Group) 2022
+% Written by Kieran Rivers, Hannah Cole and Rebecca Tearle (Oxford Micromechanics Group) 2022
 
 clear
 close all
@@ -9,26 +9,28 @@ addpath src
 % and provide an output format of data that can be used directly into Chris 
 % Magazzeni's XPCorrelate EBSD MATLAB script
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% This is the main input deck - users: please edit inputs here only
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\Example_Automated_Grid_Array_Data\";
+base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\Example_Mapping_Data\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "automated_indentation_grid_array";
+mapping_type = "xpm_indentation_map";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 6;
-columns = 6;
+rows = 3;
+columns = 3;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 5;
+spacing = 45;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -49,9 +51,15 @@ column_overlap = 0;
 exclude_dodgy = "yes";
 dodgy_tolerance = 20;
 
-%% From here, different functions are called in order and if needed - users: do not edit
+% Specify here whether you'd like to use Hannah's Oliver and Parr method
+% using "yes" or "no"
+hannah_oliver_parr = "yes";
 
-% Calling main data import function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% From here, different functions are called in order and if needed - users: do not edit from this point onwards
+
+%% Calling main data import function
 if mapping_type == "xpm_indentation_map"
     [load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,exclude_dodgy,dodgy_tolerance);
     disp("XPM Indentation Data Successfully Imported.")
@@ -60,3 +68,54 @@ else if mapping_type == "automated_indentation_grid_array"
         disp("Automated Grid Array Indentation Data Successfully Imported.")
     end
 end
+% load_displacement_data is a data struct and bad_indents_list is a list of indent indices (where indent numbering starts at zero)
+
+%% Calling Oliver and Parr Methods
+if hannah_oliver_parr == "yes"
+    [main_data_struct,output_text_file] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data);
+else if hannah_oliver_parr == "no"
+        [main_data_struct,output_text_file] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
+    end
+end
+
+%% Calculating values not directly taken from the raw data, e.g. stiffness squared divided by load
+[main_data_struct] = calculations(main_data_struct);
+
+%% Dealing with dodgy indents (writes new struct with NaN values - old struct still available for comparison)
+if exclude_dodgy == "yes"
+    [updated_main_data_struct] = dodgy_indents(main_data_struct,bad_indents_list);
+else if exclude_dodgy == "no"
+        updated_main_data_struct = main_data_struct;
+    end
+end
+
+%% Generating outputs and saving them to file
+output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
+mkdir (output_file_directory); % Creates output folder in base path
+
+% Firstly the histograms
+[Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",output_file_directory);
+[Figure2_Youngs_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure3_Reduced_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
+[Figure4_Stiffness_Histogram] = histogramfunction(updated_main_data_struct,"Stiffness",output_file_directory);
+[Figure5_Hardness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Hardness",output_file_directory);
+[Figure6_Youngs_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure7_Reduced_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
+[Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Stiffness",output_file_directory);
+
+% Secondly the heat maps
+[Figure9_Hardness_Map] = heatmaps(updated_main_data_struct,"Hardness",output_file_directory);
+[Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
+[Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
+[Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
+[Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
+[Figure15_Minimum_Displacement_Map] = heatmaps(updated_main_data_struct,"Minimum_Displacement",output_file_directory);
+[Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
+[Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory);
+
+% Thirdly the dodgy indents treasure map
+[Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,bad_indents_list,output_file_directory);
+
+%% Generating output workspace to be compatible with XPCorrelate
+[workspace_output] = conversion(updated_main_data_struct);
