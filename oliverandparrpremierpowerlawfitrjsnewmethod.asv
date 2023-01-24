@@ -82,9 +82,9 @@
     tolerance=0.01; 
     index = find( abs(gradient(P)) < tolerance );
     noofdatappoint=numel(P);
-    limit=round(noofdatappoint*0.95);
+    limit=round(noofdatapoints*0.95);
     indexcatch= find(index < limit);
-    index =index(indexcatch);
+    index
     Pmaxindex=max(index);
     saving_Pmaxindex(j,1)=Pmaxindex;
     
@@ -196,7 +196,7 @@
     values_of_H_and_E(j,3)= Er;
     values_of_H_and_E(j,4)=E;
 
-if hf >5000 %unhardcode this
+if hf >5000
     values_of_H_and_E(j,2) = NaN;
     values_of_H_and_E(j,1) = i;
     values_of_H_and_E(j,3)= NaN;
