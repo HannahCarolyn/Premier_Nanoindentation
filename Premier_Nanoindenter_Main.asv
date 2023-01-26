@@ -15,7 +15,7 @@ addpath src
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "D:\premier\week1HT\sample1X65NGCMX\";
+base_file_directory = "D:\premier\week1HT\Sample6L450CMX11000\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
@@ -99,7 +99,7 @@ end
 % %         updated_main_data_struct = main_data_struct;
 % %     end
 % % end
-%updated_main_data_struct =main_data_struct;
+updated_main_data_struct =main_data_struct;
 
 % %% Generating outputs and saving them to file
 % output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder

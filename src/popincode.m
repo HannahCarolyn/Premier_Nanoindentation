@@ -1,13 +1,16 @@
- 
-noofindents=(columns*rows);
-  fig1=figure;
+%function [HCpopinfitting] = popincode(base_file_directory,load_displacement_data,tolerance,tolerancepop)
+
+
+    progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
+noofindents=length([load_displacement_data.Indent_Index]);
+ fig1=figure;
   fig2=figure;
   fig3=figure;
   fig4=figure;
-
- 
 for i=0:noofindents-1 % loop for each of the indents with zero corrections
-   
+     
+    completion_fraction = i/(noofindents-1); % Calculates fraction for progress bar
+        waitbar(completion_fraction); % Updates progress bar
     indentnostring= sprintf('indent_%04d',i); %wrtie field name
      values_of_popin=[];
         j=i+1; % correcting zero problem when putting data into the arrays
@@ -31,7 +34,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     tolerance=0.01; 
     index = find( abs(gradient(P)) < tolerance );
     noofdatappoint=numel(P);
-    limit=round(noofdatappoint*0.95);
+    limit=round(noofdatappoint*0.95); %unhard code this
     indexcatch= find(index < limit);
     index =index(indexcatch);
     Pmaxindex=max(index);
@@ -52,7 +55,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
 
     %finding pop-ins
-   tolerancepop=1; 
+   tolerancepop=2; 
    popingindex = find( abs(diff(loadinghabovezero)) > tolerancepop );
    no_of_popinindex=numel(popingindex);
 
@@ -93,20 +96,30 @@ valuesofpopinPdiff=abs(diff(valuesofpopinPsaving(j,:)));
 noofvaluesofpopinPdiff=numel(valuesofpopinPdiff);
 valuesofpopinPsavingdiff(j,[1:1:noofvaluesofpopinPdiff])=valuesofpopinPdiff;
 
+% for differencevalues=1:1:noofvaluesofpopinPdiff
+%     if valuesofpopinPsavingdiff(j,differencevalues) < 5;
+%         
+
+
 end
 
-
+close(progress_bar) % Closes progress bar
 
 
 
 valuesofpopinPsavingvector = valuesofpopinPsaving(:);
-figure(fig3)
+figure(fig2)
 histogram(valuesofpopinPsavingvector,150);
-
-valuesofpopinPsavingvectorlimitedindex = find(valuesofpopinPsavingvector < 400); %unhard code this
+xlabel 'Pop-in Load (uN)'
+ylabel 'Frequency'
+title 'Large Pop-in Histogram x65 NG 11000um'
+valuesofpopinPsavingvectorlimitedindex = find(valuesofpopinPsavingvector < 300); %unhard code this
 valuesofpopinPsavingvectorlimited=valuesofpopinPsavingvector(valuesofpopinPsavingvectorlimitedindex);
-figure(fig4)
-histogram(valuesofpopinPsavingvectorlimited,15);
+figure(fig3)
+histogram(valuesofpopinPsavingvectorlimited,20);
+xlabel 'Pop-in Load (uN)'
+ylabel 'Frequency'
+title 'Narrow Pop-in Histogram x65 NG 11000um'
 popinlimmean= mean(valuesofpopinPsavingvectorlimited);
 popinlimstd = std(valuesofpopinPsavingvectorlimited);
 popinlimmedian= median(valuesofpopinPsavingvectorlimited);
@@ -114,5 +127,3 @@ hold on
 xline(popinlimmean,"red");
 xline(popinlimmedian, "blue")
 hold off
-
-

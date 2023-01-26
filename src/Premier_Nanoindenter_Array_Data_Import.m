@@ -118,63 +118,63 @@ end
 
 %% Have even depth spacings (split into loading and unloading) with zeroed displacement data
 
-progress_bar = waitbar(0,"Creating Continuous Displacement Dataset"); % Creates a progress bar
-interpolated_load_displacement = original_load_displacement;
-for indent_loop = 1:initial_number_of_data % For count through each remaining indent
-    completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
-    waitbar(completion_fraction); % Updates progress bar
-    indent_displacement_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
-    indent_load_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all displacement data for indent
-    maximum_indent_displacement = max(indent_displacement_data); % Finds maximum displacement for indent
-    maximum_index = find(indent_displacement_data == maximum_indent_displacement); % Finds index in list where maximum displacement occured
-    indent_displacement_data_loading = indent_displacement_data(1:maximum_index); % Appends loading displacement values
-    indent_displacement_data_unloading = indent_displacement_data(maximum_index:length(indent_displacement_data)); % Appends unloading displacement values
-    indent_load_data_loading = indent_load_data(1:maximum_index); % Appends laoding load values
-    indent_load_data_unloading = indent_load_data(maximum_index:length(indent_displacement_data)); % Appends unloading load values
-    new_displacement_data = []; % List for storing new displacement data
-    new_load_data = []; % List for storing corresponding load data
-    new_data = []; % Create list for storing new displacement_load_data
-    maximum_indent_displacement = floor(maximum_indent_displacement); % Round maximum displacement down so able to interp
-    minimum_indent_displacement_loading = ceil(min(indent_displacement_data_loading)); % Round mimimum loading displacement up so able to interp
-    minimum_indent_displacement_unloading = ceil(min(indent_displacement_data_unloading)); % Round minimum unloading displacement up so able to interp
-    % Zero all displacement data (next 5 lines)
-    indent_displacement_data_loading = indent_displacement_data_loading - minimum_indent_displacement_loading;
-    indent_displacement_data_unloading = indent_displacement_data_unloading - minimum_indent_displacement_loading;
-    minimum_indent_displacement_unloading = minimum_indent_displacement_unloading - minimum_indent_displacement_loading;
-    maximum_indent_displacement = maximum_indent_displacement - minimum_indent_displacement_loading;
-    minimum_indent_displacement_loading = 0;
-    if minimum_indent_displacement_unloading <0 % Set minimum unloading displacement as 0 for interp if contains non-zero values
-        minimum_indent_displacement_unloading = 0;
-    end
-    for indent_displacement = minimum_indent_displacement_loading:0.1:maximum_indent_displacement % For each displacement step in loading, calculate interpolated values
-        try
-            load_value = interp1(indent_displacement_data_loading,indent_load_data_loading,indent_displacement);
-        catch
-            load_value = NaN;
-        end
-        new_displacement_data(end+1) = indent_displacement; % Append new interpolated values
-        new_load_data(end+1) = load_value;
-    end
-    for indent_displacement = maximum_indent_displacement:-0.1:minimum_indent_displacement_unloading % For each displacement step in unloading, calculate interpolated values
-        try
-            load_value = interp1(indent_displacement_data_unloading,indent_load_data_unloading,indent_displacement);
-        catch
-            load_value = NaN;
-        end
-        new_displacement_data(end+1) = indent_displacement; % Append new interpolated values
-        new_load_data(end+1) = load_value;
-    end
-    new_data(:,1) = new_displacement_data; % Append all new data to new list
-    new_data(:,2) = new_load_data;
-    interpolated_load_displacement(indent_loop).Displacement_Load_Data = []; % Delete old data from struct
-    interpolated_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new interpolated data to struct
-end
-
-close(progress_bar) % Close progress bar
+% progress_bar = waitbar(0,"Creating Continuous Displacement Dataset"); % Creates a progress bar
+% interpolated_load_displacement = original_load_displacement;
+% for indent_loop = 1:initial_number_of_data % For count through each remaining indent
+%     completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
+%     waitbar(completion_fraction); % Updates progress bar
+%     indent_displacement_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
+%     indent_load_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all displacement data for indent
+%     maximum_indent_displacement = max(indent_displacement_data); % Finds maximum displacement for indent
+%     maximum_index = find(indent_displacement_data == maximum_indent_displacement); % Finds index in list where maximum displacement occured
+%     indent_displacement_data_loading = indent_displacement_data(1:maximum_index); % Appends loading displacement values
+%     indent_displacement_data_unloading = indent_displacement_data(maximum_index:length(indent_displacement_data)); % Appends unloading displacement values
+%     indent_load_data_loading = indent_load_data(1:maximum_index); % Appends laoding load values
+%     indent_load_data_unloading = indent_load_data(maximum_index:length(indent_displacement_data)); % Appends unloading load values
+%     new_displacement_data = []; % List for storing new displacement data
+%     new_load_data = []; % List for storing corresponding load data
+%     new_data = []; % Create list for storing new displacement_load_data
+%     maximum_indent_displacement = floor(maximum_indent_displacement); % Round maximum displacement down so able to interp
+%     minimum_indent_displacement_loading = ceil(min(indent_displacement_data_loading)); % Round mimimum loading displacement up so able to interp
+%     minimum_indent_displacement_unloading = ceil(min(indent_displacement_data_unloading)); % Round minimum unloading displacement up so able to interp
+%     % Zero all displacement data (next 5 lines)
+%     indent_displacement_data_loading = indent_displacement_data_loading - minimum_indent_displacement_loading;
+%     indent_displacement_data_unloading = indent_displacement_data_unloading - minimum_indent_displacement_loading;
+%     minimum_indent_displacement_unloading = minimum_indent_displacement_unloading - minimum_indent_displacement_loading;
+%     maximum_indent_displacement = maximum_indent_displacement - minimum_indent_displacement_loading;
+%     minimum_indent_displacement_loading = 0;
+%     if minimum_indent_displacement_unloading <0 % Set minimum unloading displacement as 0 for interp if contains non-zero values
+%         minimum_indent_displacement_unloading = 0;
+%     end
+%     for indent_displacement = minimum_indent_displacement_loading:0.1:maximum_indent_displacement % For each displacement step in loading, calculate interpolated values
+%         try
+%             load_value = interp1(indent_displacement_data_loading,indent_load_data_loading,indent_displacement);
+%         catch
+%             load_value = NaN;
+%         end
+%         new_displacement_data(end+1) = indent_displacement; % Append new interpolated values
+%         new_load_data(end+1) = load_value;
+%     end
+%     for indent_displacement = maximum_indent_displacement:-0.1:minimum_indent_displacement_unloading % For each displacement step in unloading, calculate interpolated values
+%         try
+%             load_value = interp1(indent_displacement_data_unloading,indent_load_data_unloading,indent_displacement);
+%         catch
+%             load_value = NaN;
+%         end
+%         new_displacement_data(end+1) = indent_displacement; % Append new interpolated values
+%         new_load_data(end+1) = load_value;
+%     end
+%     new_data(:,1) = new_displacement_data; % Append all new data to new list
+%     new_data(:,2) = new_load_data;
+%     interpolated_load_displacement(indent_loop).Displacement_Load_Data = []; % Delete old data from struct
+%     interpolated_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new interpolated data to struct
+% end
+% 
+% close(progress_bar) % Close progress bar
 
 %% Return values from function
 
-final_load_displacement_data = interpolated_load_displacement; % Rewrite struct for function output
+final_load_displacement_data = original_load_displacement; % Rewrite struct for function output
 bad_indents_list;
 
 end

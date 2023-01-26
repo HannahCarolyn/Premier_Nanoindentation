@@ -1,4 +1,4 @@
-function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance)
+function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim)
 
 %     %code for importing the data for the displacement and load
 %     %https://www.sciencedirect.com/topics/engineering/oliver-pharr-method
@@ -28,10 +28,11 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
 %     %array of the filenames
 %      fnms = fieldnames(load_displacement_data)
     %defining variables
-    epsilon=0.75; %indenter geometry function e.g. 0.75 
+%     epsilon=0.75; %indenter geometry function e.g. 0.75 
     %This opens the ara file (you have to convert it to a text file to get it
     %work)
-    area_function_path= strcat((base_file_directory),"Area_Function");
+
+    area_function_path= strcat(base_file_directory,"Area_Function");
     folder_info = dir(fullfile(area_function_path, '/*.txt'));
     file_name = folder_info.name; 
     full_file_name = fullfile(area_function_path, file_name); 
@@ -46,13 +47,15 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     tipyoungmodulus=str2double(area_function(33)); %GPa
     tippossionratio=str2double(area_function(31));
     %user defined sample possion ratio
-    samplepossionratio=0.3;
+%     samplepossionratio=0.3;
     %no of indents
     noofindents=length([load_displacement_data.Indent_Index]);
     
     %define figures and array to put data in
     fig1 = figure;
     fig2 = figure;
+    fig3 = figure;
+   
     values_of_H_and_E=[];
     
     progress_bar = waitbar(0,"Oliver and Parr Fitting"); % Creates a progress bar
@@ -87,10 +90,11 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     % finding the unloading segment by finding when the gradient is below a
     % tolerance and then taking the max value of this index
 %     
-    tolerance=0.01; 
+    %tolerance=0.01; 
     index = find( abs(gradient(P)) < tolerance );
     noofdatappoint=numel(P);
-    limit=round(noofdatappoint*0.95); %The user may want to edit this value
+%     cutofdatavalue=0.95;
+    limit=round(noofdatappoint*cutofdatavalue); %The user may want to edit this value
     indexcatch= find(index < limit);
     index =index(indexcatch);
     Pmaxindex=max(index);
@@ -116,8 +120,10 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     %noofunloadingdatapoints=numel(unloadingP); %totals the number of unloading points
     try
     noofunloadingdatapoints=numel(unloadingP);
-    indextoplim=round(noofunloadingdatapoints*0.05); %This crops the top off the top 5% of the unloading data for the fit. The user may want to change this
-    indexbottomlim=round(noofunloadingdatapoints*0.75); %This crops off the bottom 25% of the unlodaing data for the fit. The user may want to change this
+    %cutofunloadingtoplim=0.05;
+    %cutofunloadingbottomlim=0.25;
+    indextoplim=round(noofunloadingdatapoints*cutofunloadingtoplim); %This crops the top off the top 5% of the unloading data for the fit. The user may want to change this
+    indexbottomlim=round(noofunloadingdatapoints*(1-cutofunloadingbottomlim)); %This crops off the bottom 25% of the unlodaing data for the fit. The user may want to change this
     unloadingPlim=unloadingP(indextoplim:indexbottomlim); %Getting the limited set from unloading load
     unloadinghminushflim=unloadinghminushf(indextoplim:indexbottomlim); %Getting the limited set from unloading diaplsement takeaway hf
     catch
@@ -221,12 +227,17 @@ for rowhc=1:length(values_of_H_and_E(:,1))
         load_displacement_data(rowhc).Hardness=values_of_H_and_E(rowhc,2);
         load_displacement_data(rowhc).Reduced_Modulus=values_of_H_and_E(rowhc,3);
         load_displacement_data(rowhc).Youngs_Modulus=values_of_H_and_E(rowhc,4);
+       
 end
 
 HCfitting=load_displacement_data;
 close(progress_bar) % Closes progress bar
-end
+ figure(fig3);
+        Important_Popup= imread("Importantpopup.png");
+        imshow(Important_Popup);
 
+
+end
 
 
 
