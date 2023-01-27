@@ -15,22 +15,22 @@ addpath src
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "D:\premier\week1HT\sample1X65NGCMX\";
+base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\Example_Mapping_Data\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "automated_indentation_grid_array";
+mapping_type = "xpm_indentation_map";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 10;
-columns = 10;
+rows = 3;
+columns = 3;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 10;
+spacing = 45;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -79,13 +79,13 @@ else if mapping_type == "automated_indentation_grid_array"
 end
 % load_displacement_data is a data struct and bad_indents_list is a list of indent indices (where indent numbering starts at zero)
 
-% %% Calling Oliver and Parr Methods
-% if hannah_oliver_parr == "yes"
-%     [main_data_struct] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim);
-% else if hannah_oliver_parr == "no"
-%         [main_data_struct] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
-%     end
-% end
+%% Calling Oliver and Parr Methods
+if hannah_oliver_parr == "yes"
+    [main_data_struct] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim);
+else if hannah_oliver_parr == "no"
+        [main_data_struct] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
+    end
+end
 
 
 % % 
@@ -99,7 +99,7 @@ end
 % %         updated_main_data_struct = main_data_struct;
 % %     end
 % % end
-%updated_main_data_struct =main_data_struct;
+updated_main_data_struct =main_data_struct;
 
 % %% Generating outputs and saving them to file
 % output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
