@@ -17,6 +17,7 @@ addpath src
 % how to structure your base file directory; use a \ on the end of the name
 base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\Example_Mapping_Data\";
 
+
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
 mapping_type = "xpm_indentation_map";
@@ -38,8 +39,8 @@ spacing = 45;
 % overlap did not occur enter 0; if XPM mapping was not used, also enter 0;
 % if there is a gap between xpm bundles instead, enter a negative number
 % corresponding to how many lines of indents would fit in that gap
-row_overlap = 0;
-column_overlap = 0;
+row_overlap = 2;
+column_overlap = 2;
 
 % If there are dodgy indents (due to rubbish on the surface or porosity),
 % do you want these to be automatically excluded? Enter "yes" or "no". If
