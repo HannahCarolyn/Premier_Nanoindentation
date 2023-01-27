@@ -30,7 +30,7 @@ for file_loop = 1:continuous_number_of_data % For count through continuous data 
 end
 
 close(progress_bar) % Closes progress bar
-progress_bar = waitbar(0,"Importing Indentation Data - Seperated"); % Creates a progress bar
+progress_bar = waitbar(0,"Importing Indentation Data - Separated"); % Creates a progress bar
 
 for file_loop = 1:initial_number_of_data % For count through number of indents in folder
     completion_fraction = file_loop/initial_number_of_data; % Calculates fraction for progress bar
@@ -64,13 +64,13 @@ for file_loop = 1:initial_number_of_data % For count through number of indents i
     end
     last_raw_displacement_value = continuous_data_displacement(last_load_index); % Finds raw equivalent (i.e. not edited) depth for the last_displacement_value
     raw_displacement_offset = last_displacement_value - last_raw_displacement_value; % Calculates the offset that needs to be added to raw depth values when adding them
-    a_sufficiently_large_number = 50; % Finds sufficiently large number for a loop through cropped values at end (should not need to increase this as only need to add a few values - the larger it is, the less efficient the code)
+    a_sufficiently_large_number = 150; % Finds sufficiently large number for a loop through cropped values at end (should not need to increase this as only need to add a few values - the larger it is, the less efficient the code)
     for end_data_loop = 1:a_sufficiently_large_number % Count up to sufficiently large number
         if continuous_data_load(last_load_index + end_data_loop - 1) >= 0 % If next load data value (minus 1 so at least one negative is written) is positive, then do this
             raw_input_displacement(end+1,1) = continuous_data_displacement(last_load_index + end_data_loop) + raw_displacement_offset; % Append next corrected displalcement value
             raw_input_load(end+1,1) = continuous_data_load(last_load_index + end_data_loop); % Append next load value
         else % i.e. 2nd negative value onwards
-            % Do nothing
+            break
         end
     end
     original_load_displacement(file_loop).Indent_Index = file_loop-1; % Writes indent number to struct (starting indexing at zero as per files)
@@ -352,54 +352,54 @@ waitbar(1)
 close(progress_bar)
 
 %% Check for problem indents
-%  Other conditions for excluding indents can be added here at a later date
+% %  Other conditions for excluding indents can be added here at a later date
+% 
+% if exclude_dodgy == "yes" % If user wishes to exclude dodgy indents later, run this
+%     non_overlapping_indents_count = length([non_overlapping_load_displacement.Indent_Index]);
+%     progress_bar = waitbar(0,"Checking for Problem Indents"); % Creates a progress bar
+%     bad_indents_list = []; % List for storing index of dodgy indents
+%     for indent_loop = 1:non_overlapping_indents_count % For count through each remaining indent
+%         completion_fraction = indent_loop/non_overlapping_indents_count; % Calculates fraction for progress bar
+%         waitbar(completion_fraction); % Updates progress bar
+%         displacement_data_test = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
+%         maximum_indent_displacement_test = max(displacement_data_test); % Finds maximum displacement for indent
+%         maximum_index_test = find(displacement_data_test == maximum_indent_displacement_test); % Finds index in list where maximum displacement occured
+%         displacement_data_loading_test = displacement_data_test(1:maximum_index_test); % Appends loading displacement values
+%         minimum_displacement_data_test = min(displacement_data_loading_test); % Calculates minimum recorded displacement for indent in loading section
+%         if minimum_displacement_data_test < (-1*dodgy_tolerance) % If minimum displacement below threshold for bad data
+%             bad_indents_list(end+1) = non_overlapping_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
+%         end
+%     end
+%     close(progress_bar)
+%     number_dodgy = length(bad_indents_list);
+%     disp(strcat("Number of dodgy indents found is ",string(number_dodgy)," out of the original ",string(initial_number_of_data)," indents."))
+% end
 
-if exclude_dodgy == "yes" % If user wishes to exclude dodgy indents later, run this
-    non_overlapping_indents_count = length([non_overlapping_load_displacement.Indent_Index]);
-    progress_bar = waitbar(0,"Checking for Problem Indents"); % Creates a progress bar
-    bad_indents_list = []; % List for storing index of dodgy indents
-    for indent_loop = 1:non_overlapping_indents_count % For count through each remaining indent
-        completion_fraction = indent_loop/non_overlapping_indents_count; % Calculates fraction for progress bar
-        waitbar(completion_fraction); % Updates progress bar
-        displacement_data_test = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
-        maximum_indent_displacement_test = max(displacement_data_test); % Finds maximum displacement for indent
-        maximum_index_test = find(displacement_data_test == maximum_indent_displacement_test); % Finds index in list where maximum displacement occured
-        displacement_data_loading_test = displacement_data_test(1:maximum_index_test); % Appends loading displacement values
-        minimum_displacement_data_test = min(displacement_data_loading_test); % Calculates minimum recorded displacement for indent in loading section
-        if minimum_displacement_data_test < (-1*dodgy_tolerance) % If minimum displacement below threshold for bad data
-            bad_indents_list(end+1) = non_overlapping_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
-        end
-    end
-    close(progress_bar)
-    number_dodgy = length(bad_indents_list);
-    disp(strcat("Number of dodgy indents found is ",string(number_dodgy)," out of the original ",string(initial_number_of_data)," indents."))
-end
-
-%% Zero the displacement data
-
-progress_bar = waitbar(0,"Zeroing Displacement from Initial Loading Value"); % Creates a progress bar
-zeroed_load_displacement = non_overlapping_load_displacement;
-for indent_loop = 1:non_overlapping_indents_count % For count through each remaining indent
-    completion_fraction = indent_loop/non_overlapping_indents_count; % Calculates fraction for progress bar
-    waitbar(completion_fraction); % Updates progress bar
-    indent_displacement_data = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
-    indent_load_data = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all displacement data for indent
-    new_displacement_data = []; % List for storing new displacement data
-    new_data = []; % Create list for storing new displacement_load_data
-    minimum_indent_displacement_loading = indent_displacement_data(1); % Round mimimum loading displacement up so able to interp
-    new_displacement_data = indent_displacement_data - minimum_indent_displacement_loading;
-    new_data(:,1) = new_displacement_data; % Append all new data to new list
-    new_data(:,2) = indent_load_data;
-    zeroed_load_displacement(indent_loop).Displacement_Load_Data = []; % Delete old data from struct
-    zeroed_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new interpolated data to struct
-end
-
-close(progress_bar) % Close progress bar
+% %% Zero the displacement data
+% 
+% progress_bar = waitbar(0,"Zeroing Displacement from Initial Loading Value"); % Creates a progress bar
+% zeroed_load_displacement = non_overlapping_load_displacement;
+% for indent_loop = 1:non_overlapping_indents_count % For count through each remaining indent
+%     completion_fraction = indent_loop/non_overlapping_indents_count; % Calculates fraction for progress bar
+%     waitbar(completion_fraction); % Updates progress bar
+%     indent_displacement_data = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
+%     indent_load_data = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all displacement data for indent
+%     new_displacement_data = []; % List for storing new displacement data
+%     new_data = []; % Create list for storing new displacement_load_data
+%     minimum_indent_displacement_loading = indent_displacement_data(1); % Round mimimum loading displacement up so able to interp
+%     new_displacement_data = indent_displacement_data - minimum_indent_displacement_loading;
+%     new_data(:,1) = new_displacement_data; % Append all new data to new list
+%     new_data(:,2) = indent_load_data;
+%     zeroed_load_displacement(indent_loop).Displacement_Load_Data = []; % Delete old data from struct
+%     zeroed_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new interpolated data to struct
+% end
+% 
+% close(progress_bar) % Close progress bar
 
 %% Return values from function
 
-final_load_displacement_data = zeroed_load_displacement; % Rewrite struct for function output
-bad_indents_list;
+final_load_displacement_data = non_overlapping_load_displacement; % Rewrite struct for function output
+bad_indents_list=0;
 
 end
 

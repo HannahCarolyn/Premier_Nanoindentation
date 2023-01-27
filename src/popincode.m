@@ -13,11 +13,14 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         waitbar(completion_fraction); % Updates progress bar
     indentnostring= sprintf('indent_%04d',i); %wrtie field name
      values_of_popin=[];
+     dataabovezero=[];
         j=i+1; % correcting zero problem when putting data into the arrays
         indentsnostring= sprintf('indent_%04d',i); %string of the field name
         loading_P_h_data=load_displacement_data(j).Displacement_Load_Data;
+        
         h=loading_P_h_data(:,1);
         P=loading_P_h_data(:,2);
+        
         numberofpoints=numel(h);
 
          maximumh=max(h);
@@ -44,12 +47,21 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     loadingPabovezeroindex= find(loadingP >1);
     loadingPabovezero=loadingP(loadingPabovezeroindex);
     loadinghabovezero=loadingh(loadingPabovezeroindex);
+    dataabovezero(:,1)=loadingPabovezero;
+    dataabovezero(:,2)=loadinghabovezero;
+
+   smoothloading_P_h_data=smoothdata(dataabovezero,'movmedian',10);
+   smoothloadingPabovezero=smoothloading_P_h_data(:,1);
+   smoothloadinghabovezero=smoothloading_P_h_data(:,2);
+
 
          %plot the raw data
      figure(fig1);
-        plot(loadinghabovezero,loadingPabovezero,"black x")
+        plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
         ylabel("Load (uN)")
         xlabel("displacement (nm)")
+        hold on
+        plot(smoothloadinghabovezero,smoothloadingPabovezero,"red")
         hold on
 
 
@@ -78,43 +90,50 @@ values_of_popin_diff.(indentnostring)=values_of_popin;
 try
 valuesofpopinP=(values_of_popin_diff.(indentnostring)(:,2))';
 noofvaluesofpopinP=numel(valuesofpopinP);
-valuesofpopinPsaving(j,[1:1:noofvaluesofpopinP])=valuesofpopinP;
+valuesofpopinPsaving(j,1:1:noofvaluesofpopinP)=valuesofpopinP;
 valuesofpopinPsaving(valuesofpopinPsaving == 0) = NaN;
 catch
-valuesofpopinPsaving(j,[1:1:noofvaluesofpopinP])= NaN;
+valuesofpopinPsaving(j,1:1:noofvaluesofpopinP)= NaN;
 end
 
-if valuesofpopinPsaving(j,1) == NaN;
+if isnan(valuesofpopinPsaving(j,1)) == true
     continue
 end
 
 if noofvaluesofpopinP == 1
+    valuesofpopinPsavingsingle(j,1)=valuesofpopinPsaving(j,1);
     continue
+
 end
 
 valuesofpopinPdiff=abs(diff(valuesofpopinPsaving(j,:)));
 noofvaluesofpopinPdiff=numel(valuesofpopinPdiff);
-valuesofpopinPsavingdiff(j,[1:1:noofvaluesofpopinPdiff])=valuesofpopinPdiff;
+valuesofpopinPsavingdiff(j,1:1:noofvaluesofpopinPdiff)=valuesofpopinPdiff;
 
-% for differencevalues=1:1:noofvaluesofpopinPdiff
-%     if valuesofpopinPsavingdiff(j,differencevalues) < 5;
-%         
-
-
+for differencevalues=1:1:noofvaluesofpopinPdiff
+    if valuesofpopinPsavingdiff(j,differencevalues) < 10
+        valuesofpopinPsaving(j,(differencevalues+1))=NaN;
+    end    
 end
-
+end
 close(progress_bar) % Closes progress bar
 
-
-
 valuesofpopinPsavingvector = valuesofpopinPsaving(:);
+frequencyofpopins=nnz(~isnan(valuesofpopinPsavingvector));
 figure(fig2)
 histogram(valuesofpopinPsavingvector,150);
 xlabel 'Pop-in Load (uN)'
 ylabel 'Frequency'
 title 'Large Pop-in Histogram x65 NG 11000um'
-valuesofpopinPsavingvectorlimitedindex = find(valuesofpopinPsavingvector < 300); %unhard code this
+
+
+cutofflow=0;
+cutoffhigh=300;
+valuesofpopinPsavingvectorlimitedindex = find(cutofflow < valuesofpopinPsavingvector & valuesofpopinPsavingvector< cutoffhigh); %unhard code this
 valuesofpopinPsavingvectorlimited=valuesofpopinPsavingvector(valuesofpopinPsavingvectorlimitedindex);
+frequencyofpopinslimited=nnz(~isnan(valuesofpopinPsavingvectorlimited));
+
+
 figure(fig3)
 histogram(valuesofpopinPsavingvectorlimited,20);
 xlabel 'Pop-in Load (uN)'
@@ -123,7 +142,16 @@ title 'Narrow Pop-in Histogram x65 NG 11000um'
 popinlimmean= mean(valuesofpopinPsavingvectorlimited);
 popinlimstd = std(valuesofpopinPsavingvectorlimited);
 popinlimmedian= median(valuesofpopinPsavingvectorlimited);
+popinlimstderror=(popinlimstd)/(sqrt(frequencyofpopinslimited));
 hold on
 xline(popinlimmean,"red");
 xline(popinlimmedian, "blue")
 hold off
+
+
+disp(strcat("Total frequency of Pop-ins is ", string(frequencyofpopins)));
+disp(strcat("Frequency of Pop-ins above ", string(cutofflow)," uN and below ", string(cutoffhigh), " uN is " , string(frequencyofpopinslimited)));
+disp(strcat("The following data is calculated from the pop-ins below the limited range see line above."))
+disp(strcat("Mean of Pop-ins ", string(popinlimmean)," +/- ", string(popinlimstderror), " uN"));
+disp(strcat("Median of Pop-ins ", string(popinlimmedian), " uN"));
+disp(strcat("Standard Deviation of Pop-ins ", string(popinlimstd), " uN"));

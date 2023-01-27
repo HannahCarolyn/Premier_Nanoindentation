@@ -1,5 +1,6 @@
 function[heatmapfigs]=heatmaps(struct, Output_Type, output_file_directory) %not sure about what to put in the_figure
-% 
+clf
+
  %Output_Type='Youngs_Modulus'; % for testing
   X_Coordinate='X_Coordinate';
   Y_Coordinate='Y_Coordinate';

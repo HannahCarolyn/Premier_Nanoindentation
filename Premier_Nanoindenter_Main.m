@@ -8,6 +8,7 @@ addpath src
 % provide basic plots of hardness, modulus, etc. using Oliver and Parr methods 
 % and provide an output format of data that can be used directly into Chris 
 % Magazzeni's XPCorrelate EBSD MATLAB script
+warning('off','curvefit:fittype:sethandles:xMustBePositive')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,7 +16,7 @@ addpath src
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\Example_Mapping_Data\";
+base_file_directory = "D:\OUdi\";
 
 
 % Specify whether the data is for an "xpm_indentation_map" or
@@ -25,13 +26,13 @@ mapping_type = "xpm_indentation_map";
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 3;
-columns = 3;
+rows = 1;
+columns = 1;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 45;
+spacing = 1;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -39,8 +40,8 @@ spacing = 45;
 % overlap did not occur enter 0; if XPM mapping was not used, also enter 0;
 % if there is a gap between xpm bundles instead, enter a negative number
 % corresponding to how many lines of indents would fit in that gap
-row_overlap = 2;
-column_overlap = 2;
+row_overlap = 0;
+column_overlap = 0;
 
 % If there are dodgy indents (due to rubbish on the surface or porosity),
 % do you want these to be automatically excluded? Enter "yes" or "no". If
@@ -59,7 +60,7 @@ hannah_oliver_parr = "yes";
 % change these pararmeters
 epsilon = 0.75;
 samplepossionratio = 0.3;
-tolerance = 0.01;
+tolerance = 0.007;
 cutofdatavalue = 0.95;
 cutofunloadingtoplim = 0.05;
 cutofunloadingbottomlim = 0.25;
@@ -103,7 +104,7 @@ end
 updated_main_data_struct =main_data_struct;
 
 % %% Generating outputs and saving them to file
-% output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
+output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
 % mkdir (output_file_directory); % Creates output folder in base path
 % 
 % % Firstly the histograms
@@ -117,9 +118,9 @@ updated_main_data_struct =main_data_struct;
 % % [Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Stiffness",output_file_directory);
 % 
 % % Secondly the heat maps
-% [Figure9_Hardness_Map] = heatmaps(updated_main_data_struct,"Hardness",output_file_directory);
-% [Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
-% [Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
+[Figure9_Hardness_Map] = heatmaps(updated_main_data_struct,"Hardness",output_file_directory);
+[Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
 % % [Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
 % % [Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
 % % [Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
