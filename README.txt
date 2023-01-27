@@ -3,12 +3,12 @@
 
 * Need to add note about check of column headers in these files
 
-Within your base directory, have four folders named: Area_Function, Coordinate_Data, Indent_Data,
-Load_Function. 
+Within your base directory, have five folders named: Area_Function, Coordinate_Data, Indent_Data,
+Load_Function, Premier_Calculated_Data.
 
 Inside the Area_Function folder you should have a single file created from the tip calibration
-on the Hysitron Triboscan software. Change the file extension of this file from .ara to .txt. 
-This file can have any name.
+on the Hysitron Triboscan software. Change the file extension of this file from .ara to .txt in
+windows file explorer. This file can have any name.
 
 If using mapping data, within the Indent_Data folder you should have the output text files from 
 the XPM analysis sub-tab in the Hysitron Triboscan software (file --> export curves to text). 
