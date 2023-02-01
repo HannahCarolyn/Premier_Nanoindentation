@@ -32,7 +32,7 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     %This opens the ara file (you have to convert it to a text file to get it
     %work)
 
-    area_function_path= "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\Example_Mapping_Data\Area_Function";%strcat(base_file_directory,"Area_Function");
+    area_function_path= strcat(base_file_directory,"Area_Function");
     folder_info = dir(fullfile(area_function_path, '/*.txt'));
     file_name = folder_info.name; 
     full_file_name = fullfile(area_function_path, file_name); 
@@ -72,23 +72,24 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
         h=loading_P_h_data(:,1);
         P=loading_P_h_data(:,2);
         maximumh=max(h);
-        if maximumh > 700; %unhard code this
-                 values_of_H_and_E(j,2) = NaN;
-    values_of_H_and_E(j,1) = i;
-    values_of_H_and_E(j,3)= NaN;
-    values_of_H_and_E(j,4)=NaN; 
-    values_of_H_and_E(j,5)=NaN;
-            continue
-          
-        end
+
+%         if maximumh > 700; %unhard code this
+%                  values_of_H_and_E(j,2) = NaN;
+%     values_of_H_and_E(j,1) = i;
+%     values_of_H_and_E(j,3)= NaN;
+%     values_of_H_and_E(j,4)=NaN; 
+%     values_of_H_and_E(j,5)=NaN;
+%             continue
+%           
+%         end
         
 
-    %plot the raw data
-%         figure(fig1);
-%         plot(h,P,"black x")
-%         ylabel("Load (uN)")
-%         xlabel("displacment (nm)")
-%         hold on
+   % plot the raw data
+        figure(fig1);
+        plot(h,P,"black x")
+        ylabel("Load (uN)")
+        xlabel("displacment (nm)")
+        hold on
     % finding the unloading segment by finding when the gradient is below a
     % tolerance and then taking the max value of this index
 %     
@@ -106,7 +107,7 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     try %dodgy indent for when it doesn't go below zero
     unloadingP=P(Pmaxindex:noofdatappoint); %extracting the unloading section of load
     unloadingh=h(Pmaxindex:noofdatappoint); % extracting the unloading section of load
-    Pintercept = find(unloadingP < 0); %find the point where load is below zero
+    Pintercept = find(unloadingP < 0); %find the point where load is below zero editted 10
     findinghf=unloadingh(Pintercept); %from the index of the points where load is less than zero
     hf=max(findinghf); %find the maximum point of this array in order to extract the fitting parameter hf
 %     hf=min(unloadingh);
@@ -118,7 +119,7 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     values_of_H_and_E(j,3)= NaN;
     values_of_H_and_E(j,4)=NaN; 
     values_of_H_and_E(j,5)=NaN;
-            continue
+   %         continue
     end
 
     
@@ -152,7 +153,7 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     % 
     w = (transpose((1:1:length(yData))).^2);% This is a sqaure weighing such that the top of the data is more accounted for in the fitting of the power law 
      %%
-     try
+    try
     % Set up fittype and options.
     ft = fittype( 'power1' );
     opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
@@ -170,19 +171,19 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     values_of_H_and_E(j,5)=NaN;
      end
     
-    %Plot fit with data.
-%      figure(fig2);
-%      plot(xData, yData, 'k.', 'DisplayName', 'Raw');
-%      hold on
-%      f_x = xData;
-%      f_y =feval(fitresult, f_x);
-%      plot(f_x, f_y, 'b-', 'DisplayName', 'PLF');
-%      hold on
-%      % Label axes
-%      xlabel( 'unloadinghminushf', 'Interpreter', 'none' );
-%      ylabel( 'unloadingP', 'Interpreter', 'none' );
-%      grid on
-%      hold on
+%    Plot fit with data.
+     figure(fig2);
+     plot(xData, yData, 'k.', 'DisplayName', 'Raw');
+     hold on
+     f_x = xData;
+     f_y =feval(fitresult, f_x);
+     plot(f_x, f_y, 'b-', 'DisplayName', 'PLF');
+     hold on
+     % Label axes
+     xlabel( 'unloadinghminushf', 'Interpreter', 'none' );
+     ylabel( 'unloadingP', 'Interpreter', 'none' );
+     grid on
+     hold on
     
     
     %find the derivative of the power law at the Pmax point
@@ -197,14 +198,14 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     
     
 %     
-%      %plotting the gradient line
-%      c=Pmax-(S*hmax);
-%     lineplot=(S*h)+c;
-%      figure(fig1)
-%      plot(h,lineplot,"red :",LineWidth=1.2);
-%      Pmaxrange= Pmax+200;
-%      ylim([0 Pmaxrange])
-%     hold on
+     %plotting the gradient line
+     c=Pmax-(S*hmax);
+    lineplot=(S*h)+c;
+     figure(fig1)
+     plot(h,lineplot,"red :",LineWidth=1.2);
+     Pmaxrange= Pmax+200;
+     ylim([0 Pmaxrange])
+    hold on
     
     
     %Oliver and Parr maths
@@ -232,7 +233,7 @@ function [HCfitting] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_dir
     header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm'}; %headers for the array
     valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
     
-    writecell (valuesofHandEoutput,'L450CMX1000') %change the file name
+    writecell (valuesofHandEoutput,'9indentsL450') %change the file name
   end
 for rowhc=1:length(values_of_H_and_E(:,1))
         load_displacement_data(rowhc).Hardness=values_of_H_and_E(rowhc,2);
@@ -249,7 +250,7 @@ close(progress_bar) % Closes progress bar
         imshow(Important_Popup);
 
 
-        end
+   end
 
 
 
