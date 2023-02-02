@@ -58,12 +58,18 @@ exclude_dodgy = "yes";
 % Amber errors:
 % - Negative displacement tolerance is how negative a displacement (in um) 
 %   needs to go for an indent for it to count as dodgy (xpm mapping only)
+% Red errors:
 % - Minimum load tolerance is how close an indent needs to get to zero load
 %   in unloading for it to be used in Oliver and Parr calculations (a
 %   higher number excludes less indents but the calculations will be less
-%   accurate for ALL indents)
+%   accurate for ALL indents) - load units are in uN
+% - Maximum displacement tolerance is how high the displacement gets on an
+%   indent before it is considered that the surface was missed - this will
+%   need to be a value lower than the expected maximum displacement for the
+%   maximum load used
 negative_displacement_tolerance = 20;
 minimum_load_tolerance = 5;
+maximum_displacement_tolerance = 700;
 
 % Specify here whether you'd like to use Hannah's Oliver and Parr method
 % using "yes" or "no"
@@ -90,7 +96,7 @@ if mapping_type == "xpm_indentation_map"
     [load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,negative_displacement_tolerance,minimum_load_tolerance);
     disp("XPM Indentation Data Successfully Imported.")
 else if mapping_type == "automated_indentation_grid_array"
-        [load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy,negative_displacement_tolerance,minimum_load_tolerance);
+        [load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,minimum_load_tolerance,maximum_displacement_tolerance);
         disp("Automated Grid Array Indentation Data Successfully Imported.")
     end
 end
