@@ -244,22 +244,24 @@ function [HCfitting,naughty_indents_list] = oliverandparrpremierpowerlawfitrjsne
         
         writecell (valuesofHandEoutput,'L450CMX1000') %change the file name
       end
+  end
 for rowhc=1:length(values_of_H_and_E(:,1))
         load_displacement_data(rowhc).Hardness=values_of_H_and_E(rowhc,2);
         load_displacement_data(rowhc).Reduced_Modulus=values_of_H_and_E(rowhc,3);
         load_displacement_data(rowhc).Youngs_Modulus=values_of_H_and_E(rowhc,4);
         load_displacement_data(rowhc).Stiffness=values_of_H_and_E(rowhc,5);
 end
+ 
        
 
 HCfitting=load_displacement_data;
-close(progress_bar) % Closes progress bar
+close(progress_bar); % Closes progress bar
  figure(fig3);
         Important_Popup= imread("Importantpopup.png");
         imshow(Important_Popup);
 
 
-   end
+end
 
 
 
