@@ -1,4 +1,4 @@
-function [final_load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy,dodgy_tolerance)
+function [final_load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,minimum_load_tolerance,maximum_displacement_tolerance)
 
 %% Importing all indentation data
 
@@ -64,26 +64,49 @@ close(progress_bar) % Closes progress bar
 %% Check for problem indents
 %  Other conditions for excluding indents can be added here at a later date
 
-if exclude_dodgy == "yes" % If user wishes to exclude dodgy indents later, run this
-    progress_bar = waitbar(0,"Checking for Problem Indents"); % Creates a progress bar
-    bad_indents_list = []; % List for storing index of dodgy indents
-    for indent_loop = 1:initial_number_of_data % For count through each indent
-        completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
-        waitbar(completion_fraction); % Updates progress bar
-        displacement_data = []; % List for indent displacement data
-        displacement_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Get displacement data for indent
-        maximum_indent_displacement = max(displacement_data); % Finds maximum displacement for indent
-        maximum_index = find(displacement_data == maximum_indent_displacement); % Finds index in list where maximum displacement occured
-        displacement_data_loading = displacement_data(1:maximum_index); % Appends loading displacement values
-        minimum_displacement_data = min(displacement_data_loading); % Calculates minimum recorded displacement for indent in loading section
-        if minimum_displacement_data < (-1*dodgy_tolerance) % If minimum displacement below threshold for bad data
-            bad_indents_list(end+1) = original_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
-        end
+% Amber warning: no amber warnings yet
+
+amber_indents_list = []; % List for storing index of dodgy amber indents
+
+% Red warning: indent load never drops below zero
+
+progress_bar = waitbar(0,"Checking for Problem Indents - Red Warning"); % Creates a progress bar
+red_indents_list = []; % List for storing index of dodgy indents
+for indent_loop = 1:non_overlapping_indents_count % For count through each remaining indent
+    completion_fraction = indent_loop/non_overlapping_indents_count; % Calculates fraction for progress bar
+    waitbar(completion_fraction); % Updates progress bar
+    load_data_test = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all load data for indent
+    minimum_load_test = min(load_data_test(20:end)); % Excludes first few points in case those are also negative
+    if minimum_load_test > minimum_load_tolerance % If minimum load below threshold for bad data
+        red_indents_list(end+1) = non_overlapping_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
+        non_overlapping_load_displacement(indent_loop).Error_Code = strcat("Red: Load does not drop below ",string(minimum_load_tolerance)," um when unloading."); % Writes error code to struct
     end
-    close(progress_bar)
-    number_dodgy = length(bad_indents_list);
-    disp(strcat("Number of dodgy indents found is ",string(number_dodgy)," out of the original ",string(initial_number_of_data)," indents."))
 end
+close(progress_bar)
+
+number_dodgy = length(red_indents_list);
+disp(strcat("Number of dodgy indents in red category due to unloading load not dropping below ",string(minimum_load_tolerance)," um is ",string(number_dodgy)," indents."))
+
+% Red warning: displacement is above upper threshold (default 700)
+
+new_red_indents_list = []; % Error list only for displaying number of indents with this error, not used elsewhere
+progress_bar = waitbar(0,"Checking for Problem Indents - Red Warning"); % Creates a progress bar
+for indent_loop = 1:non_overlapping_indents_count % For count through each remaining indent
+    completion_fraction = indent_loop/non_overlapping_indents_count; % Calculates fraction for progress bar
+    waitbar(completion_fraction); % Updates progress bar
+    displacement_data_test = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
+    maximum_displacement_test = max(displacement_data_test); % Finds maximum displacement value recorded for indent (before final zero correction)
+    if maximum_displacement_test > maximum_displacement_tolerance % If maximum displacement above threshold for bad data
+        red_indents_list(end+1) = non_overlapping_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
+        new_red_indents_list(end+1) = non_overlapping_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
+        red_indents_list = sort(red_indents_list); % Reorders list
+        non_overlapping_load_displacement(indent_loop).Error_Code = strcat("Red: Maximum displacement is above ",string(maximum_displacement_tolerance)," um, i.e. missing surface error."); % Writes error code to struct
+    end
+end
+close(progress_bar)
+
+number_dodgy = length(new_red_indents_list);
+disp(strcat("Number of dodgy indents in red category due to maximum displacement being above ",string(maximum_displacement_tolerance)," um, i.e. missing surface error, is ",string(number_dodgy)," indents."))
 
 %% Zero the displacement data based on loading curve
 
@@ -112,7 +135,8 @@ close(progress_bar) % Close progress bar
 %% Return values from function
 
 final_load_displacement_data = zeroed_load_displacement; % Rewrite struct for function output
-bad_indents_list;
+amber_indents_list;
+red_indents_list;
 
 end
 
