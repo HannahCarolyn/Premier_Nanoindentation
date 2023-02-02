@@ -8,7 +8,6 @@ addpath src
 % provide basic plots of hardness, modulus, etc. using Oliver and Parr methods 
 % and provide an output format of data that can be used directly into Chris 
 % Magazzeni's XPCorrelate EBSD MATLAB script
-warning('off','curvefit:fittype:sethandles:xMustBePositive')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -16,8 +15,7 @@ warning('off','curvefit:fittype:sethandles:xMustBePositive')
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "D:\OUdi\";
-
+base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\Example_Mapping_Data\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
@@ -26,13 +24,13 @@ mapping_type = "xpm_indentation_map";
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 1;
-columns = 1;
+rows = 3;
+columns = 3;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 1;
+spacing = 45;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -48,16 +46,31 @@ column_overlap = 0;
 % these are excluded, an average of the surrounding indents will be used
 % when plotting any data. If these are not excluded, you will need to
 % manually edit the colour bar on the output figures so they are not
-% swamped with these outlier results; dodgy tolerance is how negative a
-% displacement (in um) needs to go on an indent for it to count as dodgy
+% swamped with these outlier results; if there are indents present that are
+% likely to break the code when applying calculations, these will 
+% automatically be exluded and are described as a red error code - other 
+% dodgy indents that do not break the code are described as an amber error 
+% code and can be toggled using this exclude_dodgy;
 exclude_dodgy = "yes";
-dodgy_tolerance = 20;
+
+% Edit these numbers to determine how an indent gets described as a red or
+% amber error: 
+% Amber errors:
+% - Negative displacement tolerance is how negative a displacement (in um) 
+%   needs to go for an indent for it to count as dodgy (xpm mapping only)
+% - Minimum load tolerance is how close an indent needs to get to zero load
+%   in unloading for it to be used in Oliver and Parr calculations (a
+%   higher number excludes less indents but the calculations will be less
+%   accurate for ALL indents)
+negative_displacement_tolerance = 20;
+minimum_load_tolerance = 5;
 
 % Specify here whether you'd like to use Hannah's Oliver and Parr method
 % using "yes" or "no"
 hannah_oliver_parr = "yes";
+
 % Fitting parameter for hannah_oliver_parr see documentation if want to
-% change these pararmeters
+% change these pararmeters (only recommended for advanced users)
 epsilon = 0.75;
 samplepossionratio = 0.3;
 tolerance = 0.007;
@@ -65,25 +78,32 @@ cutofdatavalue = 0.95;
 cutofunloadingtoplim = 0.05;
 cutofunloadingbottomlim = 0.25;
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% From here, different functions are called in order and if needed - users: do not edit from this point onwards
 
+%% Supress warnings
+warning('off','curvefit:fittype:sethandles:xMustBePositive')
+
 %% Calling main data import function
 if mapping_type == "xpm_indentation_map"
-    [load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,exclude_dodgy,dodgy_tolerance);
+    [load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,negative_displacement_tolerance,minimum_load_tolerance);
     disp("XPM Indentation Data Successfully Imported.")
 else if mapping_type == "automated_indentation_grid_array"
-        [load_displacement_data,bad_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy,dodgy_tolerance);
+        [load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,exclude_dodgy,negative_displacement_tolerance,minimum_load_tolerance);
         disp("Automated Grid Array Indentation Data Successfully Imported.")
     end
 end
 % load_displacement_data is a data struct and bad_indents_list is a list of indent indices (where indent numbering starts at zero)
 
+%% Dealing with dodgy indents (writes new struct with NaN values - old struct still available for comparison)
+%[updated_main_data_struct,naughty_indents_list] = dodgy_indents(main_data_struct,amber_indents_list,red_indents_list);
+% Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
+naughty_indents_list = red_indents_list;
+
 %% Calling Oliver and Parr Methods
 if hannah_oliver_parr == "yes"
-    [main_data_struct] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim);
+    [main_data_struct] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list);
 else if hannah_oliver_parr == "no"
         [main_data_struct] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
     end
