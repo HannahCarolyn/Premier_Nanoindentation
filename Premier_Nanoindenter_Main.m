@@ -15,7 +15,7 @@ addpath src
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\Example_Mapping_Data\";
+base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\OUdi\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
@@ -24,13 +24,13 @@ mapping_type = "xpm_indentation_map";
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 3;
-columns = 3;
+rows = 1;
+columns = 1;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 45;
+spacing = 1;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -38,8 +38,8 @@ spacing = 45;
 % overlap did not occur enter 0; if XPM mapping was not used, also enter 0;
 % if there is a gap between xpm bundles instead, enter a negative number
 % corresponding to how many lines of indents would fit in that gap
-row_overlap = 2;
-column_overlap = 3;
+row_overlap = 0;
+column_overlap = 0;
 
 % If there are dodgy indents (due to rubbish on the surface or porosity),
 % do you want these to be automatically excluded? Enter "yes" or "no". If
@@ -100,7 +100,7 @@ else if mapping_type == "automated_indentation_grid_array"
         disp("Automated Grid Array Indentation Data Successfully Imported.")
     end
 end
-% load_displacement_data is a data struct and bad_indents_list is a list of indent indices (where indent numbering starts at zero)
+% load_displacement_data is a data struct and amber/red_indents_list is a list of indent indices (where indent numbering starts at zero)
 
 %% Dealing with dodgy indents (writes new struct with NaN values - old struct still available for comparison)
 %[updated_main_data_struct,naughty_indents_list] = dodgy_indents(main_data_struct,amber_indents_list,red_indents_list);
@@ -109,7 +109,7 @@ naughty_indents_list = red_indents_list;
 
 %% Calling Oliver and Parr Methods
 if hannah_oliver_parr == "yes"
-    [main_data_struct] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list);
+    [main_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list);
 else if hannah_oliver_parr == "no"
         [main_data_struct] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
     end

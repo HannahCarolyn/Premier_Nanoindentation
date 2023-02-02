@@ -1,4 +1,4 @@
-function [HCfitting,naughty_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list)
+function [HCfitting,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
 
 %     %code for importing the data for the displacement and load
 %     %https://www.sciencedirect.com/topics/engineering/oliver-pharr-method
@@ -152,7 +152,9 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
             [fitresult, gof] = fit( xData, yData, ft, opts );
         catch % Error catch when poly fit not work
             naughty_indents_list(end+1) = load_displacement_data(j).Indent_Index; % Adds indent index to naughty list
+            red_indents_list(end+1) = load_displacement_data(j).Indent_Index; % Adds indent index to red list
             naughty_indents_list = sort(naughty_indents_list); % Reorders naughty list
+            red_indents_list = sort(red_indents_list); % Reorders red list
             %disp(strcat("Indent number ",[load_displacement_data(j).Indent_Index]," has also been added to the red list due to a fitting error.")) % Tells user of additional error indent
             load_displacement_data(j).Error_Code = strcat("Red: Fitting failed."); % Writes error code to struct
             load_displacement_data(j).Displacement_Load_Data = NaN; % Puts NaN value in struct data column
@@ -216,7 +218,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     end
 end
 
-close(progress_bar) % Closes progress bar
+%close(progress_bar) % Closes progress bar
 
 for rowhc=1:length(values_of_H_and_E(:,1))
     load_displacement_data(rowhc).Hardness=values_of_H_and_E(rowhc,2);
