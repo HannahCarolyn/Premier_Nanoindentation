@@ -32,7 +32,8 @@ function [HCfitting,naughty_indents_list] = oliverandparrpremierpowerlawfitrjsne
     %This opens the ara file (you have to convert it to a text file to get it
     %work)
 
-    area_function_path=strcat(base_file_directory,"Area_Function");
+
+    area_function_path= strcat(base_file_directory,"Area_Function");
     folder_info = dir(fullfile(area_function_path, '/*.txt'));
     file_name = folder_info.name; 
     full_file_name = fullfile(area_function_path, file_name); 
@@ -235,21 +236,14 @@ function [HCfitting,naughty_indents_list] = oliverandparrpremierpowerlawfitrjsne
         values_of_H_and_E(j,3)= real(Er);
         values_of_H_and_E(j,4)=real(E);
         values_of_H_and_E(j,5)=real(S);
+
     
-    % if hf >5000 %unhardcode this
-    %     values_of_H_and_E(j,2) = NaN;
-    %     values_of_H_and_E(j,1) = i;
-    %     values_of_H_and_E(j,3)= NaN;
-    %     values_of_H_and_E(j,4)=NaN; 
-    %     
-    % end
-    
+
         header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm'}; %headers for the array
         valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
         
         writecell (valuesofHandEoutput,'L450CMX1000') %change the file name
       end
-  end
 for rowhc=1:length(values_of_H_and_E(:,1))
         load_displacement_data(rowhc).Hardness=values_of_H_and_E(rowhc,2);
         load_displacement_data(rowhc).Reduced_Modulus=values_of_H_and_E(rowhc,3);
@@ -265,7 +259,7 @@ close(progress_bar) % Closes progress bar
         imshow(Important_Popup);
 
 
-        end
+   end
 
 
 
