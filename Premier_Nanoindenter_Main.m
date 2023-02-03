@@ -153,7 +153,7 @@ end
 %% Calling pop-in code
 if popin_fitting == "yes"
     [popinfitting] = popincode(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH);
-else if caluclateextravalues == "no"
+else if popin_fitting == "no"
     end
 end
 
