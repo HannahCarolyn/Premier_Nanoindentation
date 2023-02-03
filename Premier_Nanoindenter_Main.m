@@ -119,6 +119,7 @@ Upperdepthcutoff = 300;
 warning('off','curvefit:fittype:sethandles:xMustBePositive')
 
 %% Calling main data import function
+% load_displacement_data is a data struct and amber/red_indents_list is a list of indent indices (where indent numbering starts at zero)
 if mapping_type == "xpm_indentation_map"
     [load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,negative_displacement_tolerance,minimum_load_tolerance);
     disp("XPM Indentation Data Successfully Imported.")
@@ -127,34 +128,23 @@ else if mapping_type == "automated_indentation_grid_array"
         disp("Automated Grid Array Indentation Data Successfully Imported.")
     end
 end
-% load_displacement_data is a data struct and amber/red_indents_list is a list of indent indices (where indent numbering starts at zero)
 
 %% Dealing with dodgy indents (writes new struct with NaN values - old struct still available for comparison)
-%[updated_main_data_struct,naughty_indents_list] = dodgy_indents(main_data_struct,amber_indents_list,red_indents_list);
 % Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
-naughty_indents_list = red_indents_list;
-
-
-% %% Dealing with dodgy indents (writes new struct with NaN values - old struct still available for comparison)
-% % if exclude_dodgy == "yes"
-% %     [updated_main_data_struct] = dodgy_indents(main_data_struct,bad_indents_list);
-% % else if exclude_dodgy == "no"
-% %         updated_main_data_struct = main_data_struct;
-% %     end
-% % end
-updated_main_data_struct =final_main_data_struct;
+% Note new struct generated so originally dodgy data without NaN can also be viewed for debugging
+[updated_main_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy);
 
 %% Calling Oliver and Parr Methods
 if hannah_oliver_parr == "yes"
-    [main_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list);
+    [main_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,updated_main_data_struct,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list);
 else if hannah_oliver_parr == "no"
-        [main_data_struct] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
+        [main_data_struct] = premier_method(base_file_directory,updated_main_data_struct); % will read indent index to get correct data set
     end
 end
 
 %% Calculating values not directly taken from the raw data, e.g. stiffness squared divided by load
 if calculate_extra_values == "yes"
-    [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,load_displacement_data,main_data_struct,naughty_indents_list,red_indents_list);
+    [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,updated_main_data_struct,main_data_struct,naughty_indents_list,red_indents_list);
 else if calculate_extra_values == "no"
         final_main_data_struct=main_data_struct;
     end
@@ -162,7 +152,7 @@ end
 
 %% Calling pop-in code
 if popin_fitting == "yes"
-    [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH);
+    [popinfitting] = popincode(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH);
 else if caluclateextravalues == "no"
     end
 end
