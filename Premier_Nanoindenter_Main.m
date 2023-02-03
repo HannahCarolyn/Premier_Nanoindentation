@@ -15,22 +15,22 @@ addpath src
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "D:\premier\week1HT\Sample6L450CMX11000\";
+base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\Example_Mapping_Data\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "automated_indentation_grid_array";
+mapping_type = "xpm_indentation_map";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 10;
-columns = 10;
+rows = 3;
+columns = 3;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 10;
+spacing = 45;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -51,7 +51,7 @@ column_overlap = 0;
 % automatically be exluded and are described as a red error code - other 
 % dodgy indents that do not break the code are described as an amber error 
 % code and can be toggled using this exclude_dodgy;
-exclude_dodgy = "yes";
+exclude_dodgy = "no";
 
 % Edit these numbers to determine how an indent gets described as a red or
 % amber error: 
@@ -94,7 +94,7 @@ cutofunloadingbottomlim = 0.25;
 
 % Specify here whether you want to use the popin decting code using "yes" 
 % or "no"
-popin_fitting = "yes";
+popin_fitting = "no";
 
 % Fitting parameter for popin_fitting - see documentation if want to
 % change these pararmeters
@@ -105,7 +105,7 @@ MPH = 1.8;
 % Specify here whether you want to use the CMX_fitting using "yes" or "no" 
 % to use this function have a folder in your base directory called "CMX_Output"
 % We can change this later to auto-generate that folder
-CMX_fitting = "yes";
+CMX_fitting = "no";
 
 % Fitting parameter for CMX fitting
 Lowerdepthcutoff = 100;
@@ -189,9 +189,9 @@ mkdir (output_file_directory); % Creates output folder in base path
 [Figure15_Surface_Displacement_Map] = heatmaps(updated_main_data_struct,"Surface_Displacement",output_file_directory);
 [Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
 [Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory);
-% 
-% % Thirdly the dodgy indents treasure map
-% [Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,bad_indents_list,output_file_directory);
+ 
+% Thirdly the dodgy indents treasure map
+[Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,amber_indents_list,red_indents_list,output_file_directory);
 % 
 % %% Generating output workspace to be compatible with XPCorrelate
 % % [workspace_output] = conversion(updated_main_data_struct);
