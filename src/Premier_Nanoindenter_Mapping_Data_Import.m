@@ -18,7 +18,7 @@ continuous_data_load = []; % List for storing continuous load data stream
 
 for file_loop = 1:continuous_number_of_data % For count through continuous data files (should be one for each bundle)
     completion_fraction = file_loop/continuous_number_of_data; % Calculates fraction for progress bar
-    waitbar(completion_fraction); 
+    waitbar(completion_fraction); % Updates wait bar
     file_name = continuous_folder_info(file_loop).name; % Extract file name of indent
     full_file_name = fullfile(continuous_indent_file_locations, file_name); % Extract file name (including path) for each indent
     full_input = importdata(full_file_name); % Extracts contents of file as struct depending on data structure
@@ -411,9 +411,8 @@ for indent_loop = 1:non_overlapping_indents_count % For count through each remai
     new_data(:,1) = new_displacement_data; % Append all new data to new list
     new_data(:,2) = indent_load_data;
     zeroed_load_displacement(indent_loop).Displacement_Load_Data = []; % Delete old data from struct
-    zeroed_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new interpolated data to struct
-
-    zeroed_load_displacement(indent_loop).Surface_Displacement=minimum_indent_displacement_loading;
+    zeroed_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new data to struct
+    zeroed_load_displacement(indent_loop).Surface_Displacement = minimum_indent_displacement_loading; % Write surface displacement value to struct
 end
 
 close(progress_bar) % Close progress bar
