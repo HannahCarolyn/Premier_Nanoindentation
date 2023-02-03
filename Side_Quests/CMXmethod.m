@@ -1,5 +1,6 @@
-clear all  
-data_path= "D:\premier\week1HT\Sample6L450CMX11000\Sample6L450CMX11000CMXoutput\CMXoutput";
+function [CMXfittingresults] = CMXfitting(base_file_directory);
+
+    data_path= strcat(base_file_directory,"CMX_Output");
     folder_info = dir(fullfile(data_path, '/*.txt'));
     initial_number_of_data = size(folder_info,1);
     for file_loop = 1:initial_number_of_data
@@ -71,3 +72,4 @@ data_path= "D:\premier\week1HT\Sample6L450CMX11000\Sample6L450CMX11000CMXoutput\
   valuesofaverageHandEoutput = [header; num2cell(values_of_averageH_and_E)]; %make an array for outputting data;
     
   writecell (valuesofaverageHandEoutput,'L450CMXoutput11000') %change the file name
+end

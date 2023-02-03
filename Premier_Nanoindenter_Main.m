@@ -15,22 +15,22 @@ addpath src
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\OUdi\";
+base_file_directory = "D:\premier\week1HT\Sample6L450CMX11000\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "xpm_indentation_map";
+mapping_type = "automated_indentation_grid_array";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 1;
-columns = 1;
+rows = 10;
+columns = 10;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 1;
+spacing = 10;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -98,9 +98,12 @@ Popinfitting = "yes";
 % change these pararmeters)
 tolerancepopin= 0.007;
 smoothingvalue=7;
-MPH=0.4;
+MPH=2;
 
-%There is a CMX indents 
+% Specify here whether you want to use the CMX fitting here 
+% using "yes" or "no" to use this function 
+% have a folder in your base directory called "CMX_Output")
+CMXfitting = "yes";
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,6 +149,14 @@ end
 if Popinfitting == "yes"
     [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH);
 else if caluclateextravalues == "no"
+    end
+end
+
+%% Calling  CMX fitting
+% Specify here whether you want to use the popin decting code using "yes" or "no"
+if CMXfitting == "yes"
+    [CMXfittingresults] = CMXfitting(base_file_directory);
+else if CMXfitting == "no"
     end
 end
 

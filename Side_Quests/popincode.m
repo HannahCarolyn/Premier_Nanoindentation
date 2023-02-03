@@ -71,9 +71,9 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
 %finding pop-ins from displacement
 figure(fig4)
-changeindisp=diff(smoothloadinghabovezero);
+changeindisp=diff(loadinghabovezero);
 changeindisp(end+1)=NaN;
-plot(smoothloadinghabovezero,changeindisp);
+plot(loadinghabovezero,changeindisp);
 hold on
 % MPH=0.4;
 [PKS,LOCS]=findpeaks(changeindisp,'MinPeakHeight',MPH);
