@@ -1,9 +1,9 @@
-function [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Upperdepthcutoff);
+function [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Upperdepthcutoff)
 
-    data_path= strcat(base_file_directory,"CMX_Output");
-    folder_info = dir(fullfile(data_path, '/*.txt'));
-    initial_number_of_data = size(folder_info,1);
-    for file_loop = 1:initial_number_of_data
+data_path= strcat(base_file_directory,"CMX_Output");
+folder_info = dir(fullfile(data_path, '/*.txt'));
+initial_number_of_data = size(folder_info,1);
+for file_loop = 1:initial_number_of_data
     file_name = folder_info(file_loop).name;
     full_file_name = fullfile(data_path, file_name);
     full_input = importdata(full_file_name);
@@ -16,11 +16,11 @@ function [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Up
     original_CMX_Data(file_loop).Indent_Index = file_loop-1; % Writes indent number to struct (starting indexing at zero as per files)
     original_CMX_Data(file_loop).Data = raw_input;
 
-    end
-    fig1=figure;
-    fig2=figure;
+end
+fig1=figure;
+fig2=figure;
 
- for i=0:1:99
+for i=0:1:99
     j=i+1;
     indent_CMX_data=original_CMX_Data(j).Data;
     indentdepthforindent=indent_CMX_data(:,1);
@@ -65,7 +65,7 @@ function [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Up
     xline(Lowerdepthcutoff);
     xline(Upperdepthcutoff);
     hold on
- end
+end
 
  
   header = {'No of indents','Average Hardness (GPa)','Average Storage Modulus (GPa)'}; %headers for the array

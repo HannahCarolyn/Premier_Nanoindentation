@@ -15,22 +15,22 @@ addpath src
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\OUdi\";
+base_file_directory = "D:\premier\week1HT\Sample6L450CMX11000\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "xpm_indentation_map";
+mapping_type = "automated_indentation_grid_array";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 1;
-columns = 1;
+rows = 10;
+columns = 10;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 1;
+spacing = 10;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -71,11 +71,19 @@ negative_displacement_tolerance = 20;
 minimum_load_tolerance = 5;
 maximum_displacement_tolerance = 700;
 
+% Specify here whether you want to calculate some additional values like
+% Hardness/Modulus, etc. with the final results using "yes" or "no"
+calculate_extra_values = "yes";
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% This next section is for advanced users: only edit if you know what you are doing - see documentation
+
 % Specify here whether you'd like to use Hannah's Oliver and Parr method
 % using "yes" or "no"
 hannah_oliver_parr = "yes";
 
-% Fitting parameter for hannah_oliver_parr see documentation if want to
+% Fitting parameter for hannah_oliver_parr - see documentation if want to
 % change these pararmeters (only recommended for advanced users)
 epsilon = 0.75;
 samplepossionratio = 0.3;
@@ -84,26 +92,24 @@ cutofdatavalue = 0.95;
 cutofunloadingtoplim = 0.05;
 cutofunloadingbottomlim = 0.25;
 
+% Specify here whether you want to use the popin decting code using "yes" 
+% or "no"
+popin_fitting = "yes";
 
-% Specify here whether you want add some additional values like
-% Hardness/Modulus to you struct using "yes" or "no"
-calculateextravalues = "yes";
-
-
-%%Side quest section
-% Specify here whether you want to use the popin decting code using "yes" or "no"
-Popinfitting = "yes";
-
-% Fitting parameter for Popinfitting see documentation if want to
+% Fitting parameter for popin fitting see documentation if want to
 % change these pararmeters)
 tolerancepopin= 0.007;
 smoothingvalue=7;
-MPH=2;
+MPH=1.8;
 
 % Specify here whether you want to use the CMX fitting here 
 % using "yes" or "no" to use this function 
 % have a folder in your base directory called "CMX_Output")
 CMXfitting = "yes";
+
+%Fitting parameter for CMX fitting
+Lowerdepthcutoff=100;
+Upperdepthcutoff=300;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,15 +144,15 @@ else if hannah_oliver_parr == "no"
 end
 
 %% Calling Calculations of other 
-if calculateextravalues == "yes"
+if calculate_extra_values == "yes"
     [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,load_displacement_data,main_data_struct,naughty_indents_list,red_indents_list);
-else if calculateextravalues == "no"
+else if calculate_extra_values == "no"
         final_main_data_struct=main_data_struct;
     end
 end
 
 %% Calling Pop-in code
-if Popinfitting == "yes"
+if popin_fitting == "yes"
     [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH);
 else if caluclateextravalues == "no"
     end
@@ -155,7 +161,7 @@ end
 %% Calling  CMX fitting
 % Specify here whether you want to use the popin decting code using "yes" or "no"
 if CMXfitting == "yes"
-    [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH);
+    [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Upperdepthcutoff);
 else if CMXfitting == "no"
     end
 end

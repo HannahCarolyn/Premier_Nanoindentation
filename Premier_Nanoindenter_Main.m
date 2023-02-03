@@ -71,12 +71,20 @@ negative_displacement_tolerance = 20;
 minimum_load_tolerance = 5;
 maximum_displacement_tolerance = 700;
 
+% Specify here whether you want to calculate some additional values like
+% Hardness/Modulus, etc. with the final results using "yes" or "no"
+calculate_extra_values = "yes";
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% This next section is for advanced users: only edit if you know what you are doing - see documentation
+
 % Specify here whether you'd like to use Hannah's Oliver and Parr method
 % using "yes" or "no"
 hannah_oliver_parr = "yes";
 
-% Fitting parameter for hannah_oliver_parr see documentation if want to
-% change these pararmeters (only recommended for advanced users)
+% Fitting parameter for hannah_oliver_parr - see documentation if want to
+% change these pararmeters
 epsilon = 0.75;
 samplepossionratio = 0.3;
 tolerance = 0.007;
@@ -84,31 +92,24 @@ cutofdatavalue = 0.95;
 cutofunloadingtoplim = 0.05;
 cutofunloadingbottomlim = 0.25;
 
+% Specify here whether you want to use the popin decting code using "yes" 
+% or "no"
+popin_fitting = "yes";
 
-% Specify here whether you want add some additional values like
-% Hardness/Modulus to you struct using "yes" or "no"
-calculateextravalues = "yes";
+% Fitting parameter for popin_fitting - see documentation if want to
+% change these pararmeters
+tolerancepopin = 0.007;
+smoothingvalue = 7;
+MPH = 1.8;
 
+% Specify here whether you want to use the CMX_fitting using "yes" or "no" 
+% to use this function have a folder in your base directory called "CMX_Output"
+% We can change this later to auto-generate that folder
+CMX_fitting = "yes";
 
-%%Side quest section
-% Specify here whether you want to use the popin decting code using "yes" or "no"
-Popinfitting = "yes";
-
-% Fitting parameter for Popinfitting see documentation if want to
-% change these pararmeters)
-tolerancepopin= 0.007;
-smoothingvalue=7;
-MPH=1.8;
-
-% Specify here whether you want to use the CMX fitting here 
-% using "yes" or "no" to use this function 
-% have a folder in your base directory called "CMX_Output")
-CMXfitting = "yes";
-
-%Fitting parameter for CMX fitting
-Lowerdepthcutoff=100;
-Upperdepthcutoff=300;
-
+% Fitting parameter for CMX fitting
+Lowerdepthcutoff = 100;
+Upperdepthcutoff = 300;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -133,43 +134,7 @@ end
 % Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
 naughty_indents_list = red_indents_list;
 
-%% Calling Oliver and Parr Methods
-if hannah_oliver_parr == "yes"
-    [main_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list);
-else if hannah_oliver_parr == "no"
-        [main_data_struct] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
-    end
-end
 
-%% Calling Calculations of other 
-if calculateextravalues == "yes"
-    [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,load_displacement_data,main_data_struct,naughty_indents_list,red_indents_list);
-else if calculateextravalues == "no"
-        final_main_data_struct=main_data_struct;
-    end
-end
-
-%% Calling Pop-in code
-if Popinfitting == "yes"
-    [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH);
-else if caluclateextravalues == "no"
-    end
-end
-
-%% Calling  CMX fitting
-% Specify here whether you want to use the popin decting code using "yes" or "no"
-if CMXfitting == "yes"
-    [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Upperdepthcutoff);
-else if CMXfitting == "no"
-    end
-end
-
-
-
-% % 
-% %% Calculating values not directly taken from the raw data, e.g. stiffness squared divided by load
-% % [main_data_struct] = calculations(main_data_struct);
-% 
 % %% Dealing with dodgy indents (writes new struct with NaN values - old struct still available for comparison)
 % % if exclude_dodgy == "yes"
 % %     [updated_main_data_struct] = dodgy_indents(main_data_struct,bad_indents_list);
@@ -178,6 +143,37 @@ end
 % %     end
 % % end
 updated_main_data_struct =final_main_data_struct;
+
+%% Calling Oliver and Parr Methods
+if hannah_oliver_parr == "yes"
+    [main_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list);
+else if hannah_oliver_parr == "no"
+        [main_data_struct] = premier_method(base_file_directory,load_displacement_data); % will read indent index to get correct data set
+    end
+end
+
+%% Calculating values not directly taken from the raw data, e.g. stiffness squared divided by load
+if calculate_extra_values == "yes"
+    [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,load_displacement_data,main_data_struct,naughty_indents_list,red_indents_list);
+else if calculate_extra_values == "no"
+        final_main_data_struct=main_data_struct;
+    end
+end
+
+%% Calling pop-in code
+if popin_fitting == "yes"
+    [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH);
+else if caluclateextravalues == "no"
+    end
+end
+
+%% Calling CMX fitting
+% Specify here whether you want to use the popin decting code using "yes" or "no"
+if CMXfitting == "yes"
+    [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Upperdepthcutoff);
+else if CMXfitting == "no"
+    end
+end
 
 % %% Generating outputs and saving them to file
 output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
