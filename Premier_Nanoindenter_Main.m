@@ -98,12 +98,16 @@ Popinfitting = "yes";
 % change these pararmeters)
 tolerancepopin= 0.007;
 smoothingvalue=7;
-MPH=2;
+MPH=1.8;
 
 % Specify here whether you want to use the CMX fitting here 
 % using "yes" or "no" to use this function 
 % have a folder in your base directory called "CMX_Output")
 CMXfitting = "yes";
+
+%Fitting parameter for CMX fitting
+Lowerdepthcutoff=100;
+Upperdepthcutoff=300;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,7 +159,7 @@ end
 %% Calling  CMX fitting
 % Specify here whether you want to use the popin decting code using "yes" or "no"
 if CMXfitting == "yes"
-    [CMXfittingresults] = CMXfitting(base_file_directory);
+    [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Upperdepthcutoff);
 else if CMXfitting == "no"
     end
 end

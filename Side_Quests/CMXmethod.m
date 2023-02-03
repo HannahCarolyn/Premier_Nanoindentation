@@ -1,4 +1,4 @@
-function [CMXfittingresults] = CMXfitting(base_file_directory);
+function [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Upperdepthcutoff);
 
     data_path= strcat(base_file_directory,"CMX_Output");
     folder_info = dir(fullfile(data_path, '/*.txt'));
@@ -28,10 +28,10 @@ function [CMXfittingresults] = CMXfitting(base_file_directory);
     Storagemodulusforindent=indent_CMX_data(:,3);
 
     %hardness processing
-    Lowerdepthcutoff=100;
+    %Lowerdepthcutoff=100;
     findindexoflowcutoff=find(indentdepthforindent < 100);
     indexoflowcutoff=max(findindexoflowcutoff);
-    Upperdepthcutoff=300;
+    %Upperdepthcutoff=300;
     findindexofuppercutoff=find(indentdepthforindent < 300);
     indexofuppercutoff=max(findindexofuppercutoff);
     rangeindentdepth=indentdepthforindent(indexoflowcutoff:indexofuppercutoff,:);
@@ -70,6 +70,8 @@ function [CMXfittingresults] = CMXfitting(base_file_directory);
  
   header = {'No of indents','Average Hardness (GPa)','Average Storage Modulus (GPa)'}; %headers for the array
   valuesofaverageHandEoutput = [header; num2cell(values_of_averageH_and_E)]; %make an array for outputting data;
+
+  CMXfittingresults=valuesofaverageHandEoutput;
     
   writecell (valuesofaverageHandEoutput,'L450CMXoutput11000') %change the file name
 end
