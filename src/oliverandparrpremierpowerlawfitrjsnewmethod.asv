@@ -217,8 +217,8 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         writecell (valuesofHandEoutput,'L450CMX1000') %change the file name
     end
 
-    load_displacement_data(j).Maximum_Displacement=hmax;
-    load_displacement_data(j).Maximum_Load=Pmax;
+ load_displacement_data(j).Maximum_Displacement=hmax;
+ load_displacement_data(j).Maximum_Load=Pmax;
 end
 
 %close(progress_bar) % Closes progress bar
@@ -231,7 +231,7 @@ for rowhc=1:length(values_of_H_and_E(:,1))
 end
 
  
-Fitting=load_displacement_data;
+HCfitting=load_displacement_data;
 close(progress_bar); % Closes progress bar
 figure(fig3);
 Important_Popup= imread("Importantpopup.png");

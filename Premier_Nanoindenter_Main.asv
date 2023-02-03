@@ -84,12 +84,6 @@ cutofdatavalue = 0.95;
 cutofunloadingtoplim = 0.05;
 cutofunloadingbottomlim = 0.25;
 
-
-% Specify here whether you want additional some additional values like
-% Hardness/Modulus to you struct using "yes" or "no"
-
-calculateextravalues = "yes";
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% From here, different functions are called in order and if needed - users: do not edit from this point onwards
@@ -123,11 +117,9 @@ end
 
 %% Calling Calculations of other 
 if calculateextravalues == "yes"
-    [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,load_displacement_data,main_data_struct,naughty_indents_list,red_indents_list);
+[final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,load_displacement_data,naughty_indents_list,red_indents_list);
 else if caluclateextravalues == "no"
-        final_main_data_struct=main_data_struct;
-    end
-end
+        
 % % 
 % %% Calculating values not directly taken from the raw data, e.g. stiffness squared divided by load
 % % [main_data_struct] = calculations(main_data_struct);
@@ -139,11 +131,11 @@ end
 % %         updated_main_data_struct = main_data_struct;
 % %     end
 % % end
-updated_main_data_struct =final_main_data_struct;
+updated_main_data_struct =main_data_struct;
 
 % %% Generating outputs and saving them to file
 output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
-mkdir (output_file_directory); % Creates output folder in base path
+% mkdir (output_file_directory); % Creates output folder in base path
 % 
 % % Firstly the histograms
 % [Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",output_file_directory);
@@ -160,11 +152,11 @@ mkdir (output_file_directory); % Creates output folder in base path
 [Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
 [Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
 [Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
-[Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
-[Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
-[Figure15_Surface_Displacement_Map] = heatmaps(updated_main_data_struct,"Surface_Displacement",output_file_directory);
-[Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
-[Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory);
+% % [Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
+% % [Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
+% % [Figure15_Minimum_Displacement_Map] = heatmaps(updated_main_data_struct,"Minimum_Displacement",output_file_directory);
+% % [Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
+% % [Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory);
 % 
 % % Thirdly the dodgy indents treasure map
 % [Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,bad_indents_list,output_file_directory);

@@ -412,13 +412,15 @@ for indent_loop = 1:non_overlapping_indents_count % For count through each remai
     new_data(:,2) = indent_load_data;
     zeroed_load_displacement(indent_loop).Displacement_Load_Data = []; % Delete old data from struct
     zeroed_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new interpolated data to struct
+
+    zeroed_load_displacement(indent_loop).Surface_Displacement=minimum_indent_displacement_loading;
 end
 
 close(progress_bar) % Close progress bar
 
 %% Return values from function
 
-final_load_displacement_data = non_overlapping_load_displacement; % Rewrite struct for function output
+final_load_displacement_data = zeroed_load_displacement; % Rewrite struct for function output
 amber_indents_list;
 red_indents_list;
 
