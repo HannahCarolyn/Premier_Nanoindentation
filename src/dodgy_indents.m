@@ -37,7 +37,7 @@ close(progress_bar); % Close wait bar
 updated_main_data_struct = load_displacement_data; % Rename struct for function output
 
 Important_Popup = imread("Importantpopup2.png");
-figure(fig4);
+figure(figure);
 imshow(Important_Popup);
 pause(5);
 close all;
