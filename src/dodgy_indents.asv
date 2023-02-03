@@ -1,0 +1,22 @@
+function [updated_main_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy)
+
+%% Firstly, get correct naughty list
+
+naughty_indents_list = []; % Create empty naughty list
+if exclude_dodgy == "no" % If amber indents not to be excluded from calculations, only put red indents on naughty list
+    naughty_indents_list = red_indents_list;
+else if exclude_dodgy == "yes" % If amber indents to be included
+        naughty_indents_list = red_indents_list; % First write red indents
+        for indent = [amber_indents_list] % Go through each amber and add to list
+            naughty_indents_list(end+1) = indent;
+        end
+    end
+end
+naughty_indents_list = sort(naughty_indents_list); % Put list in order of indent indices
+
+%% Secondly write NaN in struct where naughty
+
+progress_bar = waitbar(0,"Importing Indentation Data - Continuous"); % Creates a progress bar
+for indent = [naughty_indents_list] % For through each naughty indent
+    completion_fraction = file_loop/continuous_number_of_data; % Calculates fraction for progress bar
+    waitbar(completion_fraction); 
