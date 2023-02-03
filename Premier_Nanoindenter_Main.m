@@ -85,10 +85,23 @@ cutofunloadingtoplim = 0.05;
 cutofunloadingbottomlim = 0.25;
 
 
-% Specify here whether you want additional some additional values like
+% Specify here whether you want add some additional values like
 % Hardness/Modulus to you struct using "yes" or "no"
-
 calculateextravalues = "yes";
+
+
+%%Side quest section
+% Specify here whether you want to use the popin decting code using "yes" or "no"
+Popinfitting = "yes";
+
+% Fitting parameter for Popinfitting see documentation if want to
+% change these pararmeters)
+tolerancepopin= 0.007;
+smoothingvalue=7;
+MPH=0.4;
+
+%There is a CMX indents 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -124,10 +137,20 @@ end
 %% Calling Calculations of other 
 if calculateextravalues == "yes"
     [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,load_displacement_data,main_data_struct,naughty_indents_list,red_indents_list);
-else if caluclateextravalues == "no"
+else if calculateextravalues == "no"
         final_main_data_struct=main_data_struct;
     end
 end
+
+%% Calling Pop-in code
+if Popinfitting == "yes"
+    [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH);
+else if caluclateextravalues == "no"
+    end
+end
+
+
+
 % % 
 % %% Calculating values not directly taken from the raw data, e.g. stiffness squared divided by load
 % % [main_data_struct] = calculations(main_data_struct);

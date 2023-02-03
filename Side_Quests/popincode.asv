@@ -1,4 +1,4 @@
-function [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH)
+%function [opinfitting] = popincode(base_file_directory,load_displacement_data,tolerance,tolerancepop)
 close all
 
     progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
@@ -50,15 +50,14 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     dataabovezero(:,1)=loadingPabovezero;
     dataabovezero(:,2)=loadinghabovezero;
 
-   smoothingvalue=7;
-   smoothloading_P_h_data=smoothdata(dataabovezero,'movmean',smoothingvalue);
+   smoothloading_P_h_data=smoothdata(dataabovezero,'movmean',7);
    smoothloadingPabovezero=smoothloading_P_h_data(:,1);
    smoothloadinghabovezero=smoothloading_P_h_data(:,2);
 
 
          %plot the raw data
      figure(fig1);
-        plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
+%         plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
         ylabel("Load (uN)")
         xlabel("displacement (nm)")
         hold on
@@ -71,11 +70,10 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
 %finding pop-ins from displacement
 figure(fig4)
-changeindisp=diff(smoothloadinghabovezero);
-changeindisp(end+1)=NaN;
+changeindisp=gradient(smoothloadinghabovezero);
 plot(smoothloadinghabovezero,changeindisp);
 hold on
-% MPH=0.4;
+MPH=0.4;
 [PKS,LOCS]=findpeaks(changeindisp,'MinPeakHeight',MPH);
 popindex=LOCS-1;
 no_of_popinindex=numel(popindex);
@@ -206,7 +204,6 @@ end
 %         valuesofpopinPsavingsmooth(j,(differencevaluessmooth+1))=NaN;
 %     end    
 % end
-popinfitting=valuesofpopinPsaving;
 end
 close(progress_bar) % Closes progress bar
 
