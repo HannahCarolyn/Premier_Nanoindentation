@@ -9,6 +9,13 @@ heatmap_variable=[struct.(Output_Type)].'; %These are transposed as the code was
 X=[struct.(X_Coordinate)].'; 
 Y=[struct.(Y_Coordinate)].';
 
+for letter=1:length(Output_Type) %for formatting purposes
+     if Output_Type(letter)== '_'
+         Output_Type(letter)= ' ';
+     end
+ 
+ end
+
 spacing=X(2,1)-X(1,1);
 column_number=1+(max(X)/spacing); %this calculates the number of indents in x 
 row_number=1+(max(Y)/spacing); %this calculates the number of indents in y
@@ -36,12 +43,6 @@ end
 % 
 % %% 
 % 
-for letter=1:length(Output_Type) %for formatting purposes
-     if Output_Type(letter)== '_'
-         Output_Type(letter)= ' ';
-     end
- 
- end
  
  colour_count=45; %this can be changed to alter the number of levels in the colour map - CMM used 45
  heat_map=contourf(x_coord, y_coord ,heatmap_by_coord, colour_count,'LineColor','None'); 
