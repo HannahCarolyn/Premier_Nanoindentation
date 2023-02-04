@@ -48,7 +48,7 @@ plot(coord_amber_x, coord_amber_y,'v', 'linestyle', 'none', 'MarkerSize',10, 'Li
 xlabel('X in microns', 'FontSize', 12)
 ylabel('Y in microns', 'FontSize', 12)
 title('Dodgy Indents Mapped in 2D space', 'FontSize', 14)
-legend('Red Indents', 'Amber Indents')
+legend('Red Indents', 'Amber Indents', 'Location', 'northeastoutside')
 
 axis equal
 xlim([0 max(X)])
