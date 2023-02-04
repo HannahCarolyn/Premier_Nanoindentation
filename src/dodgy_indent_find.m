@@ -1,4 +1,5 @@
 function[dodgy_indent_plot]=dodgy_indent_find(struct, amber_indents_list,red_indents_list, output_file_directory) %this function plots the location of the dodgy indents
+clf
 
 X_Coordinate='X_Coordinate';
 Y_Coordinate='Y_Coordinate';
