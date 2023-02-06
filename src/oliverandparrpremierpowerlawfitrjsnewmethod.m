@@ -164,6 +164,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
             values_of_H_and_E(j,3)= NaN;
             values_of_H_and_E(j,4)=NaN; 
             values_of_H_and_E(j,5)=NaN;
+            continue
         end
  
     %Plot fit with data.
@@ -215,11 +216,11 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm'}; %headers for the array
         valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
         writecell (valuesofHandEoutput,'L450CMX1000') %change the file name
-    end
+    
 
     load_displacement_data(j).Maximum_Displacement=hmax;
     load_displacement_data(j).Maximum_Load=Pmax;
-end
+    
 
 %close(progress_bar) % Closes progress bar
 
@@ -229,7 +230,8 @@ for rowhc=1:length(values_of_H_and_E(:,1))
     load_displacement_data(rowhc).Youngs_Modulus=values_of_H_and_E(rowhc,4);
     load_displacement_data(rowhc).Stiffness=values_of_H_and_E(rowhc,5);
 end
-
+    end
+end
  
 Fitting=load_displacement_data;
 close(progress_bar); % Closes progress bar
