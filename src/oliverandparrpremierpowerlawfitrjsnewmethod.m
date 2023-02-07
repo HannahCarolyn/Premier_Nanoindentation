@@ -100,7 +100,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 %         try %dodgy indent for when it doesn't go below zero
         unloadingP=P(Pmaxindex:noofdatappoint); %extracting the unloading section of load
         unloadingh=h(Pmaxindex:noofdatappoint); % extracting the unloading section of load
-        Pintercept = find(unloadingP < 5); %find the point where load is below zero %HC fudge editted 
+        Pintercept = find(unloadingP < 0); %find the point where load is below zero %HC fudge editted 
         findinghf=unloadingh(Pintercept); %from the index of the points where load is less than zero
         hf=max(findinghf); %find the maximum point of this array in order to extract the fitting parameter hf
 %     hf=min(unloadingh);
@@ -215,7 +215,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
         header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm'}; %headers for the array
         valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
-        writecell (valuesofHandEoutput,'L450CMX1000') %change the file name
+        writecell (valuesofHandEoutput,'X8021indents') %change the file name
     
 
     load_displacement_data(j).Maximum_Displacement=hmax;

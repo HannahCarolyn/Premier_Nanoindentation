@@ -3,6 +3,8 @@
 clear
 close all
 addpath src
+addpath Side_Quests
+
 
 % The aim of this script is to input all Bruker Premier nanoindentation data, 
 % provide basic plots of hardness, modulus, etc. using Oliver and Parr methods 
@@ -15,22 +17,22 @@ addpath src
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\mans3584\OneDrive - Nexus365\3 - Postgraduate Documents\Research Project\Data\Premier\Local Premier Github Repository\Premier_Nanoindentation\Example_Mapping_Data\";
+base_file_directory = "D:\premier\week4HT\X80sample13\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "xpm_indentation_map";
+mapping_type = "automated_indentation_grid_array";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
 rows = 3;
-columns = 3;
+columns = 7;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 45;
+spacing = 10;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -73,7 +75,7 @@ maximum_displacement_tolerance = 700;
 
 % Specify here whether you want to calculate some additional values like
 % Hardness/Modulus, etc. with the final results using "yes" or "no"
-calculate_extra_values = "yes";
+calculate_extra_values = "no";
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -94,7 +96,7 @@ cutofunloadingbottomlim = 0.25;
 
 % Specify here whether you want to use the popin decting code using "yes" 
 % or "no"
-popin_fitting = "no";
+popin_fitting = "yes";
 
 % Fitting parameter for popin_fitting - see documentation if want to
 % change these pararmeters
@@ -152,16 +154,16 @@ end
 
 %% Calling pop-in code
 if popin_fitting == "yes"
-    [popinfitting] = popincode(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH);
+    [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list);
 else if popin_fitting == "no"
     end
 end
 
 %% Calling CMX fitting
 % Specify here whether you want to use the popin decting code using "yes" or "no"
-if CMXfitting == "yes"
+if CMX_fitting == "yes"
     [CMXfittingresults] = CMXmethod(base_file_directory,Lowerdepthcutoff,Upperdepthcutoff);
-else if CMXfitting == "no"
+else if CMX_fitting == "no"
     end
 end
 
@@ -178,20 +180,20 @@ mkdir (output_file_directory); % Creates output folder in base path
 % [Figure6_Youngs_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
 % [Figure7_Reduced_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
 % % [Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Stiffness",output_file_directory);
-% 
-% % Secondly the heat maps
-[Figure9_Hardness_Map] = heatmaps(updated_main_data_struct,"Hardness",output_file_directory);
-[Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
-[Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
-[Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
-[Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
-[Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
-[Figure15_Surface_Displacement_Map] = heatmaps(updated_main_data_struct,"Surface_Displacement",output_file_directory);
-[Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
-[Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory);
- 
-% Thirdly the dodgy indents treasure map
-[Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,amber_indents_list,red_indents_list,output_file_directory);
-% 
-% %% Generating output workspace to be compatible with XPCorrelate
-% % [workspace_output] = conversion(updated_main_data_struct);
+% updated_main_data_struct=final_main_data_struct;
+% % % Secondly the heat maps
+% [Figure9_Hardness_Map] = heatmaps(updated_main_data_struct,"Hardness",output_file_directory);
+% [Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+% [Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
+% [Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
+% [Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
+% [Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
+% [Figure15_Surface_Displacement_Map] = heatmaps(updated_main_data_struct,"Surface_Displacement",output_file_directory);
+% [Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
+% [Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Sqaured_Divided_By_Load",output_file_directory);
+%  
+% % Thirdly the dodgy indents treasure map
+% [Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,amber_indents_list,red_indents_list,output_file_directory);
+% % 
+% % %% Generating output workspace to be compatible with XPCorrelate
+% % % [workspace_output] = conversion(updated_main_data_struct);

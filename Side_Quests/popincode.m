@@ -1,23 +1,29 @@
-function [popinfitting] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH)
+function [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list)
 close all
 
     progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
+nbytes = fprintf('Processing indent 0.'); % Initialising changing number display
 noofindents=length([load_displacement_data.Indent_Index]);
  fig1=figure;
   fig2=figure;
   fig3=figure;
   fig4=figure;
 for i=0:noofindents-1 % loop for each of the indents with zero corrections
-     
+       fprintf(repmat('\b',1,nbytes)) % Changing number display
+    nbytes = fprintf('Processing indent %d.', i); % Changing number display
+    j=i+1; % correcting zero problem when putting data into the arrays
     completion_fraction = i/(noofindents-1); % Calculates fraction for progress bar
         waitbar(completion_fraction); % Updates progress bar
-    indentnostring= sprintf('indent_%04d',i); %wrtie field name
+    if ismember(load_displacement_data(j).Indent_Index,naughty_indents_list) % Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
+      % Do nothing
+    else
+    
      values_of_popin=[];
      dataabovezero=[];
-        j=i+1; % correcting zero problem when putting data into the arrays
+    
         indentsnostring= sprintf('indent_%04d',i); %string of the field name
         loading_P_h_data=load_displacement_data(j).Displacement_Load_Data;
-        
+
         h=loading_P_h_data(:,1);
         P=loading_P_h_data(:,2);
         
@@ -93,7 +99,7 @@ plot(popinh,popinP,"red x","MarkerSize",10)
 hold on
 %         
  end
-values_of_popin_indents.(indentnostring)=values_of_popin;
+values_of_popin_indents.(indentsnostring)=values_of_popin;
 try
 values_of_popinP=values_of_popin_indents.(indentsnostring)(:,2);
 noofvaluesofpopinP=numel(values_of_popinP);
@@ -207,8 +213,10 @@ end
 %     end    
 % end
 popinfitting=valuesofpopinPsaving;
+    end
 end
 close(progress_bar) % Closes progress bar
+
 
 valuesofpopinPsavingvector = valuesofpopinPsaving(:);
 frequencyofpopins=nnz(~isnan(valuesofpopinPsavingvector));

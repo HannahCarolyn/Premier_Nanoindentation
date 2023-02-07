@@ -1,4 +1,4 @@
-%function [opinfitting] = popincode(base_file_directory,load_displacement_data,tolerance,tolerancepop)
+function [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list)
 close all
 
     progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
@@ -8,16 +8,21 @@ noofindents=length([load_displacement_data.Indent_Index]);
   fig3=figure;
   fig4=figure;
 for i=0:noofindents-1 % loop for each of the indents with zero corrections
-     
+       fprintf(repmat('\b',1,nbytes)) % Changing number display
+    nbytes = fprintf('Processing indent %d.', i); % Changing number display
+    j=i+1; % correcting zero problem when putting data into the arrays
     completion_fraction = i/(noofindents-1); % Calculates fraction for progress bar
         waitbar(completion_fraction); % Updates progress bar
-    indentnostring= sprintf('indent_%04d',i); %wrtie field name
+    if ismember(load_displacement_data(j).Indent_Index,naughty_indents_list) % Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
+      % Do nothing
+    else
+    
      values_of_popin=[];
      dataabovezero=[];
-        j=i+1; % correcting zero problem when putting data into the arrays
+    
         indentsnostring= sprintf('indent_%04d',i); %string of the field name
         loading_P_h_data=load_displacement_data(j).Displacement_Load_Data;
-        
+
         h=loading_P_h_data(:,1);
         P=loading_P_h_data(:,2);
         
@@ -50,14 +55,15 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     dataabovezero(:,1)=loadingPabovezero;
     dataabovezero(:,2)=loadinghabovezero;
 
-   smoothloading_P_h_data=smoothdata(dataabovezero,'movmean',7);
+   smoothingvalue=7;
+   smoothloading_P_h_data=smoothdata(dataabovezero,'movmean',smoothingvalue);
    smoothloadingPabovezero=smoothloading_P_h_data(:,1);
    smoothloadinghabovezero=smoothloading_P_h_data(:,2);
 
 
          %plot the raw data
      figure(fig1);
-%         plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
+        plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
         ylabel("Load (uN)")
         xlabel("displacement (nm)")
         hold on
@@ -70,10 +76,11 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
 %finding pop-ins from displacement
 figure(fig4)
-changeindisp=gradient(smoothloadinghabovezero);
-plot(smoothloadinghabovezero,changeindisp);
+changeindisp=diff(loadinghabovezero);
+changeindisp(end+1)=NaN;
+plot(loadinghabovezero,changeindisp);
 hold on
-MPH=0.4;
+% MPH=0.4;
 [PKS,LOCS]=findpeaks(changeindisp,'MinPeakHeight',MPH);
 popindex=LOCS-1;
 no_of_popinindex=numel(popindex);
@@ -204,8 +211,10 @@ end
 %         valuesofpopinPsavingsmooth(j,(differencevaluessmooth+1))=NaN;
 %     end    
 % end
+popinfitting=valuesofpopinPsaving;
 end
 close(progress_bar) % Closes progress bar
+end
 
 valuesofpopinPsavingvector = valuesofpopinPsaving(:);
 frequencyofpopins=nnz(~isnan(valuesofpopinPsavingvector));
