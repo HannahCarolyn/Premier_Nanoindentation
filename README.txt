@@ -38,3 +38,5 @@ Within the Load_Function folder you should copy across the load function file th
 when setting up the XPM indents. Change the file extension from .ldf to .txt. Again the file
 can have any name. Though this is not currently used in the input deck, it may be used at a
 later date.
+
+If using Premier_Nanoindenter_Main_Random, use the same data file structure as above.

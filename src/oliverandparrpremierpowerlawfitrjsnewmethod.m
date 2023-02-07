@@ -215,7 +215,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
         header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm'}; %headers for the array
         valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
-        writecell (valuesofHandEoutput,'X8021indents') %change the file name
+        writecell (valuesofHandEoutput,'X80CMX11000') %change the file name
     
 
     load_displacement_data(j).Maximum_Displacement=hmax;

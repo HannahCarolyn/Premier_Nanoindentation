@@ -20,7 +20,7 @@ end
 fig1=figure;
 fig2=figure;
 
-for i=0:1:99
+for i=0:1:initial_number_of_data-1
     j=i+1;
     indent_CMX_data=original_CMX_Data(j).Data;
     indentdepthforindent=indent_CMX_data(:,1);

@@ -1,4 +1,4 @@
-function [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list)
+function [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh)
 close all
 
     progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
@@ -81,6 +81,8 @@ changeindisp=diff(loadinghabovezero);
 changeindisp(end+1)=NaN;
 plot(loadinghabovezero,changeindisp);
 hold on
+xlabel 'displacement (nm)'
+ylabel 'Change in displacment'
 % MPH=0.4;
 [PKS,LOCS]=findpeaks(changeindisp,'MinPeakHeight',MPH);
 popindex=LOCS-1;
@@ -224,11 +226,11 @@ figure(fig2)
 histogram(valuesofpopinPsavingvector,150);
 xlabel 'Pop-in Load (uN)'
 ylabel 'Frequency'
-title 'Large Pop-in Histogram x65 NG 11000um'
+title 'Large Pop-in Histogram'
 
 
-cutofflow=0;
-cutoffhigh=120;
+% cutofflow=0;
+% cutoffhigh=120;
 valuesofpopinPlimitedindex = find(cutofflow < valuesofpopinPsavingvector  & valuesofpopinPsavingvector < cutoffhigh); %unhard code this
 valuesofpopinPlimited=valuesofpopinPsavingvector(valuesofpopinPlimitedindex);
 frequencyofpopinslimited=nnz(~isnan(valuesofpopinPlimited));
@@ -238,7 +240,7 @@ figure(fig3)
 histogram(valuesofpopinPlimited,20);
 xlabel 'Pop-in Load (uN)'
 ylabel 'Frequency'
-title 'Narrow Pop-in Histogram x65 NG 11000um'
+title 'Narrow Pop-in Histogram'
 popinlimmean= mean(valuesofpopinPlimited);
 popinlimstd = std(valuesofpopinPlimited);
 popinlimmedian= median(valuesofpopinPlimited);
