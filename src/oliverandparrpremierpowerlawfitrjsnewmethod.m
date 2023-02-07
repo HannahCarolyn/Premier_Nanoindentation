@@ -157,13 +157,22 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
             red_indents_list = sort(red_indents_list); % Reorders red list
             %disp(strcat("Indent number ",[load_displacement_data(j).Indent_Index]," has also been added to the red list due to a fitting error.")) % Tells user of additional error indent
             load_displacement_data(j).Error_Code = strcat("Red: Fitting failed."); % Writes error code to struct
-            load_displacement_data(j).Displacement_Load_Data = NaN; % Puts NaN value in struct data column
+            load_displacement_data(j).Displacement_Load_Data = NaN; % Puts NaN value in struct data column, and lines below do it for the others also
+            load_displacement_data(j).Hardness = NaN;
+            load_displacement_data(j).Youngs_Modulus = NaN;
+            load_displacement_data(j).Reduced_Modulus = NaN;
+            load_displacement_data(j).Stiffness = NaN;
+            load_displacement_data(j).Maximum_Load = NaN;
+            load_displacement_data(j).Maximum_Displacement = NaN;
+            load_displacement_data(j).Surface_Displacement = NaN;
+            load_displacement_data(j).Hardness_Divided_By_Modulus = NaN;
+            load_displacement_data(j).Stiffness_Squared_Divided_By_Load = NaN;
             % Since red error, values are written as NaN in data
             values_of_H_and_E(j,2) = NaN;
             values_of_H_and_E(j,1) = i;
-            values_of_H_and_E(j,3)= NaN;
-            values_of_H_and_E(j,4)=NaN; 
-            values_of_H_and_E(j,5)=NaN;
+            values_of_H_and_E(j,3) = NaN;
+            values_of_H_and_E(j,4) = NaN; 
+            values_of_H_and_E(j,5) = NaN;
             continue
         end
  

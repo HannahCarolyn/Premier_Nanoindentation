@@ -16,7 +16,7 @@ naughty_indents_list = sort(naughty_indents_list); % Put list in order of indent
 
 %% Secondly write NaN in struct where naughty
 
-progress_bar = waitbar(0,"Importing Indentation Data - Continuous"); % Creates a progress bar
+progress_bar = waitbar(0,"Dealing with those naughty indents"); % Creates a progress bar
 waitbar_count = 0; % Count variable for waitbar
 for indent = [naughty_indents_list] % For through each naughty indent
     waitbar_count = waitbar_count + 1 % Increment for loop count for wait bar
@@ -36,10 +36,10 @@ end
 close(progress_bar); % Close wait bar
 updated_main_data_struct = load_displacement_data; % Rename struct for function output
 
-Important_Popup = imread("Importantpopup2.png");
-figure(figure);
-imshow(Important_Popup);
-pause(5);
-close all;
+% Important_Popup = imread("Importantpopup2.png");
+% figure(figure);
+% imshow(Important_Popup);
+% pause(5);
+% close all;
 
 end
