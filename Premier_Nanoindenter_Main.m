@@ -139,22 +139,22 @@ end
 %% Calling Oliver and Parr Methods
 if hannah_oliver_parr == "yes"
     [main_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,updated_main_data_struct,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list);
-else if hannah_oliver_parr == "no"
-        [main_data_struct] = premier_method(base_file_directory,updated_main_data_struct); % will read indent index to get correct data set
-    end
+% else if hannah_oliver_parr == "no"
+%         [main_data_struct] = premier_method(base_file_directory,updated_main_data_struct); % will read indent index to get correct data set
+%     end
 end
 
 %% Calculating values not directly taken from the raw data, e.g. stiffness squared divided by load
 if calculate_extra_values == "yes"
     [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,updated_main_data_struct,main_data_struct,naughty_indents_list,red_indents_list);
 else if calculate_extra_values == "no"
-        final_main_data_struct=main_data_struct;
+        final_main_data_struct = main_data_struct;
     end
 end
 
 %% Calling pop-in code
 if popin_fitting == "yes"
-    [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list);
+    [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,final_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list);
 else if popin_fitting == "no"
     end
 end
@@ -172,28 +172,28 @@ output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Genera
 mkdir (output_file_directory); % Creates output folder in base path
 % 
 % % Firstly the histograms
-% [Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",output_file_directory);
-% [Figure2_Youngs_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
-% [Figure3_Reduced_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
-% % [Figure4_Stiffness_Histogram] = histogramfunction(updated_main_data_struct,"Stiffness",output_file_directory);
-% [Figure5_Hardness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Hardness",output_file_directory);
-% [Figure6_Youngs_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
-% [Figure7_Reduced_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
-% % [Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Stiffness",output_file_directory);
-% updated_main_data_struct=final_main_data_struct;
+% [Figure1_Hardness_Histogram] = histogramfunction(final_main_data_struct,"Hardness",output_file_directory);
+% [Figure2_Youngs_Modulus_Histogram] = histogramfunction(final_main_data_struct,"Youngs_Modulus",output_file_directory);
+% [Figure3_Reduced_Modulus_Histogram] = histogramfunction(final_main_data_struct,"Reduced_Modulus",output_file_directory);
+% % [Figure4_Stiffness_Histogram] = histogramfunction(final_main_data_struct,"Stiffness",output_file_directory);
+% [Figure5_Hardness_Histogram_Zoom] = histogramfunction_zoom(final_main_data_struct,"Hardness",output_file_directory);
+% [Figure6_Youngs_Modulus_Histogram_Zoom] = histogramfunction_zoom(final_main_data_struct,"Youngs_Modulus",output_file_directory);
+% [Figure7_Reduced_Modulus_Histogram_Zoom] = histogramfunction_zoom(final_main_data_struct,"Reduced_Modulus",output_file_directory);
+% % [Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(final_main_data_struct,"Stiffness",output_file_directory);
+
 % % % Secondly the heat maps
-% [Figure9_Hardness_Map] = heatmaps(updated_main_data_struct,"Hardness",output_file_directory);
-% [Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
-% [Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
-% [Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
-% [Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
-% [Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
-% [Figure15_Surface_Displacement_Map] = heatmaps(updated_main_data_struct,"Surface_Displacement",output_file_directory);
-% [Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
-% [Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Sqaured_Divided_By_Load",output_file_directory);
+% [Figure9_Hardness_Map] = heatmaps(final_main_data_struct,"Hardness",output_file_directory);
+% [Figure10_Youngs_Modulus_Map] = heatmaps(final_main_data_struct,"Youngs_Modulus",output_file_directory);
+% [Figure11_Reduced_Modulus_Map] = heatmaps(final_main_data_struct,"Reduced_Modulus",output_file_directory);
+% [Figure12_Stiffness_Map] = heatmaps(final_main_data_struct,"Stiffness",output_file_directory);
+% [Figure13_Maximum_Load_Map] = heatmaps(final_main_data_struct,"Maximum_Load",output_file_directory);
+% [Figure14_Maximum_Displacement_Map] = heatmaps(final_main_data_struct,"Maximum_Displacement",output_file_directory);
+% [Figure15_Surface_Displacement_Map] = heatmaps(final_main_data_struct,"Surface_Displacement",output_file_directory);
+% [Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(final_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
+% [Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(final_main_data_struct,"Stiffness_Sqaured_Divided_By_Load",output_file_directory);
 %  
 % % Thirdly the dodgy indents treasure map
-% [Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,amber_indents_list,red_indents_list,output_file_directory);
+% [Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(final_main_data_struct,amber_indents_list,red_indents_list,output_file_directory);
 % % 
 % % %% Generating output workspace to be compatible with XPCorrelate
 % % % [workspace_output] = conversion(updated_main_data_struct);
