@@ -17,22 +17,23 @@ addpath Side_Quests
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "D:\premier\week4HT\x80sample130702\";
+% Strpmg
+base_file_directory = "C:\Users\mans3584\Documents\Example_Mapping_Data\";
 
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "automated_indentation_grid_array";
+mapping_type = "xpm_indentation_map";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 7;
-columns = 7;
+rows = 3;
+columns = 3;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 10;
+spacing = 45;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -73,10 +74,6 @@ negative_displacement_tolerance = 20;
 minimum_load_tolerance = 5;
 maximum_displacement_tolerance = 700;
 
-% Specify here whether you want to calculate some additional values like
-% Hardness/Modulus, etc. with the final results using "yes" or "no"
-calculate_extra_values = "no";
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% This next section is for advanced users: only edit if you know what you are doing - see documentation
@@ -96,7 +93,7 @@ cutofunloadingbottomlim = 0.25;
 
 % Specify here whether you want to use the popin decting code using "yes" 
 % or "no"
-popin_fitting = "yes";
+popin_fitting = "no";
 
 % Fitting parameter for popin_fitting - see documentation if want to
 % change these pararmeters
@@ -124,6 +121,7 @@ warning('off','curvefit:fittype:sethandles:xMustBePositive')
 
 %% Calling main data import function
 % load_displacement_data is a data struct and amber/red_indents_list is a list of indent indices (where indent numbering starts at zero)
+% Note need to get Maximum Load, Maximum Displacement, Surface Displacement values from these too
 if mapping_type == "xpm_indentation_map"
     [load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Mapping_Data_Import(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,negative_displacement_tolerance,minimum_load_tolerance);
     disp("XPM Indentation Data Successfully Imported.")
@@ -136,27 +134,23 @@ end
 %% Dealing with dodgy indents (writes new struct with NaN values - old struct still available for comparison)
 % Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
 % Note new struct generated so originally dodgy data without NaN can also be viewed for debugging
-[updated_main_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy);
+[updated_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy);
 
 %% Calling Oliver and Parr Methods
 if hannah_oliver_parr == "yes"
-    [main_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,updated_main_data_struct,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list);
+    [updated_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,updated_data_struct,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list,minimum_load_tolerance);
 else if hannah_oliver_parr == "no"
-        [main_data_struct] = premier_method(base_file_directory,updated_main_data_struct); % will read indent index to get correct data set
+        [updated_data_struct] = premier_method(base_file_directory,updated_data_struct); % will read indent index to get correct data set
     end
 end
 
 %% Calculating values not directly taken from the raw data, e.g. stiffness squared divided by load
-if calculate_extra_values == "yes"
-    [final_main_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,updated_main_data_struct,main_data_struct,naughty_indents_list,red_indents_list);
-else if calculate_extra_values == "no"
-        final_main_data_struct=main_data_struct;
-    end
-end
+% Shouldn't need red list from this point, only naughty
+[updated_data_struct,naughty_indents_list,red_indents_list] = calculationsofotherusefulvalues(base_file_directory,updated_data_struct,naughty_indents_list,red_indents_list); 
 
 %% Calling pop-in code
 if popin_fitting == "yes"
-    [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh)
+    [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,updated_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh);
 else if popin_fitting == "no"
     end
 end
@@ -169,33 +163,37 @@ else if CMX_fitting == "no"
     end
 end
 
-% %% Generating outputs and saving them to file
-output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
+%% Generating outputs and saving them to file
+% Need to add time and date to name so not overwrite. Will add generation
+% of text file with parameters above also
+output_file_directory = strcat((base_file_directory),"Figure_Outputs\"); % Generates path for output folder
 mkdir (output_file_directory); % Creates output folder in base path
+
+% Need to update these outputs to deal with bundle gaps (i.e. put white
+% space rather than blend)
+% Firstly the histograms
+% [Figure1_Hardness_Histogram] = histogramfunction(updated_data_struct,"Hardness",output_file_directory);
+% [Figure2_Youngs_Modulus_Histogram] = histogramfunction(updated_data_struct,"Youngs_Modulus",output_file_directory);
+% [Figure3_Reduced_Modulus_Histogram] = histogramfunction(updated_data_struct,"Reduced_Modulus",output_file_directory);
+% [Figure4_Stiffness_Histogram] = histogramfunction(updated_data_struct,"Stiffness",output_file_directory);
+% [Figure5_Hardness_Histogram_Zoom] = histogramfunction_zoom(updated_data_struct,"Hardness",output_file_directory);
+% [Figure6_Youngs_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_data_struct,"Youngs_Modulus",output_file_directory);
+% [Figure7_Reduced_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_data_struct,"Reduced_Modulus",output_file_directory);
+% [Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(updated_data_struct,"Stiffness",output_file_directory);
 % 
-% % Firstly the histograms
-% [Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",output_file_directory);
-% [Figure2_Youngs_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
-% [Figure3_Reduced_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
-% % [Figure4_Stiffness_Histogram] = histogramfunction(updated_main_data_struct,"Stiffness",output_file_directory);
-% [Figure5_Hardness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Hardness",output_file_directory);
-% [Figure6_Youngs_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
-% [Figure7_Reduced_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
-% % [Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Stiffness",output_file_directory);
-% updated_main_data_struct=final_main_data_struct;
-% % % Secondly the heat maps
-% [Figure9_Hardness_Map] = heatmaps(updated_main_data_struct,"Hardness",output_file_directory);
-% [Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
-% [Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
-% [Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
-% [Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
-% [Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
-% [Figure15_Surface_Displacement_Map] = heatmaps(updated_main_data_struct,"Surface_Displacement",output_file_directory);
-% [Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
-% [Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Sqaured_Divided_By_Load",output_file_directory);
-%  
-% % Thirdly the dodgy indents treasure map
-% [Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,amber_indents_list,red_indents_list,output_file_directory);
-% % 
-% % %% Generating output workspace to be compatible with XPCorrelate
-% % % [workspace_output] = conversion(updated_main_data_struct);
+% % Secondly the heat maps
+[Figure9_Hardness_Map] = heatmaps(updated_data_struct,"Hardness",output_file_directory);
+[Figure10_Youngs_Modulus_Map] = heatmaps(updated_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure11_Reduced_Modulus_Map] = heatmaps(updated_data_struct,"Reduced_Modulus",output_file_directory);
+[Figure12_Stiffness_Map] = heatmaps(updated_data_struct,"Stiffness",output_file_directory);
+[Figure13_Maximum_Load_Map] = heatmaps(updated_data_struct,"Maximum_Load",output_file_directory);
+[Figure14_Maximum_Displacement_Map] = heatmaps(updated_data_struct,"Maximum_Displacement",output_file_directory);
+[Figure15_Surface_Displacement_Map] = heatmaps(updated_data_struct,"Surface_Displacement",output_file_directory);
+[Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
+%[Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory);
+ 
+% Thirdly the dodgy indents treasure map
+[Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_data_struct,amber_indents_list,red_indents_list,output_file_directory);
+
+%% Generating output workspace to be compatible with XPCorrelate and generate excel output
+conversion(updated_data_struct,output_file_directory);
