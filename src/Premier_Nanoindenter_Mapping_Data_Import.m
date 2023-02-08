@@ -385,7 +385,7 @@ for indent_loop = 1:non_overlapping_indents_count % For count through each remai
     waitbar(completion_fraction); % Updates progress bar
     load_data_test = non_overlapping_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all load data for indent
     minimum_load_test = min(load_data_test(20:end)); % Excludes first few points in case those are also negative
-    if minimum_load_test > minimum_load_tolerance % If minimum displacement below threshold for bad data %HC fudge editted 3
+    if minimum_load_test > minimum_load_tolerance % If minimum displacement below threshold for bad data
         red_indents_list(end+1) = non_overlapping_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
         non_overlapping_load_displacement(indent_loop).Error_Code = strcat("Red: Load does not drop below ",string(minimum_load_tolerance)," um when unloading."); % Writes error code to struct
     end
