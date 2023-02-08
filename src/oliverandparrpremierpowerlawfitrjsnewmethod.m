@@ -1,4 +1,4 @@
-function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
+function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list,minimum_load_tolerance)
 
 %     %code for importing the data for the displacement and load
 %     %https://www.sciencedirect.com/topics/engineering/oliver-pharr-method
@@ -100,7 +100,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 %         try %dodgy indent for when it doesn't go below zero
         unloadingP=P(Pmaxindex:noofdatappoint); %extracting the unloading section of load
         unloadingh=h(Pmaxindex:noofdatappoint); % extracting the unloading section of load
-        Pintercept = find(unloadingP < 0); %find the point where load is below zero %HC fudge editted 
+        Pintercept = find(unloadingP < minimum_load_tolerance); %find the point where load is below zero
         findinghf=unloadingh(Pintercept); %from the index of the points where load is less than zero
         hf=max(findinghf); %find the maximum point of this array in order to extract the fitting parameter hf
 %     hf=min(unloadingh);
