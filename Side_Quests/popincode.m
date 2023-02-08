@@ -8,6 +8,7 @@ noofindents=length([load_displacement_data.Indent_Index]);
   fig2=figure;
   fig3=figure;
   fig4=figure;
+  fig5=figure;
 for i=0:noofindents-1 % loop for each of the indents with zero corrections
        fprintf(repmat('\b',1,nbytes)) % Changing number display
     nbytes = fprintf('Processing indent %d.', i); % Changing number display
@@ -29,12 +30,12 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         
         numberofpoints=numel(h);
 
-         maximumh=max(h);
-        if maximumh > 700 %unhard code this
-    valuesofpopinPsaving(j,1)= NaN;
-            continue
-          
-        end
+%          maximumh=max(h);
+%         if maximumh > 700 %unhard code this
+%     valuesofpopinPsaving(j,1)= NaN;
+%             continue
+%           
+%         end
 
    % loading section of curve
 
@@ -110,7 +111,6 @@ valuesofpopinPsaving(valuesofpopinPsaving == 0) = NaN;
 catch
 valuesofpopinPsaving(j,1)= NaN;
 end
-
 
 
 %    %finding pop-ins from displacement
@@ -214,10 +214,32 @@ end
 %         valuesofpopinPsavingsmooth(j,(differencevaluessmooth+1))=NaN;
 %     end    
 % end
+figure(fig5)
+ title 'Pop-in load against indent number'
+ ylabel 'Pop-in load (uN)'
+ xlabel 'Indent number'
+ 
+
+if isnan(valuesofpopinPsaving(j,1)) 
+    figure(fig5)
+    y=0;
+    plot(i,y, "red o")
+    hold on
+else
+    figure(fig5)
+    plot(i,valuesofpopinPsaving(j,:), "black x");
+    hold on
+
+end
+legend 'Marker for no indents' 'Pop-in'
+ylim ([0 150])
+
 popinfitting=valuesofpopinPsaving;
     end
 end
 close(progress_bar) % Closes progress bar
+
+
 
 
 valuesofpopinPsavingvector = valuesofpopinPsaving(:);
@@ -250,6 +272,7 @@ xline(popinlimmean,"red");
 xline(popinlimmedian, "blue")
 hold off
 
+    
 
 disp(strcat("Total frequency of Pop-ins is ", string(frequencyofpopins)));
 disp(strcat("Frequency of Pop-ins above ", string(cutofflow)," uN and below ", string(cutoffhigh), " uN is " , string(frequencyofpopinslimited)));
