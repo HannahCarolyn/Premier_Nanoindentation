@@ -5,7 +5,6 @@ close all
 addpath src
 addpath Side_Quests
 
-
 % The aim of this script is to input all Bruker Premier nanoindentation data, 
 % provide basic plots of hardness, modulus, etc. using Oliver and Parr methods 
 % and provide an output format of data that can be used directly into Chris 
