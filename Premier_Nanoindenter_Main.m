@@ -48,11 +48,17 @@ column_overlap = 0;
 % these are excluded, an average of the surrounding indents will be used
 % when plotting any data. If these are not excluded, you will need to
 % manually edit the colour bar on the output figures so they are not
-% swamped with these outlier results; if there are indents present that are
-% likely to break the code when applying calculations, these will 
-% automatically be exluded and are described as a red error code - other 
-% dodgy indents that do not break the code are described as an amber error 
-% code and can be toggled using this exclude_dodgy;
+% swamped with these outlier results; please note:
+% - If using Hannah's Oliver and Parr calculations: If there are indents 
+%   present that are likely to break the code when applying Oliver and Parr 
+%   calculations, these will automatically be exluded and are described as 
+%   a red error code - other dodgy indents that do not break the code are 
+%   described as an amber error code and can be toggled using this 
+%   exclude_dodgy. 
+% - If you are just going to use the Premier calculated values: The premier
+%   is able to calculate values whether the indents have a amber or red
+%   error so exclude_dodgy will in this case be used to toggle on/off both
+%   the red and amber errored indents
 exclude_dodgy = "no";
 
 % Edit these numbers to determine how an indent gets described as a red or
@@ -82,7 +88,8 @@ maximum_displacement_tolerance = 700;
 hannah_oliver_parr = "yes";
 
 % Fitting parameter for hannah_oliver_parr - see documentation if want to
-% change these pararmeters
+% change these pararmeters; note samplepossionratio also used in premier
+% method for calculating Youngs Modulus from Reduced Modulus
 epsilon = 0.75;
 samplepossionratio = 0.3;
 tolerance = 0.007;
@@ -132,14 +139,15 @@ end
 
 %% Dealing with dodgy indents (writes new struct with NaN values - old struct still available for comparison)
 % Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
+% Note if not using Hannah's Oliver and Parr methods, red errors are not an issue so if exclude_dodgy is no, the naughty list is cleared
 % Note new struct generated so originally dodgy data without NaN can also be viewed for debugging
-[updated_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy);
+[updated_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy,hannah_oliver_parr);
 
 %% Calling Oliver and Parr Methods
 if hannah_oliver_parr == "yes"
     [updated_data_struct,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,updated_data_struct,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list,minimum_load_tolerance);
 else if hannah_oliver_parr == "no"
-        [updated_data_struct] = premier_method(base_file_directory,updated_data_struct); % will read indent index to get correct data set
+        [updated_data_struct] = premier_method(base_file_directory,updated_data_struct,mapping_type,naughty_indents_list,samplepossionratio); % will read indent index to get correct data set and will ignore naughty list ones
     end
 end
 
