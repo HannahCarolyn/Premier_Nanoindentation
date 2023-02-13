@@ -1,4 +1,4 @@
-function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
+function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrmappingversion(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
 
 %     %code for importing the data for the displacement and load
 %     %https://www.sciencedirect.com/topics/engineering/oliver-pharr-method
@@ -260,8 +260,3 @@ Important_Popup= imread("Importantpopup.png");
 imshow(Important_Popup);
 
 end % Function end
-
-
-
-
-

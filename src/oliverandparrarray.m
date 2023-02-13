@@ -1,4 +1,4 @@
-function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrpremierpowerlawfitrjsnewmethod(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
+function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrarray(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
 
 %     %code for importing the data for the displacement and load
 %     %https://www.sciencedirect.com/topics/engineering/oliver-pharr-method
@@ -75,7 +75,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         indentsnostring= sprintf('indent_%04d',i); %string of the field name
 %         h=load_displacement_data.(indentsnostring)(:,1);%extracting displacement data from the array (nm)
 %         P=(load_displacement_data.(indentnostring)(:,2)); %extracting load data from the array (uN)
-        loading_P_h_data=load_displacement_data(j).UnloadingSegment;
+        loading_P_h_data=load_displacement_data(j).Displacement_Load_Data;
         h=loading_P_h_data(:,1);
         P=loading_P_h_data(:,2);
         maximumh=max(h);
@@ -89,25 +89,23 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     % finding the unloading segment by finding when the gradient is below a
     % tolerance and then taking the max value of this index
 %     
-% %     tolerance=0.01; %put back in for the CMX indents
-%         index = find( abs(gradient(P)) < tolerance );
-%         noofdatappoint=numel(P);
-% %     cutofdatavalue=0.95;
-%         limit=round(noofdatappoint*cutofdatavalue); %The user may want to edit this value
-%         indexcatch= find(index < limit);
-%         index =index(indexcatch);
-%         Pmaxindex=max(index);
-%         saving_Pmaxindex(j,1)=Pmaxindex;
+%     tolerance=0.01; 
+        index = find( abs(gradient(P)) < tolerance );
         noofdatappoint=numel(P);
-        Pmaxindex=1;
+%     cutofdatavalue=0.95;
+        limit=round(noofdatappoint*cutofdatavalue); %The user may want to edit this value
+        indexcatch= find(index < limit);
+        index =index(indexcatch);
+        Pmaxindex=max(index);
+        saving_Pmaxindex(j,1)=Pmaxindex;
+        
     
 %         try %dodgy indent for when it doesn't go below zero
         unloadingP=P(Pmaxindex:noofdatappoint); %extracting the unloading section of load
         unloadingh=h(Pmaxindex:noofdatappoint); % extracting the unloading section of load
-%         Pintercept = find(unloadingP < 5); %find the point where load is below zero %HC fudge editted 
-%         findinghf=unloadingh(Pintercept); %from the index of the points where load is less than zero
-%         hf=max(findinghf); %find the maximum point of this array in order to extract the fitting parameter hf
-        hf=unloadingh(end);
+        Pintercept = find(unloadingP < 0); %find the point where load is below zero %HC fudge editted 
+        findinghf=unloadingh(Pintercept); %from the index of the points where load is less than zero
+        hf=max(findinghf); %find the maximum point of this array in order to extract the fitting parameter hf
         unloadinghminushf=unloadingh-hf; %this is value needed for the power law fit
         savinghf(j,1)= hf;
 %         catch

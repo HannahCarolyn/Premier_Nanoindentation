@@ -1,9 +1,9 @@
-function [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,load_displacement_data,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh)
+function [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh)
 close all
 
     progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
 nbytes = fprintf('Processing indent 0.'); % Initialising changing number display
-noofindents=length([load_displacement_data.Indent_Index]);
+noofindents=length([updated_main_data_struct.Indent_Index]);
  fig1=figure;
   fig2=figure;
   fig3=figure;
@@ -15,7 +15,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     j=i+1; % correcting zero problem when putting data into the arrays
     completion_fraction = i/(noofindents-1); % Calculates fraction for progress bar
         waitbar(completion_fraction); % Updates progress bar
-    if ismember(load_displacement_data(j).Indent_Index,naughty_indents_list) % Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
+    if ismember(updated_main_data_struct(j).Indent_Index,naughty_indents_list) % Note naughty list always contains red error indents, but only contains amber indents if user says so using exclude_dodgy
       % Do nothing
     else
     
@@ -23,12 +23,12 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
      dataabovezero=[];
     
         indentsnostring= sprintf('indent_%04d',i); %string of the field name
-        loading_P_h_data=load_displacement_data(j).Displacement_Load_Data;
+        loading_P_h_data=updated_main_data_struct(j).Loadingsegment;
 
-        h=loading_P_h_data(:,1);
-        P=loading_P_h_data(:,2);
+        loadingh=loading_P_h_data(:,1);
+        loadingP=loading_P_h_data(:,2);
         
-        numberofpoints=numel(h);
+        %numberofpoints=numel(h);
 
 %          maximumh=max(h);
 %         if maximumh > 700 %unhard code this
@@ -40,18 +40,21 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
    % loading section of curve
 
 
+% 
+%     tolerance=0.01; 
+%     index = find( abs(gradient(P)) < tolerance );
+%     noofdatappoint=numel(P);
+%     limit=round(noofdatappoint*0.95); %unhard code this
+%     indexcatch= find(index < limit);
+%     index =index(indexcatch);
+%     Pmaxindex=max(index);
+%     saving_Pmaxindex(j,1)=Pmaxindex;
+%         loadingP=P(1:Pmaxindex); %extracting the loading section of load
+%     loadingh=h(1:Pmaxindex); % extracting the loading section of load
+     
+loadingPabovezeroindex= find(loadingP >0);
 
-    tolerance=0.01; 
-    index = find( abs(gradient(P)) < tolerance );
-    noofdatappoint=numel(P);
-    limit=round(noofdatappoint*0.95); %unhard code this
-    indexcatch= find(index < limit);
-    index =index(indexcatch);
-    Pmaxindex=max(index);
-    saving_Pmaxindex(j,1)=Pmaxindex;
-        loadingP=P(1:Pmaxindex); %extracting the loading section of load
-    loadingh=h(1:Pmaxindex); % extracting the loading section of load
-    loadingPabovezeroindex= find(loadingP >1);
+
     loadingPabovezero=loadingP(loadingPabovezeroindex);
     loadinghabovezero=loadingh(loadingPabovezeroindex);
     dataabovezero(:,1)=loadingPabovezero;
@@ -78,9 +81,9 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
 %finding pop-ins from displacement
 figure(fig4)
-changeindisp=diff(loadinghabovezero);
+changeindisp=diff(smoothloadinghabovezero);
 changeindisp(end+1)=NaN;
-plot(loadinghabovezero,changeindisp);
+plot(smoothloadinghabovezero,changeindisp);
 hold on
 xlabel 'displacement (nm)'
 ylabel 'Change in displacment'
@@ -91,8 +94,8 @@ no_of_popinindex=numel(popindex);
 
  for popin=1:1:no_of_popinindex
 popin_index=popindex(popin);
-popinP=smoothloadingPabovezero(popin_index);
-popinh=smoothloadinghabovezero(popin_index);
+popinP=loadingP(popin_index);
+popinh=loadingh(popin_index);
 values_of_popin(popin,1)= popin_index;
 values_of_popin(popin,2)= popinP;
 values_of_popin(popin,3)= popinh;
@@ -232,7 +235,7 @@ else
 
 end
 legend 'Marker for no indents' 'Pop-in'
-ylim ()
+ylim ([0 150])
 
 popinfitting=valuesofpopinPsaving;
     end
