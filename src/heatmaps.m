@@ -9,12 +9,14 @@ heatmap_variable=[struct.(Output_Type)].'; %These are transposed as the code was
 X=[struct.(X_Coordinate)].'; 
 Y=[struct.(Y_Coordinate)].';
 
-for letter=1:length(Output_Type) %for formatting purposes
-     if Output_Type(letter)== '_'
-         Output_Type(letter)= ' ';
-     end
- 
- end
+% for letter=1:length(Output_Type) %for formatting purposes
+%      if Output_Type(letter)== '_'
+%          Output_Type(letter)= ' ';
+%      end
+%  
+%  end
+output_type_seperate=strsplit(Output_Type,"_");
+output_type_space=strjoin(output_type_seperate," ");
 
 spacing=X(2,1)-X(1,1);
 column_number=1+(max(X)/spacing); %this calculates the number of indents in x 
@@ -44,6 +46,7 @@ end
 % %% 
 % 
  
+
  colour_count=45; %this can be changed to alter the number of levels in the colour map - CMM used 45
  heat_map=contourf(x_coord, y_coord ,heatmap_by_coord, colour_count,'LineColor','None'); 
  %specifies the x and y coordinates for the values in the variable
@@ -51,22 +54,27 @@ end
  %1 unit)
  
  c=colorbar;
- c.Label.String = strcat(Output_Type, ' units'); % units (GPa?)???
+ c.Label.String = strcat(output_type_space, ' units'); % units (GPa?)???
  xlabel('X in microns')
  ylabel('Y in microns')
  set(gca,'DataAspectRatio',[1 1 1])
- title(strcat(Output_Type, ' heat map'), 'FontSize', 14) 
+ title(strcat(output_type_space, ' heat map'), 'FontSize', 14) 
  
+
  
- file_name=strcat(output_file_directory, Output_Type, '_heatmap.fig'); %save it
- savefig(file_name)
- % 
- heatmapfigs=openfig(file_name); %the function should open it
+file_name_fig=strcat(output_file_directory,'\', Output_Type, '_heatmap.fig'); %save it
+file_name_png=strcat(output_file_directory,'\',Output_Type,'_heatmap.png');
+
+print(gcf,file_name_png,'-dpng','-r600');
+savefig(gcf,file_name_fig);
+%  savefig(file_name)
+%  % 
+heatmapfigs=openfig(file_name_fig); %the function should open it
  
- for letter=1:length(Output_Type) %rewrite so no spaces for future code/functions
-     if Output_Type(letter)== ' '
-         Output_Type(letter)= '_';
-     end
- end
+%  for letter=1:length(Output_Type) %rewrite so no spaces for future code/functions
+%      if Output_Type(letter)== ' '
+%          Output_Type(letter)= '_';
+%      end
+%  end
  
  end 
