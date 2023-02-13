@@ -3,8 +3,8 @@
 
 * Need to add note about check of column headers in these files
 
-Within your base directory, have five folders named: Area_Function, Coordinate_Data, Indent_Data,
-Load_Function, Premier_Calculated_Data.
+Within your base directory, have five folders named: Area_Function, Continuous_Data, Coordinate_Data or Dynamic_Data, Indent_Data,
+Load_Function, Premier_Calculated_Data. This all needs rewriting
 
 Inside the Area_Function folder you should have a single file created from the tip calibration
 on the Hysitron Triboscan software. Change the file extension of this file from .ara to .txt in
@@ -28,11 +28,10 @@ in the XPM analysis sub-tab in the Hysitron Triboscan software. You may rename t
 but ensure the alphabetical order of the files remains the same. These files contain the express 
 mapping coordinates.
 
-If using basic automated grid array data, the Coordinate_Data file should contain the .txt file
+If using basic automated grid array data, the Dynamic_Data file should contain the .txt file
 that is auto-saved (user is asked where it is saved) when loading multiple curve analysis in the
-quasi analysis sub-tab in the Hysitron Triboscan software. This file is not currently used in the 
-input deck as basic automated grid array data coordinates are generated automatically, but save 
-this anyway in case the code is changed and the file is used at a later date.
+quasi analysis sub-tab in the Hysitron Triboscan software. These files can have any name, but 
+make sure alphabetical order corresponds to the indent order.
 
 Within the Load_Function folder you should copy across the load function file that was created
 when setting up the XPM indents. Change the file extension from .ldf to .txt. Again the file

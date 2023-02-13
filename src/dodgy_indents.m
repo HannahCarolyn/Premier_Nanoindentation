@@ -1,8 +1,8 @@
-function [updated_main_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy)
+function [updated_main_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy,hannah_oliver_parr)
 
-%% Firstly, get correct naughty list
+%% Firstly, get correct bad indents list
 
-naughty_indents_list = []; % Create empty naughty list
+naughty_indents_list = []; % Create empty bad indents list (ones to be excluded from calculations and plots)
 if exclude_dodgy == "no" % If amber indents not to be excluded from calculations, only put red indents on naughty list
     naughty_indents_list = red_indents_list;
 else if exclude_dodgy == "yes" % If amber indents to be included
@@ -13,6 +13,9 @@ else if exclude_dodgy == "yes" % If amber indents to be included
     end
 end
 naughty_indents_list = sort(naughty_indents_list); % Put list in order of indent indices
+if hannah_oliver_parr == "no" && exclude_dodgy == "no" % If not using Hannah's Oliver and Parr method, and not wanting to exclude dodgy, Premier not restricted by red indents, so list will be cleared
+    naughty_indents_list = []; % Clears list
+end
 
 %% Secondly write NaN in struct where naughty
 
@@ -35,11 +38,5 @@ for indent = [naughty_indents_list] % For through each naughty indent
 end
 close(progress_bar); % Close wait bar
 updated_main_data_struct = load_displacement_data; % Rename struct for function output
-
-% Important_Popup = imread("Importantpopup2.png");
-% figure(figure);
-% imshow(Important_Popup);
-% pause(5);
-% close all;
 
 end
