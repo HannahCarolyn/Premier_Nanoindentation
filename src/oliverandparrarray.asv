@@ -80,7 +80,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         
    % plot the raw data
         figure(fig1);
-        plot(h,P,"black")
+        plot(h,P,"black x")
         ylabel("Load (uN)")
         xlabel("displacment (nm)")
         hold on
@@ -101,7 +101,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 %         try %dodgy indent for when it doesn't go below zero
         unloadingP=P(Pmaxindex:noofdatappoint); %extracting the unloading section of load
         unloadingh=h(Pmaxindex:noofdatappoint); % extracting the unloading section of load
-        Pintercept = find(unloadingP < 0); %find the point where load is below zero %HC fudge editted 
+        Pintercept = find(unloadingP < 10); %find the point where load is below zero %HC fudge editted 
         findinghf=unloadingh(Pintercept); %from the index of the points where load is less than zero
         hf=max(findinghf); %find the maximum point of this array in order to extract the fitting parameter hf
         unloadinghminushf=unloadingh-hf; %this is value needed for the power law fit
@@ -202,11 +202,10 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
      %plotting the gradient line
 %      c=Pmax-(S*hmax);
 %     lineplot=(S*h)+c;
-%        figure(fig1)
-%        hfindex=find(unloadingh == hf);
-%        pf=unloadingP(hfindex);
-%        plot(hf,pf,"red o")
-%        hold on
+       (fig1)
+       unloadingh(hfindex)
+       plot(hf,Pf,"red o")
+       holdon
 %      plot(h,lineplot,"red :",LineWidth=1.2);
 %      Pmaxrange= Pmax+200;
 %      ylim([0 Pmaxrange])
@@ -252,6 +251,7 @@ for rowhc=1:length(values_of_H_and_E(:,1))
 end
     end
 end
+ 
 Fitting=load_displacement_data;
 close(progress_bar); % Closes progress bar
 figure(fig3);

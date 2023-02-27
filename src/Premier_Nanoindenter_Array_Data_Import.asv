@@ -25,6 +25,27 @@ end
 
 close(progress_bar) % Closes progress bar
 
+%% Coordinate Data
+        premier_data_locations = strcat(base_file_directory,"Premier_Analysis"); % Gets the full folder path for the premier data (same file as coordinates)
+        folder_info = dir(fullfile(premier_data_locations, '/*.txt')); % Gets a list of file properties within the folder
+
+        progress_bar = waitbar(0,"Importing Coordinate Data"); % Creates a progress bar
+
+        for file_loop = 1:1:initial_number_of_data % For count through number of indents in folder (note all indents are used so no need to bother with indent indices)
+                completion_fraction = file_loop/initial_number_of_data; % Calculates fraction for progress bar
+                waitbar(completion_fraction); % Updates progress bar
+                file_name = folder_info.name;
+                full_file_name = fullfile(premier_data_locations, file_name); % Extract file name (including path) for each indent
+                full_input = importdata(full_file_name); % Extracts contents of file as struct depending on data structure
+                data_input = full_input.data; % Selects only the numerical data
+                
+              
+                original_load_displacement(file_loop).X_Coordinate = data_input(file_loop,12); % NaN each value for this indent
+                original_load_displacement(file_loop).Y_Coordinate = data_input(file_loop,13);
+
+            end
+        end
+
 %% Calculate zeroed coordinates
 
 if initial_number_of_data ~= (rows*columns) % Quick check if rows and columns consistent with files
@@ -109,35 +130,16 @@ number_dodgy = length(new_red_indents_list);
 disp(strcat("Number of dodgy indents in red category due to maximum displacement being above ",string(maximum_displacement_tolerance)," um, i.e. missing surface error, is ",string(number_dodgy)," indents."))
 
 %% Zero the displacement data based on loading curve
+% Note not needed for basic array. Surface displacement not relevant so will be set to NaN for all values
 
-% progress_bar = waitbar(0,"Zeroing Displacement from Loading Curve"); % Creates a progress bar
-% zeroed_load_displacement = original_load_displacement;
-% for indent_loop = 1:initial_number_of_data % For count through each remaining indent
-%     completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
-%     waitbar(completion_fraction); % Updates progress bar
-%     indent_displacement_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,1); % Gets all displacement data for indent
-%     indent_load_data = original_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all displacement data for indent
-%     new_displacement_data = []; % List for storing new displacement data
-%     new_data = []; % Create list for storing new displacement_load_data
-%     maximum_indent_displacement = max(indent_displacement_data); % Finds maximum displacement for indent
-%     maximum_index = find(indent_displacement_data == maximum_indent_displacement); % Finds index in list where maximum displacement occured
-%     indent_displacement_data_loading = indent_displacement_data(1:maximum_index); % Appends loading displacement values
-%     minimum_indent_displacement_loading = min(indent_displacement_data_loading); % Round mimimum loading displacement up so able to interp
-%     new_displacement_data = indent_displacement_data - minimum_indent_displacement_loading;
-%     new_data(:,1) = new_displacement_data; % Append all new data to new list
-%     new_data(:,2) = indent_load_data;
-%     zeroed_load_displacement(indent_loop).Displacement_Load_Data = []; % Delete old data from struct
-%     zeroed_load_displacement(indent_loop).Displacement_Load_Data = new_data; % Write new interpolated data to struct
-% end
-
-close(progress_bar) % Close progress bar
+for indent_loop = 1:initial_number_of_data
+    original_load_displacement(indent_loop).Surface_Displacement = NaN;
+end
 
 %% Return values from function
 
-final_load_displacement_data = zeroed_load_displacement; % Rewrite struct for function output
+final_load_displacement_data = original_load_displacement; % Rewrite struct for function output
 amber_indents_list;
 red_indents_list;
 
 end
-
-% 179 lines total 04/01/2023
