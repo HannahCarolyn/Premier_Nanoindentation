@@ -1,4 +1,4 @@
-function conversion(updated_main_data_struct,output_conversion_file_directory)
+function conversion(updated_main_data_struct,output_file_directory)
 
 %% Getting required info and setting up 3D arrays
 
@@ -56,44 +56,44 @@ for x_coordinate_index = 1:length(possible_x_coordinates) % Loop through each po
     for y_coordinate_index = 1:length(possible_y_coordinates) % Loop through each possible y coordinate
         y_coordinate = possible_y_coordinates(y_coordinate_index); % Notes current y coordinate
         y_coordinate_find_indices = find(all_y_coordinates == y_coordinate,number_of_data); % Find indent indices corresponding to y coordinate
-     % try % Try used in case gap in data in which case indent coordinate pair not exist 
+      try % Try used in case gap in data in which case indent coordinate pair not exist 
             indent_field_index = intersect(x_coordinate_find_indices,y_coordinate_find_indices); % Finds the specific indent of the current x,y coordinates based on struct field number (not indent number)
             % Writes values in correct order in fullres for CMM XPCorrelate
-            fullres(x_coordinate_index,y_coordinate_index,1) = NaN; %updated_main_data_struct(indent_field_index).Surface_Displacement;
+            fullres(x_coordinate_index,y_coordinate_index,1) = updated_main_data_struct(indent_field_index).Surface_Displacement;
             fullres(x_coordinate_index,y_coordinate_index,2) = updated_main_data_struct(indent_field_index).Maximum_Displacement;
             fullres(x_coordinate_index,y_coordinate_index,3) = updated_main_data_struct(indent_field_index).Maximum_Load;
             fullres(x_coordinate_index,y_coordinate_index,4) = updated_main_data_struct(indent_field_index).Youngs_Modulus;
-            fullres(x_coordinate_index,y_coordinate_index,5) = updated_main_data_struct(indent_field_index).Stiffness_Squared_Divided_By_Load;
+            fullres(x_coordinate_index,y_coordinate_index,5) = updated_main_data_struct(indent_field_index).Stiffness_Sqaured_Divided_By_Load;
             fullres(x_coordinate_index,y_coordinate_index,6) = updated_main_data_struct(indent_field_index).Hardness;
             % Writes values in fullres_additional for excel output (currently wrong orientation for output)
-%             fullres_additional(x_coordinate_index,y_coordinate_index,1) = updated_main_data_struct(indent_field_index).Hardness;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,2) = updated_main_data_struct(indent_field_index).Youngs_Modulus;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,3) = updated_main_data_struct(indent_field_index).Reduced_Modulus;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,4) = updated_main_data_struct(indent_field_index).Stiffness;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,5) = updated_main_data_struct(indent_field_index).Maximum_Load;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,6) = updated_main_data_struct(indent_field_index).Maximum_Displacement;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,7) = updated_main_data_struct(indent_field_index).Surface_Displacement;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,8) = updated_main_data_struct(indent_field_index).Hardness_Divided_By_Modulus;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,9) = updated_main_data_struct(indent_field_index).Stiffness_Squared_Divided_By_Load;
-%         catch % If coordinate pair not exist, NaN values written instead
-%             % Writes values in correct order in fullres for CMM XPCorrelate
-%             fullres(x_coordinate_index,y_coordinate_index,1) = NaN;
-%             fullres(x_coordinate_index,y_coordinate_index,2) = NaN;
-%             fullres(x_coordinate_index,y_coordinate_index,3) = NaN;
-%             fullres(x_coordinate_index,y_coordinate_index,4) = NaN;
-%             fullres(x_coordinate_index,y_coordinate_index,5) = NaN;
-%             fullres(x_coordinate_index,y_coordinate_index,6) = NaN;
-%             % Writes values in fullres_additional for excel output (currently wrong orientation for output)
-%             fullres_additional(x_coordinate_index,y_coordinate_index,1) = NaN;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,2) = NaN;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,3) = NaN;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,4) = NaN;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,5) = NaN;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,6) = NaN;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,7) = NaN;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,8) = NaN;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,9) = NaN;
-        %end
+            fullres_additional(x_coordinate_index,y_coordinate_index,1) = updated_main_data_struct(indent_field_index).Hardness;
+            fullres_additional(x_coordinate_index,y_coordinate_index,2) = updated_main_data_struct(indent_field_index).Youngs_Modulus;
+            fullres_additional(x_coordinate_index,y_coordinate_index,3) = updated_main_data_struct(indent_field_index).Reduced_Modulus;
+            fullres_additional(x_coordinate_index,y_coordinate_index,4) = updated_main_data_struct(indent_field_index).Stiffness;
+            fullres_additional(x_coordinate_index,y_coordinate_index,5) = updated_main_data_struct(indent_field_index).Maximum_Load;
+            fullres_additional(x_coordinate_index,y_coordinate_index,6) = updated_main_data_struct(indent_field_index).Maximum_Displacement;
+            fullres_additional(x_coordinate_index,y_coordinate_index,7) = updated_main_data_struct(indent_field_index).Surface_Displacement;
+            fullres_additional(x_coordinate_index,y_coordinate_index,8) = updated_main_data_struct(indent_field_index).Hardness_Divided_By_Modulus;
+            fullres_additional(x_coordinate_index,y_coordinate_index,9) = updated_main_data_struct(indent_field_index).Stiffness_Sqaured_Divided_By_Load;
+        catch % If coordinate pair not exist, NaN values written instead
+            % Writes values in correct order in fullres for CMM XPCorrelate
+            fullres(x_coordinate_index,y_coordinate_index,1) = NaN;
+            fullres(x_coordinate_index,y_coordinate_index,2) = NaN;
+            fullres(x_coordinate_index,y_coordinate_index,3) = NaN;
+            fullres(x_coordinate_index,y_coordinate_index,4) = NaN;
+            fullres(x_coordinate_index,y_coordinate_index,5) = NaN;
+            fullres(x_coordinate_index,y_coordinate_index,6) = NaN;
+            % Writes values in fullres_additional for excel output (currently wrong orientation for output)
+            fullres_additional(x_coordinate_index,y_coordinate_index,1) = NaN;
+            fullres_additional(x_coordinate_index,y_coordinate_index,2) = NaN;
+            fullres_additional(x_coordinate_index,y_coordinate_index,3) = NaN;
+            fullres_additional(x_coordinate_index,y_coordinate_index,4) = NaN;
+            fullres_additional(x_coordinate_index,y_coordinate_index,5) = NaN;
+            fullres_additional(x_coordinate_index,y_coordinate_index,6) = NaN;
+            fullres_additional(x_coordinate_index,y_coordinate_index,7) = NaN;
+            fullres_additional(x_coordinate_index,y_coordinate_index,8) = NaN;
+            fullres_additional(x_coordinate_index,y_coordinate_index,9) = NaN;
+        end
     end
 end
 close(progress_bar) % Closes progress bar
@@ -118,7 +118,7 @@ close(progress_bar) % Closes progress bar
 
 %% Finally save files
 
-excel_file_name = strcat(output_conversion_file_directory,"\","Excel_Output.xlsx"); % Creates full file name
+excel_file_name = strcat(output_file_directory,"Excel_Output.xlsx"); % Creates full file name
 % These write to excel sheets:
 xlswrite(excel_file_name,[fullres_orientated(:,:,1)],"Hardness (GPa)");
 xlswrite(excel_file_name,[fullres_orientated(:,:,2)],"Youngs Modulus (GPa)");
@@ -142,12 +142,12 @@ delete(newExcel);
 % Create any extra variables needed for CMM:
 X = fullresloc(:,:,1);
 Y = fullresloc(:,:,2);
-folders = split(output_conversion_file_directory,"\");
+folders = split(output_file_directory,"\");
 filename = folders(end-1);
-resultsdir = output_conversion_file_directory;
+resultsdir = output_file_directory;
 
 % Save selected variables in workspace file
-workspace_file = strcat(output_conversion_file_directory,"\", "Workspace_Output_2");
+workspace_file = strcat(output_file_directory,"Workspace_Output");
 save(workspace_file,"filename","resultsdir","X","Y","fullres");
 
 disp("All data converted to appropriate formats.")

@@ -1,4 +1,4 @@
-function [popinfitting,naughty_indents_list,red_indents_list,updated_main_data_struct] = popincodemapping(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin)
+function [popinfitting,naughty_indents_list,red_indents_list] = popincode(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh)
 close all
 
     progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
@@ -9,9 +9,6 @@ noofindents=length([updated_main_data_struct.Indent_Index]);
   fig3=figure;
   fig4=figure;
   fig5=figure;
-  
-  valuesofpopinPsaving = zeros([noofindents numberofexpectedpopin]);
-
 for i=0:noofindents-1 % loop for each of the indents with zero corrections
        fprintf(repmat('\b',1,nbytes)) % Changing number display
     nbytes = fprintf('Processing indent %d.', i); % Changing number display
@@ -63,30 +60,30 @@ loadingPabovezeroindex= find(loadingP >0);
     dataabovezero(:,1)=loadingPabovezero;
     dataabovezero(:,2)=loadinghabovezero;
 
-   %smoothingvalue=7;
+   smoothingvalue=7;
    smoothloading_P_h_data=smoothdata(dataabovezero,'movmean',smoothingvalue);
    smoothloadingPabovezero=smoothloading_P_h_data(:,1);
    smoothloadinghabovezero=smoothloading_P_h_data(:,2);
 
 
          %plot the raw data
-%      figure(fig1);
-%         plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
-%         ylabel("Load (uN)")
-%         xlabel("displacement (nm)")
-%         hold on
-% 
-%      figure(fig1);
-%         plot(smoothloadinghabovezero,smoothloadingPabovezero,"blue")
-%         ylabel("Load (uN)")
-%         xlabel("displacement (nm)")
-%         hold on
+     figure(fig1);
+        plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
+        ylabel("Load (uN)")
+        xlabel("displacement (nm)")
+        hold on
+
+     figure(fig1);
+        plot(smoothloadinghabovezero,smoothloadingPabovezero,"blue")
+        ylabel("Load (uN)")
+        xlabel("displacement (nm)")
+        hold on
 
 %finding pop-ins from displacement
-% figure(fig4)
-changeindisp=diff(loadinghabovezero);
-%changeindisp(end+1)=NaN;
-% plot(loadinghabovezero,changeindisp);
+figure(fig4)
+changeindisp=diff(smoothloadinghabovezero);
+changeindisp(end+1)=NaN;
+plot(smoothloadinghabovezero,changeindisp);
 hold on
 xlabel 'displacement (nm)'
 ylabel 'Change in displacment'
@@ -103,9 +100,9 @@ values_of_popin(popin,1)= popin_index;
 values_of_popin(popin,2)= popinP;
 values_of_popin(popin,3)= popinh;
 
-% figure(fig1)
-% plot(popinh,popinP,"red x","MarkerSize",10)
-% hold on
+figure(fig1)
+plot(popinh,popinP,"red x","MarkerSize",10)
+hold on
 %         
  end
 values_of_popin_indents.(indentsnostring)=values_of_popin;
@@ -116,9 +113,8 @@ valuesofpopinPsaving(j,1:1:noofvaluesofpopinP)=values_of_popinP;
 valuesofpopinPsaving(valuesofpopinPsaving == 0) = NaN;
 catch
 valuesofpopinPsaving(j,1)= NaN;
-valuesofpopinPsaving(valuesofpopinPsaving == 0) = NaN;
 end
-updated_main_data_struct(j).PopinData=valuesofpopinPsaving(j,:);
+
 
 %    %finding pop-ins from displacement
 %    tolerancepop=1.5; 
@@ -221,25 +217,25 @@ updated_main_data_struct(j).PopinData=valuesofpopinPsaving(j,:);
 %         valuesofpopinPsavingsmooth(j,(differencevaluessmooth+1))=NaN;
 %     end    
 % end
-% figure(fig5)
-%  title 'Pop-in load against indent number'
-%  ylabel 'Pop-in load (uN)'
-%  xlabel 'Indent number'
-%  
-% 
-% if isnan(valuesofpopinPsaving(j,1)) 
-%     figure(fig5)
-%     y=0;
-%     plot(i,y, "red o")
-%     hold on
-% else
-%     figure(fig5)
-%     plot(i,valuesofpopinPsaving(j,:), "black x");
-%     hold on
-% 
-% end
-% legend 'Marker for no indents' 'Pop-in'
-% ylim ([0 150])
+figure(fig5)
+ title 'Pop-in load against indent number'
+ ylabel 'Pop-in load (uN)'
+ xlabel 'Indent number'
+ 
+
+if isnan(valuesofpopinPsaving(j,1)) 
+    figure(fig5)
+    y=0;
+    plot(i,y, "red o")
+    hold on
+else
+    figure(fig5)
+    plot(i,valuesofpopinPsaving(j,:), "black x");
+    hold on
+
+end
+legend 'Marker for no indents' 'Pop-in'
+ylim ([0 150])
 
 popinfitting=valuesofpopinPsaving;
     end

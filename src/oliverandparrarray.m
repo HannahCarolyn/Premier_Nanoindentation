@@ -31,6 +31,8 @@ function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrarray(ba
 %     epsilon=0.75; %indenter geometry function e.g. 0.75 
     %This opens the ara file (you have to convert it to a text file to get it
     %work)
+base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\Example_Mapping_Data\";
+
 
 area_function_path= strcat(base_file_directory,"Area_Function");
 folder_info = dir(fullfile(area_function_path, '/*.txt'));
@@ -80,7 +82,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         
    % plot the raw data
         figure(fig1);
-        plot(h,P,"black")
+        plot(h,P,"black x")
         ylabel("Load (uN)")
         xlabel("displacment (nm)")
         hold on
@@ -139,7 +141,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         xData=flipud(xData); %This flips the data set so it goes from the smallest to the largest number
         yData=flipud(yData);
     
-        %w = (transpose((1:1:length(yData))).^2);% This is a sqaure weighing such that the top of the data is more accounted for in the fitting of the power law 
+        w = (transpose((1:1:length(yData))).^2);% This is a sqaure weighing such that the top of the data is more accounted for in the fitting of the power law 
      
         try
             % Set up fittype and options.
@@ -147,7 +149,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
             opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
             opts.Display = 'Off';
             opts.StartPoint = [78.6937525155057 1.49509087940554];
-            %opts.Weights = (w);
+            opts.Weights = (w);
             % Fit model to data.
             [fitresult, gof] = fit( xData, yData, ft, opts );
         catch % Error catch when poly fit not work
@@ -199,14 +201,10 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         FindPmax= find(unloadingP == Pmax);%finding the value of the maximum load
         hmax=unloadingh(FindPmax); %find the value of h at Pmax
 %     
-     %plotting the gradient line
+%      %plotting the gradient line
 %      c=Pmax-(S*hmax);
 %     lineplot=(S*h)+c;
-%        figure(fig1)
-%        hfindex=find(unloadingh == hf);
-%        pf=unloadingP(hfindex);
-%        plot(hf,pf,"red o")
-%        hold on
+%      figure(fig1)
 %      plot(h,lineplot,"red :",LineWidth=1.2);
 %      Pmaxrange= Pmax+200;
 %      ylim([0 Pmaxrange])
@@ -235,7 +233,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
         header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm'}; %headers for the array
         valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
-        writecell (valuesofHandEoutput,'H&Eoutput') %change the file name
+        writecell (valuesofHandEoutput,'X80CMX11000') %change the file name
     
 
     load_displacement_data(j).Maximum_Displacement=hmax;
@@ -252,6 +250,7 @@ for rowhc=1:length(values_of_H_and_E(:,1))
 end
     end
 end
+ 
 Fitting=load_displacement_data;
 close(progress_bar); % Closes progress bar
 figure(fig3);

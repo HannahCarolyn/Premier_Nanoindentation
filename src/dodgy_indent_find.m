@@ -55,12 +55,9 @@ axis equal
 xlim([0 max(X)])
 ylim([0 max(Y)])
 
- file_name_fig=strcat(output_file_directory,'\','dodgy_indents.fig'); %save it
-file_name_png=strcat(output_file_directory,'\','dodgy_indents.png');
-
-print(gcf,file_name_png,'-dpng','-r600');
-savefig(gcf,file_name_fig);
+file_name=strcat(output_file_directory,'dodgy_indents.fig'); %save it
+savefig(file_name)
     
- dodgy_indent_plot=openfig(file_name_fig);
+ dodgy_indent_plot=openfig(file_name);
 
 end

@@ -17,7 +17,7 @@ addpath Side_Quests
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\memorystick back up\premier\week5HT\L450sample6grid1\indents\";
+base_file_directory = "Z:\2022 Pt IIs\Hannah Cole\nanoindentation\HTw6\week6HT\x65ngsample2aftercharging\";
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
 mapping_type = "automated_indentation_grid_array";
@@ -95,16 +95,16 @@ cutofunloadingbottomlim = 0.25;
 
 % Specify here whether you want to use the popin decting code using "yes" 
 % or "no"
- popin_fitting= "no";
+popin_fitting = "yes";
 
 % Fitting parameter for popin_fitting - see documentation if want to
 % change these pararmeters
 tolerancepopin = 0.007;
 smoothingvalue = 7;
-MPH = 1.0;
-cutofflow=20;
-cutoffhigh=1000;
-numberofexpectedpopin=100;
+MPH = 0.8;
+cutofflow=0;
+cutoffhigh=250;
+numberofexpectedpopin=9;
 
 % Specify here whether you want to use the CMX_fitting using "yes" or "no" 
 % to use this function have a folder in your base directory called "CMX_Output"
@@ -138,7 +138,6 @@ end
 % Note new struct generated so originally dodgy data without NaN can also be viewed for debugging
 [updated_main_data_struct,naughty_indents_list] = dodgy_indents(load_displacement_data,amber_indents_list,red_indents_list,exclude_dodgy,hannah_oliver_parr);
 
-
 %% Calling Oliver and Parr Methods
 if hannah_oliver_parr == "yes"
     if mapping_type == "xpm_indentation_map"
@@ -162,25 +161,10 @@ end
 
 %% Calling pop-in code
 if popin_fitting == "yes"
-    if mapping_type == "automated_indentation_grid_array"
-            [popinfitting,naughty_indents_list,red_indents_list,final_main_popin_data_struct] = popincode(base_file_directory,final_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin);
-        else if mapping_type == "xpm_indentation_map"
-                [popinfitting,naughty_indents_list,red_indents_list,final_main_popin_data_struct] = popincodemapping(base_file_directory,final_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin);
-        end
-    end
-    else if popin_fitting == "no"
+    [popinfitting,naughty_indents_list,red_indents_list,final_main_popin_data_struct] = popincode(base_file_directory,final_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin);
+else if popin_fitting == "no"
     end
 end
-%% Single curve popin 
-% individual_indent_no=20;
-% [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
-
-%% Popinsample
-MPH = 1.0;
-MPHgrad = 0.22;
-samplesize=20;
-[popinfittingsamplebetweenlimits,popinfittingsampleabovehighlimit,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,MPHgrad,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
-
 
 %% Calling CMX fitting
 % Specify here whether you want to use the popin decting code using "yes" or "no"
@@ -190,13 +174,15 @@ else if CMX_fitting == "no"
     end
 end
  %% Generating outputs and saving them to file
+% output_file_directory=fullfile(base_file_directory,"Figure_Output");
+% mkdir(output_file_directory);
 
 output_file_directory = strcat((base_file_directory),"Figure_Outputs"); % Generates path for output folder
 mkdir (output_file_directory); % Creates output folder in base path
 
 %%
 updated_main_data_struct=final_main_data_struct;
-
+% 
 % % Firstly the histograms
 [Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",output_file_directory);
 [Figure2_Youngs_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
@@ -214,47 +200,13 @@ updated_main_data_struct=final_main_data_struct;
 [Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
 [Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
 [Figure14_Maximum_Displacement_Map] = heatmaps(updated_main_data_struct,"Maximum_Displacement",output_file_directory);
-
-[Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,amber_indents_list,red_indents_list,output_file_directory);
-
-output_conversion_file_directory = strcat((base_file_directory),"Conversion");
-mkdir (output_conversion_file_directory); 
-conversion(updated_main_data_struct,output_conversion_file_directory);
-
-if calculate_extra_values == "yes"
-    [Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
-    [Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory);
-end
-
-if popin_fitting == "yes"
-    updated_main_data_struct=final_main_popin_data_struct;
-    [Figure14_Popin_no_density_above_cut_off] = heatmaps(updated_main_data_struct,"No_Pop_in_Data_Above_Cut_off",output_file_directory);
-    [Figure14_Popin_no_density_limited] = heatmaps(updated_main_data_struct,"No_Pop_in_Data_Between_Limits",output_file_directory);
-    [Figure9_Hardness_Map] = heatmapspopin(updated_main_data_struct,"Hardness",output_file_directory,numberofexpectedpopin);
-    [Figure10_Youngs_Modulus_Map] = heatmapspopin(updated_main_data_struct,"Youngs_Modulus",output_file_directory,numberofexpectedpopin);
-    [Figure11_Reduced_Modulus_Map] = heatmapspopin(updated_main_data_struct,"Reduced_Modulus",output_file_directory,numberofexpectedpopin);
-    [Figure12_Stiffness_Map] = heatmapspopin(updated_main_data_struct,"Stiffness",output_file_directory,numberofexpectedpopin);
-    [Figure13_Maximum_Load_Map] = heatmapspopin(updated_main_data_struct,"Maximum_Load",output_file_directory,numberofexpectedpopin);
-    [Figure14_Maximum_Displacement_Map] = heatmapspopin(updated_main_data_struct,"Maximum_Displacement",output_file_directory,numberofexpectedpopin);
-         if calculate_extra_values == "yes"
-            [Figure16_Hardness_Divided_By_Modulus_Map] = heatmapspopin(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory,numberofexpectedpopin);
-            [Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmapspopin(updated_main_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory,numberofexpectedpopin);
-         end
-end
-
-if mapping_type == "xpm_indentation_map"
-    [Figure15_Surface_Displacement_Map] = heatmaps(updated_main_data_struct,"Surface_Displacement",output_file_directory);
-    if popin_fitting == "yes"
-        [Figure15_Surface_Displacement_Map] = heatmapspopin(updated_main_data_struct,"Surface_Displacement",output_file_directory,numberofexpectedpopin);
-    end
-   
-end
-
-close all
-
-
-
+[Figure15_Surface_Displacement_Map] = heatmaps(updated_main_data_struct,"Surface_Displacement",output_file_directory);
+[Figure16_Hardness_Divided_By_Modulus_Map] = heatmaps(updated_main_data_struct,"Hardness_Divided_By_Modulus",output_file_directory);
+[Figure17_Stiffness_Squared_Divided_By_Load_Map] = heatmaps(updated_main_data_struct,"Stiffness_Squared_Divided_By_Load",output_file_directory);
  
-
-
-
+% % Thirdly the dodgy indents treasure map
+%[Figure18_Dodgy_Indent_Locations] = dodgy_indent_find(updated_main_data_struct,amber_indents_list,red_indents_list,output_file_directory);
+% % 
+% % %% Generating output workspace to be compatible with XPCorrelate
+ conversion(updated_main_data_struct,output_file_directory);
+close all

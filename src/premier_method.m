@@ -78,7 +78,6 @@ else if mapping_type == "automated_indentation_grid_array"
                 updated_main_data_struct(file_loop).Maximum_Load = data_input(file_loop,2);
                 updated_main_data_struct(file_loop).Surface_Displacement = NaN;
                 updated_main_data_struct(file_loop).Hardness = data_input(file_loop,8);
-                updated_main_data_struct(file_loop).hf=data_input(file_loop,10);
                 Er = data_input(file_loop,7);
                 updated_main_data_struct(file_loop).Reduced_Modulus = data_input(file_loop,7);
                 SampleEwithvin = 1/((1/Er) - (1-(tippoissonratio^2))/tipyoungmodulus); % Middle calculation step

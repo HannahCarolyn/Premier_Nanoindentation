@@ -4,14 +4,11 @@ close all
     progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
 nbytes = fprintf('Processing indent 0.'); % Initialising changing number display
 noofindents=length([updated_main_data_struct.Indent_Index]);
-samplesize=10;
  fig1=figure;
   fig2=figure;
   fig3=figure;
   fig4=figure;
   fig5=figure;
-
-
 %numberofexpectedpopin=6;
   valuesofpopinPsaving = zeros([noofindents numberofexpectedpopin]);
 
@@ -70,24 +67,23 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 
 
          %plot the raw data
-%      figure(fig1);
-%         plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
-%         ylabel("Load (uN)")
-%         xlabel("displacement (nm)")
-%         hold on
-% 
-%      figure(fig1);
-%         plot(smoothloadinghabovezero,smoothloadingPabovezero,"blue")
-%         ylabel("Load (uN)")
-%         xlabel("displacement (nm)")
-%         hold on
+     figure(fig1);
+        plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
+        ylabel("Load (uN)")
+        xlabel("displacement (nm)")
+        hold on
+
+     figure(fig1);
+        plot(smoothloadinghabovezero,smoothloadingPabovezero,"blue")
+        ylabel("Load (uN)")
+        xlabel("displacement (nm)")
+        hold on
 
 %finding pop-ins from displacement
-% figure(fig4)
+figure(fig4)
 changeindisp=diff(loadinghabovezero);
-
-%changeindisp(end+1)=NaN;
-% plot(loadinghabovezero,changeindisp);
+changeindisp(end+1)=NaN;
+plot(loadinghabovezero,changeindisp);
 hold on
 xlabel 'displacement (nm)'
 ylabel 'Change in displacment'
@@ -104,9 +100,9 @@ values_of_popin(popin,1)= popin_index;
 values_of_popin(popin,2)= popinP;
 values_of_popin(popin,3)= popinh;
 
-% figure(fig1)
-% plot(popinh,popinP,"red x","MarkerSize",10)
-% hold on
+figure(fig1)
+plot(popinh,popinP,"red x","MarkerSize",10)
+hold on
 %         
  end
 values_of_popin_indents.(indentsnostring)=values_of_popin;
@@ -123,10 +119,6 @@ valuesofpopinPsaving(j,1)= NaN;
 valuesofpopinPsaving(valuesofpopinPsaving == 0) = NaN;
 end
 updated_main_data_struct(j).PopinData=valuesofpopinPsaving(j,:);
-
-
-
-
 
 %    %finding pop-ins from displacement
 %    tolerancepop=1.5; 
@@ -229,59 +221,31 @@ updated_main_data_struct(j).PopinData=valuesofpopinPsaving(j,:);
 %         valuesofpopinPsavingsmooth(j,(differencevaluessmooth+1))=NaN;
 %     end    
 % end
-% figure(fig5)
-%  title 'Pop-in load against indent number'
-%  ylabel 'Pop-in load (uN)'
-%  xlabel 'Indent number'
-%  
-% 
-% if isnan(valuesofpopinPsaving(j,1)) 
-%     figure(fig5)
-%     y=0;
-%     plot(i,y, "red o")
-%     hold on
-% else
-%     figure(fig5)
-%     plot(i,valuesofpopinPsaving(j,:), "black x");
-%     hold on
-% 
-% end
-% legend 'Marker for no indents' 'Pop-in'
+figure(fig5)
+ title 'Pop-in load against indent number'
+ ylabel 'Pop-in load (uN)'
+ xlabel 'Indent number'
+ 
 
+if isnan(valuesofpopinPsaving(j,1)) 
+    figure(fig5)
+    y=0;
+    plot(i,y, "red o")
+    hold on
+else
+    figure(fig5)
+    plot(i,valuesofpopinPsaving(j,:), "black x");
+    hold on
 
 end
-%close(progress_bar) % Closes progress bar
+legend 'Marker for no indents' 'Pop-in'
 
 popinfitting=valuesofpopinPsaving;
-% 
-for i=0:noofindents-1
-    j=i+1;
-    for k=1:numberofexpectedpopin;
-        if popinfitting(j,k) < cutoffhigh
-            popinfittingabovecutoffhigh(j,k)= NaN;
-        else
-            popinfittingabovecutoffhigh(j,k) = popinfitting(j,k);
-        end
-
-        if cutofflow>popinfitting(j,k) 
-            popinfittinglimited(j,k)= NaN;
-        else
-            popinfittinglimited(j,k) = popinfitting(j,k);
-        end
-         if popinfitting(j,k) > cutoffhigh
-            popinfittinglimited(j,k)= NaN;
-        else
-            popinfittinglimited(j,k) = popinfitting(j,k);
-        end
     end
-
-    noofpopinsabovecutoff=nnz(~isnan(popinfittingabovecutoffhigh(j,:)));
-    noofpopinsbetweenlimits=nnz(~isnan(popinfittinglimited(j,:)));
-    updated_main_data_struct(j).No_Pop_in_Data_Above_Cut_off=noofpopinsabovecutoff;
-    updated_main_data_struct(j).No_Pop_in_Data_Between_Limits=noofpopinsbetweenlimits;
 end
+close(progress_bar) % Closes progress bar
 
-    end
+
 
 
 valuesofpopinPsavingvector = valuesofpopinPsaving(:);

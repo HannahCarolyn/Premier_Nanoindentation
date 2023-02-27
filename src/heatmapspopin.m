@@ -25,7 +25,7 @@ row_number=1+(max(Y)/spacing); %this calculates the number of indents in y
 indent_number=column_number*row_number; %more of a sense check for me
 
 Popin=[struct.PopinData].';
-Popinshaping=reshape(Popin,[numberofexpectedpopin indent_number]); 
+Popinshaping=reshape(Popin,[numberofexpectedpopin indent_number]); %unhard code
 Popinfinal=Popinshaping';
 
 
@@ -49,7 +49,7 @@ grid_x=zeros(length(X),1);
 grid_y=zeros(length(Y),1);
 
 
-for k=1:length(variable_by_coord(:,1)) %this for loop uses order (from above) to take the variable and put it into co-ordinate space
+for k=1:length(variable_by_coord) %this for loop uses order (from above) to take the variable and put it into co-ordinate space
     grid_x(:,1)=variable_by_coord(k,1);
     grid_y(:,1)=variable_by_coord(k,2);
     heatmap_by_coord_2D(grid_y,grid_x)=variable_by_coord(k,3);
@@ -66,7 +66,6 @@ end
 
 colour_count=45; %this can be changed to alter the number of levels in the colour map - CMM used 45
 contourf(x_coord, y_coord ,heatmap_by_coord_2D, colour_count,'LineColor','None'); 
-colormap spring
 hold on
  %specifies the x and y coordinates for the values in the variable
  %(so each row/column is assigned a certain micron spacing, rather than just
