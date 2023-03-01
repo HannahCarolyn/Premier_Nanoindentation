@@ -66,15 +66,15 @@ for x_coordinate_index = 1:length(possible_x_coordinates) % Loop through each po
             fullres(x_coordinate_index,y_coordinate_index,5) = updated_main_data_struct(indent_field_index).Stiffness_Squared_Divided_By_Load;
             fullres(x_coordinate_index,y_coordinate_index,6) = updated_main_data_struct(indent_field_index).Hardness;
             % Writes values in fullres_additional for excel output (currently wrong orientation for output)
-%             fullres_additional(x_coordinate_index,y_coordinate_index,1) = updated_main_data_struct(indent_field_index).Hardness;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,2) = updated_main_data_struct(indent_field_index).Youngs_Modulus;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,3) = updated_main_data_struct(indent_field_index).Reduced_Modulus;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,4) = updated_main_data_struct(indent_field_index).Stiffness;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,5) = updated_main_data_struct(indent_field_index).Maximum_Load;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,6) = updated_main_data_struct(indent_field_index).Maximum_Displacement;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,7) = updated_main_data_struct(indent_field_index).Surface_Displacement;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,8) = updated_main_data_struct(indent_field_index).Hardness_Divided_By_Modulus;
-%             fullres_additional(x_coordinate_index,y_coordinate_index,9) = updated_main_data_struct(indent_field_index).Stiffness_Squared_Divided_By_Load;
+            fullres_additional(x_coordinate_index,y_coordinate_index,1) = updated_main_data_struct(indent_field_index).Hardness;
+            fullres_additional(x_coordinate_index,y_coordinate_index,2) = updated_main_data_struct(indent_field_index).Youngs_Modulus;
+            fullres_additional(x_coordinate_index,y_coordinate_index,3) = updated_main_data_struct(indent_field_index).Reduced_Modulus;
+            fullres_additional(x_coordinate_index,y_coordinate_index,4) = updated_main_data_struct(indent_field_index).Stiffness;
+            fullres_additional(x_coordinate_index,y_coordinate_index,5) = updated_main_data_struct(indent_field_index).Maximum_Load;
+            fullres_additional(x_coordinate_index,y_coordinate_index,6) = updated_main_data_struct(indent_field_index).Maximum_Displacement;
+            fullres_additional(x_coordinate_index,y_coordinate_index,7) = updated_main_data_struct(indent_field_index).Surface_Displacement;
+            fullres_additional(x_coordinate_index,y_coordinate_index,8) = updated_main_data_struct(indent_field_index).Hardness_Divided_By_Modulus;
+            fullres_additional(x_coordinate_index,y_coordinate_index,9) = updated_main_data_struct(indent_field_index).Stiffness_Squared_Divided_By_Load;
 %         catch % If coordinate pair not exist, NaN values written instead
 %             % Writes values in correct order in fullres for CMM XPCorrelate
 %             fullres(x_coordinate_index,y_coordinate_index,1) = NaN;

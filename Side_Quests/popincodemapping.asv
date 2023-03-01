@@ -26,7 +26,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
      dataabovezero=[];
     
         indentsnostring= sprintf('indent_%04d',i); %string of the field name
-        loading_P_h_data=updated_main_data_struct(j).Loading_Segment;
+        loading_P_h_data=updated_main_data_struct(j).Loadingsegment;
 
         loadingh=loading_P_h_data(:,1);
         loadingP=loading_P_h_data(:,2);
@@ -65,8 +65,8 @@ loadingPabovelowerindex= find(loadingP >0);
 
    %smoothingvalue=7;
    smoothloading_P_h_data=smoothdata(dataabovelower,'movmean',smoothingvalue);
-   smoothloadingPabovelower=smoothloading_P_h_data(:,1);
-   smoothloadinghabovelower=smoothloading_P_h_data(:,2);
+   smoothloadingPabovezero=smoothloading_P_h_data(:,1);
+   smoothloadinghabovezero=smoothloading_P_h_data(:,2);
 
 
          %plot the raw data

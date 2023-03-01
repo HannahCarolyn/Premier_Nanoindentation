@@ -1,4 +1,4 @@
-function [load_displacement_data,amber_indents_list,red_indents_list] = Premier_mapping_import_V2(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,negative_displacement_tolerance,minimum_load_tolerance);
+function [load_displacement_data,amber_indents_list,red_indents_list] = Premier_mapping_import_V2(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,negative_displacement_tolerance,minimum_load_tolerance,noofsegments);
 
 indent_file_locations = strcat(base_file_directory,"Indent_Data"); % Gets the full folder path for the indentation data
 folder_info = dir(fullfile(indent_file_locations, '/*.txt')); % Gets a list of file properties within the folder
@@ -23,36 +23,35 @@ for file_loop = 1:initial_number_of_data % For count through number of indents i
     original_load_displacement(file_loop).Indent_Index = file_loop-1; % Writes indent number to struct (starting indexing at zero as per files)
     original_load_displacement(file_loop).Displacement_Load_Data = raw_input; % Writes displacement and load data array to struct
 
-
-    
-
-
 end
 
 close(progress_bar) % Closes progress bar
 
-
-load_function_path= strcat(base_file_directory,"Load_Function");
-folder_info = dir(fullfile(load_function_path, '/*.txt'));
+% This loads the load function text file from file structure.
+load_function_path= strcat(base_file_directory,"Load_Function"); 
+folder_info = dir(fullfile(load_function_path, '/*.txt')); 
 file_name = folder_info.name; 
 full_file_name = fullfile(load_function_path, file_name); 
 load_function=readlines(full_file_name);%takes each line of the text file and turns it into an array
+% Finds the a key phrase for the number of points in the segment.
 Indexnoofseqpoints = find(contains(load_function,'NumofSeqPoints'));
 
-noofsegments=3;
-
-for segmentno=1
-   Indexforsegment=Indexnoofseqpoints(1+segmentno);
-   noofseqpointsforsegmentstring=load_function(Indexforsegment);
-   noofseqpointsforsegment = sscanf(noofseqpointsforsegmentstring, '%d_→:NumofSeqPoints');
-   for file_loop = 1:initial_number_of_data
+% finds the loading section of the data by reading the load function
+for segmentno=1 % for the first segment
+   Indexforsegment=Indexnoofseqpoints(1+segmentno); % index for the second time NumofSeqPoints in load function file
+   noofseqpointsforsegmentstring=load_function(Indexforsegment); % grab the string for that line
+   noofseqpointsforsegment = sscanf(noofseqpointsforsegmentstring, '%d_→:NumofSeqPoints'); % find the number of points
+   % next section get each indent crop the data based on the number of
+   % points in loading segment and write it into the struct
+   for file_loop = 1:initial_number_of_data 
        extractingPandH=original_load_displacement(file_loop).Displacement_Load_Data;
        Pandhforsegment=extractingPandH(1:noofseqpointsforsegment,1:2);
-       original_load_displacement(file_loop).Loadingsegment = Pandhforsegment;
+       original_load_displacement(file_loop).Loading_Segment = Pandhforsegment;
    end
  
 end
-
+% This is the same as above but will do this for the unloading data. It is
+% built such that if you have 2 or 3 segements in 
 for segmentno=noofsegments
    Indexforsegment=Indexnoofseqpoints(1+segmentno);
    noofseqpointsforsegmentstring=load_function(Indexforsegment);
@@ -60,7 +59,7 @@ for segmentno=noofsegments
    for file_loop = 1:initial_number_of_data
        extractingPandH=original_load_displacement(file_loop).Displacement_Load_Data;
        Pandhforsegment=extractingPandH(end-noofseqpointsforsegment-1:end,1:2);
-       original_load_displacement(file_loop).UnloadingSegment = Pandhforsegment;
+       original_load_displacement(file_loop).Unloading_Segment = Pandhforsegment;
    end
  
 end
@@ -282,6 +281,8 @@ for original_struct_loop = 1:initial_number_of_data % For count through each ind
         non_overlapping_load_displacement(new_struct_count).Displacement_Load_Data = original_load_displacement(original_struct_loop).Displacement_Load_Data;
         non_overlapping_load_displacement(new_struct_count).X_Coordinate = original_load_displacement(original_struct_loop).X_Coordinate;
         non_overlapping_load_displacement(new_struct_count).Y_Coordinate = original_load_displacement(original_struct_loop).Y_Coordinate;
+        non_overlapping_load_displacement(new_struct_count).Loading_Segment = original_load_displacement(original_struct_loop).Loading_Segment;
+        non_overlapping_load_displacement(new_struct_count).Unloading_Segment = original_load_displacement(original_struct_loop).Unloading_Segment;
     end
 end
 

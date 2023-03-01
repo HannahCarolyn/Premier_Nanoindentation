@@ -1,4 +1,4 @@
-function [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
+function [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
 noofindents=length([updated_main_data_struct.Indent_Index]);
 
 %samplesize=10;
@@ -85,7 +85,7 @@ ylabel 'Change in displacment'
 title("Single Indent Peak Finding")
 % MPH=0.4;
 [PKS,LOCS]=findpeaks(changeindisp,'MinPeakHeight',MPH);
-popindex=LOCS-1;
+popindex=LOCS;
 no_of_popinindex=numel(popindex);
 
  for popin=1:1:no_of_popinindex

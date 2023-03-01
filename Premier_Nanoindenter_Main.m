@@ -17,21 +17,21 @@ addpath Side_Quests
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\memorystick back up\premier\week5HT\L450sample6grid1\indents\";
+base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\OUdi\";
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "automated_indentation_grid_array";
+mapping_type = "xpm_indentation_map";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 16;
-columns = 16;
+rows = 1;
+columns = 1;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 5;
+spacing = 1;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -53,6 +53,12 @@ column_overlap = 0;
 % dodgy indents that do not break the code are described as an amber error 
 % code and can be toggled using this exclude_dodgy;
 exclude_dodgy = "no";
+
+% If inputting xpm data specify here the number of segments in the load
+% fucntion for each indent. This will either be 2 or 3.
+
+noofsegments=3;
+
 
 % Edit these numbers to determine how an indent gets described as a red or
 % amber error: 
@@ -95,7 +101,7 @@ cutofunloadingbottomlim = 0.25;
 
 % Specify here whether you want to use the popin decting code using "yes" 
 % or "no"
- popin_fitting= "no";
+ popin_fitting= "yes";
 
 % Fitting parameter for popin_fitting - see documentation if want to
 % change these pararmeters
@@ -125,7 +131,7 @@ warning('off','curvefit:fittype:sethandles:xMustBePositive')
 %% Calling main data import function
 % load_displacement_data is a data struct and amber/red_indents_list is a list of indent indices (where indent numbering starts at zero)
 if mapping_type == "xpm_indentation_map"
-    [load_displacement_data,amber_indents_list,red_indents_list] = Premier_mapping_import_V2(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,negative_displacement_tolerance,minimum_load_tolerance);
+    [load_displacement_data,amber_indents_list,red_indents_list] = Premier_mapping_import_V2(base_file_directory,rows,columns,spacing,row_overlap,column_overlap,negative_displacement_tolerance,minimum_load_tolerance,noofsegments);
     disp("XPM Indentation Data Successfully Imported.")
 else if mapping_type == "automated_indentation_grid_array"
         [load_displacement_data,amber_indents_list,red_indents_list] = Premier_Nanoindenter_Array_Data_Import(base_file_directory,rows,columns,spacing,minimum_load_tolerance,maximum_displacement_tolerance);
@@ -172,14 +178,14 @@ if popin_fitting == "yes"
     end
 end
 %% Single curve popin 
-% individual_indent_no=20;
-% [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
+% MPH = 1.0;
+% individual_indent_no=250;
+% [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
 
 %% Popinsample
-MPH = 1.0;
-MPHgrad = 0.22;
-samplesize=20;
-[popinfittingsamplebetweenlimits,popinfittingsampleabovehighlimit,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,MPHgrad,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
+% MPH = 0.8;
+% samplesize=100;
+% [popinfittingsample,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
 
 
 %% Calling CMX fitting

@@ -1,4 +1,4 @@
-function[popinfittingsamplebetweenlimits,popinfittingsampleabovehighlimit,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,MPHgrad,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
+function[popinfittingsample,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
 noofindents=length([updated_main_data_struct.Indent_Index]);
 %samplesize=10;
 %indentnotoinvestigate=15;
@@ -78,44 +78,27 @@ for i=1:samplesize; % loop for each of the indents with zero corrections
         xlabel("displacement (nm)")
         hold on
 
-%finding pop-ins from displacement
-loadingPbetweenlimitsindexs = find(cutofflow < loadingPabovezero  & loadingPabovezero < cutoffhigh);
-loadingPabovehighlimitindex= max(loadingPbetweenlimitsindexs) + 1;
-findindexcutofflow=find(loadingPabovezero == cutofflow);
-findindexcutoffhigh=find(loadingPabovezero == cutoffhigh);
-loadingPbetweenlimits= loadingPabovezero(loadingPbetweenlimitsindexs);
-loadinghbetweenlimits= loadinghabovezero(loadingPbetweenlimitsindexs);
-loadingPabovezeronumber=numel(loadingPabovezero);
-upperlimitindex=round(loadingPabovezeronumber*0.85); %unfudge this
-loadingPabovehighlimit= loadingPabovezero(loadingPabovehighlimitindex:upperlimitindex);
-loadinghabovehighlimit= loadinghabovezero(loadingPabovehighlimitindex:upperlimitindex);
 
 
 figure(fig2)
-changeindisp=diff(loadinghbetweenlimits);
-graidentofcurve=gradient(loadinghabovehighlimit,loadingPabovehighlimit);
+changeindisp=diff(loadinghabovezero);
 changeindisp(end+1)=NaN;
-plot(loadinghbetweenlimits,changeindisp,"black");
-hold on
-plot(loadinghabovehighlimit,graidentofcurve,"red");
+plot(loadinghabovezero,changeindisp,"black");
 hold on
 xlabel 'displacement (nm)'
 ylabel 'Change in displacement'
-legend 'Displacement Change Fit' 'Gradient Change Fit'
+legend 'Displacement Change Fit'
 title("Sample Indent Peak Finding")
 % MPH=0.4;
 [PKS,LOCS]=findpeaks(changeindisp,'MinPeakHeight',MPH);
 popindex=LOCS-1;
-%MPHgrad=0.22;
 no_of_popinindex=numel(popindex);
-[PKSgrad,LOCSgrad]=findpeaks(graidentofcurve,'MinPeakHeight',MPHgrad);
-popindexgrad=LOCSgrad-1;
-no_of_popinindex_grad=numel(popindexgrad);
+
 
  for popin=1:1:no_of_popinindex
 popin_index=popindex(popin);
-popinP=loadingPbetweenlimits(popin_index);
-popinh=loadinghbetweenlimits(popin_index);
+popinP=loadingPabovezero(popin_index);
+popinh=loadinghabovezero(popin_index);
 values_of_popin(popin,1)= popin_index;
 values_of_popin(popin,2)= popinP;
 values_of_popin(popin,3)= popinh;
@@ -127,21 +110,7 @@ hold on
  end
 values_of_popin_indents.(indentsnostring)=values_of_popin;
 
-  for popin_grad=1:1:no_of_popinindex_grad
-popin_index_grad=popindexgrad(popin_grad);
-popinPgrad=loadingPabovehighlimit(popin_index_grad);
-popinhgrad=loadinghabovehighlimit(popin_index_grad);
-values_of_popin_grad(popin_grad,1)= popin_index_grad;
-values_of_popin_grad(popin_grad,2)= popinPgrad;
-values_of_popin_grad(popin_grad,3)= popinhgrad;
-
-figure(fig1)
-plot(popinhgrad,popinPgrad,"red o","MarkerSize",10)
-hold on
-        
- end
-values_of_popin_indents_grad.(indentsnostring)=values_of_popin_grad;
-
+ 
 
 
 try
@@ -153,18 +122,6 @@ catch
 valuesofpopinPsaving(j,1)= NaN;
 valuesofpopinPsaving(valuesofpopinPsaving == 0) = NaN;
 end
-
-
-try
-values_of_popinP_grad=values_of_popin_indents_grad.(indentsnostring)(:,2);
-noofvaluesofpopinP_grad=numel(values_of_popinP_grad);
-valuesofpopinPsaving_grad(j,1:1:noofvaluesofpopinP_grad)=values_of_popinP_grad;
-valuesofpopinPsaving_grad(valuesofpopinPsaving_grad == 0) = NaN;
-catch
-valuesofpopinPsaving_grad(j,1)= NaN;
-valuesofpopinPsaving_grad(valuesofpopinPsaving_grad == 0) = NaN;
-end
-
 
 
 
@@ -190,7 +147,7 @@ end
 % end
 % legend 'Marker for no indents' 'Pop-in'
 
-popinfittingsamplebetweenlimits=valuesofpopinPsaving;
-popinfittingsampleabovehighlimit=valuesofpopinPsaving_grad;
+popinfittingsample=valuesofpopinPsaving;
+
     end
 end
