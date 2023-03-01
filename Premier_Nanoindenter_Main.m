@@ -168,24 +168,21 @@ end
 
 %% Calling pop-in code
 if popin_fitting == "yes"
-    if mapping_type == "automated_indentation_grid_array"
-            [popinfitting,naughty_indents_list,red_indents_list,final_main_popin_data_struct] = popincode(base_file_directory,final_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin);
-        else if mapping_type == "xpm_indentation_map"
-                [popinfitting,naughty_indents_list,red_indents_list,final_main_popin_data_struct] = popincodemapping(base_file_directory,final_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin);
-        end
-    end
+    [popinfitting,naughty_indents_list,red_indents_list,final_main_popin_data_struct] = popincode(base_file_directory,mapping_type,final_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin);
     else if popin_fitting == "no"
     end
 end
 %% Single curve popin 
-% MPH = 1.0;
-% individual_indent_no=250;
-% [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
+% MPH = 0.8;
+% cutofflow=200;
+% individual_indent_no=56;
+% [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
 
 %% Popinsample
-% MPH = 0.8;
-% samplesize=100;
-% [popinfittingsample,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
+% MPH = 1.0;
+% cutofflow=50;
+% samplesize=10;
+% [popinfittingsample,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
 
 
 %% Calling CMX fitting

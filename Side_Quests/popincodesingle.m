@@ -1,4 +1,4 @@
-function [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
+function [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
 noofindents=length([updated_main_data_struct.Indent_Index]);
 
 %samplesize=10;
@@ -23,62 +23,73 @@ i=individual_indent_no;
    % else
     
      values_of_popin=[];
-     dataabovezero=[];
+     dataabovelower=[];
+    if mapping_type == "automated_indentation_grid_array"
+            indentsnostring= sprintf('indent_%04d',i); %string of the field name
+            loading_P_h_data=updated_main_data_struct(j).Displacement_Load_Data;
     
-        indentsnostring= sprintf('indent_%04d',i); %string of the field name
-        loading_P_h_data=updated_main_data_struct(j).Displacement_Load_Data;
+            h=loading_P_h_data(:,1);
+            P=loading_P_h_data(:,2);
+            
+            numberofpoints=numel(h);
+    
+   
+    
+       % loading section of curve
+    
+    
+    
+        tolerance=0.01; 
+        index = find( abs(gradient(P)) < tolerance );
+        noofdatappoint=numel(P);
+        limit=round(noofdatappoint*0.95); %unhard code this
+        indexcatch= find(index < limit);
+        index =index(indexcatch);
+        Pmaxindex=max(index);
+        saving_Pmaxindex(j,1)=Pmaxindex;
+            loadingP=P(1:Pmaxindex); %extracting the loading section of load
+        loadingh=h(1:Pmaxindex); % extracting the loading section of load
+    
+      else if mapping_type == "xpm_indentation_map"
+                  indentsnostring= sprintf('indent_%04d',i); %string of the field name
+            loading_P_h_data=updated_main_data_struct(j).Loading_Segment;
+    
+            loadingh=loading_P_h_data(:,1);
+            loadingP=loading_P_h_data(:,2);
+        end
+    end
 
-        h=loading_P_h_data(:,1);
-        P=loading_P_h_data(:,2);
-        
-        numberofpoints=numel(h);
-
-   % loading section of curve
-
-
-
-    tolerance=0.01; 
-    index = find( abs(gradient(P)) < tolerance );
-    noofdatappoint=numel(P);
-    limit=round(noofdatappoint*0.95); %unhard code this
-    indexcatch= find(index < limit);
-    index =index(indexcatch);
-    Pmaxindex=max(index);
-    saving_Pmaxindex(j,1)=Pmaxindex;
-
-        loadingP=P(1:Pmaxindex); %extracting the loading section of load
-    loadingh=h(1:Pmaxindex); % extracting the loading section of load
-    loadingPabovezeroindex= find(loadingP >1);
-    loadingPabovezero=loadingP(loadingPabovezeroindex);
-    loadinghabovezero=loadingh(loadingPabovezeroindex);
-    dataabovezero(:,1)=loadingPabovezero;
-    dataabovezero(:,2)=loadinghabovezero;
+    loadingPabovelowerindex= find(loadingP >cutofflow);
+    loadingPabovelower=loadingP(loadingPabovelowerindex);
+    loadinghabovelower=loadingh(loadingPabovelowerindex);
+    dataabovelower(:,1)=loadingPabovelower;
+    dataabovelower(:,2)=loadinghabovelower;
 
    smoothingvalue=7;
-   smoothloading_P_h_data=smoothdata(dataabovezero,'movmean',smoothingvalue);
-   smoothloadingPabovezero=smoothloading_P_h_data(:,1);
-   smoothloadinghabovezero=smoothloading_P_h_data(:,2);
+   smoothloading_P_h_data=smoothdata(dataabovelower,'movmean',smoothingvalue);
+   smoothloadingPabovelower=smoothloading_P_h_data(:,1);
+   smoothloadinghabovelower=smoothloading_P_h_data(:,2);
 
 
          %plot the raw data
      figure(fig1);
-        plot(loadinghabovezero,loadingPabovezero,"black x","MarkerSize",3)
+        plot(loadinghabovelower,loadingPabovelower,"black x","MarkerSize",3)
         ylabel("Load (uN)")
         xlabel("displacement (nm)")
         title("Single Indent Pop-in Finding")
         hold on
 
      figure(fig1);
-        plot(smoothloadinghabovezero,smoothloadingPabovezero,"blue")
+        plot(smoothloadinghabovelower,smoothloadingPabovelower,"blue")
         ylabel("Load (uN)")
         xlabel("displacement (nm)")
         hold on
 
 %finding pop-ins from displacement
 figure(fig2)
-changeindisp=diff(loadinghabovezero);
+changeindisp=diff(loadinghabovelower);
 changeindisp(end+1)=NaN;
-plot(loadinghabovezero,changeindisp);
+plot(loadinghabovelower,changeindisp);
 hold on
 xlabel 'displacement (nm)'
 ylabel 'Change in displacment'
@@ -90,8 +101,8 @@ no_of_popinindex=numel(popindex);
 
  for popin=1:1:no_of_popinindex
 popin_index=popindex(popin);
-popinP=loadingPabovezero(popin_index);
-popinh=loadinghabovezero(popin_index);
+popinP=loadingPabovelower(popin_index);
+popinh=loadinghabovelower(popin_index);
 values_of_popin(popin,1)= popin_index;
 values_of_popin(popin,2)= popinP;
 values_of_popin(popin,3)= popinh;

@@ -1,4 +1,4 @@
-function[popinfittingsample,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
+function[popinfittingsample,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,mapping)updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
 noofindents=length([updated_main_data_struct.Indent_Index]);
 %samplesize=10;
 %indentnotoinvestigate=15;
@@ -70,8 +70,8 @@ for i=1:samplesize; % loop for each of the indents with zero corrections
 
    smoothingvalue=7;
    smoothloading_P_h_data=smoothdata(dataabovelower,'movmean',smoothingvalue);
-   smoothloadingPabovelower=smoothloading_P_h_data(:,1);
-   smoothloadinghabovelower=smoothloading_P_h_data(:,2);
+   smoothloadingPabovezero=smoothloading_P_h_data(:,1);
+   smoothloadinghabovezero=smoothloading_P_h_data(:,2);
 
 
          %plot the raw data
@@ -102,14 +102,14 @@ legend 'Displacement Change Fit'
 title("Sample Indent Peak Finding")
 % MPH=0.4;
 [PKS,LOCS]=findpeaks(changeindisp,'MinPeakHeight',MPH);
-popindex=LOCS;
+popindex=LOCS-1;
 no_of_popinindex=numel(popindex);
 
 
  for popin=1:1:no_of_popinindex
 popin_index=popindex(popin);
-popinP=loadingPabovelower(popin_index);
-popinh=loadinghabovelower(popin_index);
+popinP=loadingPabovezero(popin_index);
+popinh=loadinghabovezero(popin_index);
 values_of_popin(popin,1)= popin_index;
 values_of_popin(popin,2)= popinP;
 values_of_popin(popin,3)= popinh;

@@ -1,37 +1,6 @@
 function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrmappingversion(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
 
-%     %code for importing the data for the displacement and load
-%     %https://www.sciencedirect.com/topics/engineering/oliver-pharr-method
-%     %link above for the method for oliver-parr method example
-%     clear
-%     close all
-%     clc
-%     
-%     for k=0:9 %This for loop opens the first 10 files (note first indent is called indent 0)
-%         filenames= sprintf('301122X65NG_0000%d.txt',k);%writes filename as string
-%         indentnostring= sprintf('indent_%04d',k); %wrtie field name
-%         indent_no= readtable(filenames, 'VariableNamingRule','preserve');%open file as table
-%         indent_k=table2array(indent_no);
-%         load_displacement_data.(indentnostring)=indent_k;%write into a structure
-%     end
-%     
-%     %The following for loop is the same as before but accoutns for the 2
-%     %digits by having 1 less 0 in the file name.
-%     
-%     for k=10:35
-%         filenames= sprintf('301122X65NG_000%d.txt',k);
-%         indent_no= readtable(filenames, 'VariableNamingRule','preserve');
-%         indent_k=table2array(indent_no);
-%         indentnostring= sprintf('indent_%04d',k);
-%         load_displacement_data.(indentnostring)=indent_k;
-%     end
-%     %array of the filenames
-%      fnms = fieldnames(load_displacement_data)
-    %defining variables
-%     epsilon=0.75; %indenter geometry function e.g. 0.75 
-    %This opens the ara file (you have to convert it to a text file to get it
-    %work)
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\Example_Mapping_Data\";
+
 
 
 area_function_path= strcat(base_file_directory,"Area_Function");
@@ -233,9 +202,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
          values_of_H_and_E(j,5)= NaN;
      end
 
-        header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm'}; %headers for the array
-        valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
-        writecell (valuesofHandEoutput,'X80CMX11000') %change the file name
+      
     
 
     load_displacement_data(j).Maximum_Displacement=hmax;
@@ -252,6 +219,19 @@ for rowhc=1:length(values_of_H_and_E(:,1))
 end
     end
 end
+
+header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm)'}; %headers for the array
+valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
+
+
+output_file_directory = strcat((base_file_directory),"Hannah_OP_fitting"); % Generates path for output folder
+mkdir (output_file_directory); % Creates output folder in base path
+filename=fullfile(output_file_directory,"\","OP_fitting_outputs.txt");
+writecell(valuesofHandEoutput,filename); 
+
+%file_name=strcat(output_file_directory,'\','OP_fitting_outputs.txt'); 
+
+
  
 Fitting=load_displacement_data;
 close(progress_bar); % Closes progress bar

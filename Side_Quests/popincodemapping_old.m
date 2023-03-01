@@ -1,18 +1,15 @@
-function [popinfitting,naughty_indents_list,red_indents_list,updated_main_data_struct] = popincode(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin)
+function [popinfitting,naughty_indents_list,red_indents_list,updated_main_data_struct] = popincodemapping(base_file_directory,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,numberofexpectedpopin)
 close all
 
     progress_bar = waitbar(0,"Pop-In Fitting"); % Creates a progress bar
 nbytes = fprintf('Processing indent 0.'); % Initialising changing number display
 noofindents=length([updated_main_data_struct.Indent_Index]);
-samplesize=10;
  fig1=figure;
   fig2=figure;
   fig3=figure;
   fig4=figure;
   fig5=figure;
-
-
-%numberofexpectedpopin=6;
+  
   valuesofpopinPsaving = zeros([noofindents numberofexpectedpopin]);
 
 for i=0:noofindents-1 % loop for each of the indents with zero corrections
@@ -27,51 +24,49 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     
      values_of_popin=[];
      dataabovelower=[];
-    if mapping_type == "automated_indentation_grid_array"
-            indentsnostring= sprintf('indent_%04d',i); %string of the field name
-            loading_P_h_data=updated_main_data_struct(j).Displacement_Load_Data;
     
-            h=loading_P_h_data(:,1);
-            P=loading_P_h_data(:,2);
-            
-            numberofpoints=numel(h);
-    
-   
-    
-       % loading section of curve
-    
-    
-    
-        tolerance=0.01; 
-        index = find( abs(gradient(P)) < tolerance );
-        noofdatappoint=numel(P);
-        limit=round(noofdatappoint*0.95); %unhard code this
-        indexcatch= find(index < limit);
-        index =index(indexcatch);
-        Pmaxindex=max(index);
-        saving_Pmaxindex(j,1)=Pmaxindex;
-            loadingP=P(1:Pmaxindex); %extracting the loading section of load
-        loadingh=h(1:Pmaxindex); % extracting the loading section of load
-    
-      else if mapping_type == "xpm_indentation_map"
-                  indentsnostring= sprintf('indent_%04d',i); %string of the field name
-            loading_P_h_data=updated_main_data_struct(j).Loading_Segment;
-    
-            loadingh=loading_P_h_data(:,1);
-            loadingP=loading_P_h_data(:,2);
-        end
-    end
+        indentsnostring= sprintf('indent_%04d',i); %string of the field name
+        loading_P_h_data=updated_main_data_struct(j).Loading_Segment;
 
-    loadingPabovelowerindex= find(loadingP >cutofflow);
+        loadingh=loading_P_h_data(:,1);
+        loadingP=loading_P_h_data(:,2);
+        
+        %numberofpoints=numel(h);
+
+%          maximumh=max(h);
+%         if maximumh > 700 %unhard code this
+%     valuesofpopinPsaving(j,1)= NaN;
+%             continue
+%           
+%         end
+
+   % loading section of curve
+
+
+% 
+%     tolerance=0.01; 
+%     index = find( abs(gradient(P)) < tolerance );
+%     noofdatappoint=numel(P);
+%     limit=round(noofdatappoint*0.95); %unhard code this
+%     indexcatch= find(index < limit);
+%     index =index(indexcatch);
+%     Pmaxindex=max(index);
+%     saving_Pmaxindex(j,1)=Pmaxindex;
+%         loadingP=P(1:Pmaxindex); %extracting the loading section of load
+%     loadingh=h(1:Pmaxindex); % extracting the loading section of load
+     
+loadingPabovelowerindex= find(loadingP > cutofflow); 
+
+
     loadingPabovelower=loadingP(loadingPabovelowerindex);
     loadinghabovelower=loadingh(loadingPabovelowerindex);
     dataabovelower(:,1)=loadingPabovelower;
     dataabovelower(:,2)=loadinghabovelower;
 
-   smoothingvalue=7;
+   %smoothingvalue=7;
    smoothloading_P_h_data=smoothdata(dataabovelower,'movmean',smoothingvalue);
-   smoothloadingPabovezero=smoothloading_P_h_data(:,1);
-   smoothloadinghabovezero=smoothloading_P_h_data(:,2);
+   smoothloadingPabovelower=smoothloading_P_h_data(:,1);
+   smoothloadinghabovelower=smoothloading_P_h_data(:,2);
 
 
          %plot the raw data
@@ -90,7 +85,6 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 %finding pop-ins from displacement
 % figure(fig4)
 changeindisp=diff(loadinghabovelower);
-
 %changeindisp(end+1)=NaN;
 % plot(loadinghabovezero,changeindisp);
 hold on
@@ -103,8 +97,8 @@ no_of_popinindex=numel(popindex);
 
  for popin=1:1:no_of_popinindex
 popin_index=popindex(popin);
-popinP=loadingPabovelower(popin_index);
-popinh=loadinghabovelower(popin_index);
+popinP=loadingP(popin_index);
+popinh=loadingh(popin_index);
 values_of_popin(popin,1)= popin_index;
 values_of_popin(popin,2)= popinP;
 values_of_popin(popin,3)= popinh;
@@ -115,9 +109,6 @@ values_of_popin(popin,3)= popinh;
 %         
  end
 values_of_popin_indents.(indentsnostring)=values_of_popin;
-
-
-
 try
 values_of_popinP=values_of_popin_indents.(indentsnostring)(:,2);
 noofvaluesofpopinP=numel(values_of_popinP);
@@ -128,10 +119,6 @@ valuesofpopinPsaving(j,1)= NaN;
 valuesofpopinPsaving(valuesofpopinPsaving == 0) = NaN;
 end
 updated_main_data_struct(j).PopinData=valuesofpopinPsaving(j,:);
-
-
-
-
 
 %    %finding pop-ins from displacement
 %    tolerancepop=1.5; 
@@ -252,41 +239,14 @@ updated_main_data_struct(j).PopinData=valuesofpopinPsaving(j,:);
 % 
 % end
 % legend 'Marker for no indents' 'Pop-in'
-
-
-end
-%close(progress_bar) % Closes progress bar
+% ylim ([0 150])
 
 popinfitting=valuesofpopinPsaving;
-% 
-for i=0:noofindents-1
-    j=i+1;
-    for k=1:numberofexpectedpopin;
-        if popinfitting(j,k) < cutoffhigh
-            popinfittingabovecutoffhigh(j,k)= NaN;
-        else
-            popinfittingabovecutoffhigh(j,k) = popinfitting(j,k);
-        end
-
-        if cutofflow>popinfitting(j,k) 
-            popinfittinglimited(j,k)= NaN;
-        else
-            popinfittinglimited(j,k) = popinfitting(j,k);
-        end
-         if popinfitting(j,k) > cutoffhigh
-            popinfittinglimited(j,k)= NaN;
-        else
-            popinfittinglimited(j,k) = popinfitting(j,k);
-        end
     end
-
-    noofpopinsabovecutoff=nnz(~isnan(popinfittingabovecutoffhigh(j,:)));
-    noofpopinsbetweenlimits=nnz(~isnan(popinfittinglimited(j,:)));
-    updated_main_data_struct(j).No_Pop_in_Data_Above_Cut_off=noofpopinsabovecutoff;
-    updated_main_data_struct(j).No_Pop_in_Data_Between_Limits=noofpopinsbetweenlimits;
 end
+close(progress_bar) % Closes progress bar
 
-    end
+
 
 
 valuesofpopinPsavingvector = valuesofpopinPsaving(:);
