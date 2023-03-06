@@ -108,7 +108,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         xData=flipud(xData); %This flips the data set so it goes from the smallest to the largest number
         yData=flipud(yData);
     
-        %w = (transpose((1:1:length(yData))).^2);% This is a sqaure weighing such that the top of the data is more accounted for in the fitting of the power law 
+        w = (transpose((1:1:length(yData))).^2);% This is a sqaure weighing such that the top of the data is more accounted for in the fitting of the power law 
      
         try
             % Set up fittype and options.
@@ -116,7 +116,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
             opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
             opts.Display = 'Off';
             opts.StartPoint = [78.6937525155057 1.49509087940554];
-            %opts.Weights = (w);
+            opts.Weights = (w);
             % Fit model to data.
             [fitresult, gof] = fit( xData, yData, ft, opts );
         catch % Error catch when poly fit not work
@@ -168,18 +168,18 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         FindPmax= find(unloadingP == Pmax);%finding the value of the maximum load
         hmax=unloadingh(FindPmax); %find the value of h at Pmax
 %     
-     %plotting the gradient line
-%      c=Pmax-(S*hmax);
-%     lineplot=(S*h)+c;
-%        figure(fig1)
-%        hfindex=find(unloadingh == hf);
-%        pf=unloadingP(hfindex);
-%        plot(hf,pf,"red o")
-%        hold on
-%      plot(h,lineplot,"red :",LineWidth=1.2);
-%      Pmaxrange= Pmax+200;
-%      ylim([0 Pmaxrange])
-%     hold on
+   %  plotting the gradient line
+     c=Pmax-(S*hmax);
+    lineplot=(S*h)+c;
+       figure(fig1)
+       hfindex=find(unloadingh == hf);
+       pf=unloadingP(hfindex);
+       plot(hf,pf,"red o")
+       hold on
+     plot(h,lineplot,"red :",LineWidth=1.2);
+     Pmaxrange= Pmax+200;
+     ylim([-50 Pmaxrange])
+    hold on
     
         %Oliver and Parr maths
         hc = hmax-(epsilon*(Pmax/S)); %standard equation

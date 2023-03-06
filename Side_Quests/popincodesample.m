@@ -94,7 +94,7 @@ for i=1:samplesize; % loop for each of the indents with zero corrections
 figure(fig2)
 changeindisp=diff(loadinghabovelower);
 changeindisp(end+1)=NaN;
-plot(loadinghabovelower,changeindisp,"black");
+plot(loadinghabovelower,changeindisp);
 hold on
 xlabel 'displacement (nm)'
 ylabel 'Change in displacement'

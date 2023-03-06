@@ -17,21 +17,21 @@ addpath Side_Quests
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\Term 1\HC_nanoindenation_premier\Premier_Nanoindentation\OUdi\";
+base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\memorystick back up\premier\week4HT\x80sample130702\";
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
-mapping_type = "xpm_indentation_map";
+mapping_type = "automated_indentation_grid_array";
 
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 1;
-columns = 1;
+rows = 7;
+columns = 7;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 1;
+spacing = 10;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -107,7 +107,7 @@ cutofunloadingbottomlim = 0.25;
 % change these pararmeters
 tolerancepopin = 0.007;
 smoothingvalue = 7;
-MPH = 1.0;
+MPH = 1.2;
 cutofflow=20;
 cutoffhigh=1000;
 numberofexpectedpopin=100;
@@ -173,15 +173,15 @@ if popin_fitting == "yes"
     end
 end
 %% Single curve popin 
-% MPH = 0.8;
-% cutofflow=200;
-% individual_indent_no=56;
-% [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
+MPH = 1.2;
+cutofflow=20;
+individual_indent_no=69;
+[popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
 
 %% Popinsample
-% MPH = 1.0;
-% cutofflow=50;
-% samplesize=10;
+% MPH = 1.2;
+% cutofflow=20;
+% samplesize=3;
 % [popinfittingsample,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
 
 
