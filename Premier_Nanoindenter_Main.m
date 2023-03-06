@@ -115,7 +115,7 @@ numberofexpectedpopin=100;
 % Specify here whether you want to use the CMX_fitting using "yes" or "no" 
 % to use this function have a folder in your base directory called "CMX_Output"
 % We can change this later to auto-generate that folder
-CMX_fitting = "no";
+CMX_fitting = "yes";
 
 % Fitting parameter for CMX fitting
 Lowerdepthcutoff = 100;
@@ -173,10 +173,10 @@ if popin_fitting == "yes"
     end
 end
 %% Single curve popin 
-MPH = 1.2;
-cutofflow=20;
-individual_indent_no=69;
-[popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
+% MPH = 1.2;
+% cutofflow=20;
+% individual_indent_no=69;
+% [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
 
 %% Popinsample
 % MPH = 1.2;
