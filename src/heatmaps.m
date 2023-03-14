@@ -6,6 +6,7 @@ clf
   Y_Coordinate='Y_Coordinate';
 
 heatmap_variable=[struct.(Output_Type)].'; %These are transposed as the code was outputting these in rows and I'm not sure why.
+units_reference=["Hardness", "GPa"; "Modulus", "GPa"; "Reduced Modulus", "GPa"; "Stiffness", "μN/nm"; "Maximum Load", "μN"; "Maximum Displacement", "nm"; "Hardness Divided By Modulus", " "; "Stiffness Squared Divided By Load", "GPa"];
 X=[struct.(X_Coordinate)].'; 
 Y=[struct.(Y_Coordinate)].';
 
@@ -52,9 +53,11 @@ end
  %specifies the x and y coordinates for the values in the variable
  %(so each row/column is assigned a certain micron spacing, rather than just
  %1 unit)
+ row_for_unit=find(output_type_space==units_reference);
+ unit=units_reference(row_for_unit,2);
  
  c=colorbar;
- c.Label.String = strcat(output_type_space, ' units'); % units (GPa?)???
+ c.Label.String = strcat(output_type_space, ' , ', unit);
  xlabel('X in microns')
  ylabel('Y in microns')
  set(gca,'DataAspectRatio',[1 1 1])
@@ -67,14 +70,9 @@ file_name_png=strcat(output_file_directory,'\',Output_Type,'_heatmap.png');
 
 print(gcf,file_name_png,'-dpng','-r600');
 savefig(gcf,file_name_fig);
-%  savefig(file_name)
-%  % 
+
 heatmapfigs=openfig(file_name_fig); %the function should open it
  
-%  for letter=1:length(Output_Type) %rewrite so no spaces for future code/functions
-%      if Output_Type(letter)== ' '
-%          Output_Type(letter)= '_';
-%      end
-%  end
+
  
  end 

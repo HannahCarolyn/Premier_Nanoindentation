@@ -17,7 +17,7 @@ addpath Side_Quests
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\memorystick back up\premier\week4HT\x80sample130702\";
+base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\memorystick back up\premier\week8HT\sample1grid2\";
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
 mapping_type = "automated_indentation_grid_array";
@@ -25,13 +25,13 @@ mapping_type = "automated_indentation_grid_array";
 % Give the rows and columns data dimension: this is the number of rows and
 % columns entered in the "Array Patterns" section of the automation tab
 % regardless of the mapping type
-rows = 7;
-columns = 7;
+rows = 16;
+columns = 16;
 
 % Give the spacing entered on the "Array Patterns" section of the
 % automation tab regardless of the mapping type in um - if using automated
 % indentation grid array you may wish to enter a measured spacing instead
-spacing = 10;
+spacing = 5;
 
 % If overlap occured between xpm bundles, enter the number of overlapping
 % columns and rows of indents so this may be corrected (only the data from
@@ -115,7 +115,7 @@ numberofexpectedpopin=100;
 % Specify here whether you want to use the CMX_fitting using "yes" or "no" 
 % to use this function have a folder in your base directory called "CMX_Output"
 % We can change this later to auto-generate that folder
-CMX_fitting = "yes";
+CMX_fitting = "no";
 
 % Fitting parameter for CMX fitting
 Lowerdepthcutoff = 100;
@@ -202,17 +202,17 @@ updated_main_data_struct=final_main_data_struct;
 
 % % Firstly the histograms
 [Figure1_Hardness_Histogram] = histogramfunction(updated_main_data_struct,"Hardness",output_file_directory);
-[Figure2_Youngs_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure2_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Modulus",output_file_directory);
 [Figure3_Reduced_Modulus_Histogram] = histogramfunction(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
 [Figure4_Stiffness_Histogram] = histogramfunction(updated_main_data_struct,"Stiffness",output_file_directory);
 [Figure5_Hardness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Hardness",output_file_directory);
-[Figure6_Youngs_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure6_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Modulus",output_file_directory);
 [Figure7_Reduced_Modulus_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
 [Figure8_Stiffness_Histogram_Zoom] = histogramfunction_zoom(updated_main_data_struct,"Stiffness",output_file_directory);
 
 % % % Secondly the heat maps
 [Figure9_Hardness_Map] = heatmaps(updated_main_data_struct,"Hardness",output_file_directory);
-[Figure10_Youngs_Modulus_Map] = heatmaps(updated_main_data_struct,"Youngs_Modulus",output_file_directory);
+[Figure10_Modulus_Map] = heatmaps(updated_main_data_struct,"Modulus",output_file_directory);
 [Figure11_Reduced_Modulus_Map] = heatmaps(updated_main_data_struct,"Reduced_Modulus",output_file_directory);
 [Figure12_Stiffness_Map] = heatmaps(updated_main_data_struct,"Stiffness",output_file_directory);
 [Figure13_Maximum_Load_Map] = heatmaps(updated_main_data_struct,"Maximum_Load",output_file_directory);
@@ -233,8 +233,9 @@ if popin_fitting == "yes"
     updated_main_data_struct=final_main_popin_data_struct;
     [Figure14_Popin_no_density_above_cut_off] = heatmaps(updated_main_data_struct,"No_Pop_in_Data_Above_Cut_off",output_file_directory);
     [Figure14_Popin_no_density_limited] = heatmaps(updated_main_data_struct,"No_Pop_in_Data_Between_Limits",output_file_directory);
+    [Figure14_Popin_first]=heatmaps2dpopins(updated_main_data_struct,output_file_directory,numberofexpectedpopin);
     [Figure9_Hardness_Map] = heatmapspopin(updated_main_data_struct,"Hardness",output_file_directory,numberofexpectedpopin);
-    [Figure10_Youngs_Modulus_Map] = heatmapspopin(updated_main_data_struct,"Youngs_Modulus",output_file_directory,numberofexpectedpopin);
+    [Figure10_Modulus_Map] = heatmapspopin(updated_main_data_struct,"Modulus",output_file_directory,numberofexpectedpopin);
     [Figure11_Reduced_Modulus_Map] = heatmapspopin(updated_main_data_struct,"Reduced_Modulus",output_file_directory,numberofexpectedpopin);
     [Figure12_Stiffness_Map] = heatmapspopin(updated_main_data_struct,"Stiffness",output_file_directory,numberofexpectedpopin);
     [Figure13_Maximum_Load_Map] = heatmapspopin(updated_main_data_struct,"Maximum_Load",output_file_directory,numberofexpectedpopin);

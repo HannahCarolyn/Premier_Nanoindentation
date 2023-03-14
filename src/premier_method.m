@@ -44,7 +44,7 @@ if mapping_type == "xpm_indentation_map"
             updated_main_data_struct(indent_loop).Reduced_Modulus = Er; % Append Er
             SampleEwithvin = 1/((1/Er) - (1-(tippoissonratio^2))/tipyoungmodulus); % Middle calculation step
             E = (SampleEwithvin*(1-(samplepossionratio^2))); %Young's modulus in (GPa) (copied from Hannah Oliver and Parr)
-            updated_main_data_struct(indent_loop).Youngs_Modulus = E; % Append E
+            updated_main_data_struct(indent_loop).Modulus = E; % Append E
             updated_main_data_struct(indent_loop).Stiffness = all_data(current_indent_index+1,3); % Append stiffness
             updated_data_struct=updated_main_data_struct;
         end
@@ -83,7 +83,7 @@ else if mapping_type == "automated_indentation_grid_array"
                 updated_main_data_struct(file_loop).Reduced_Modulus = data_input(file_loop,7);
                 SampleEwithvin = 1/((1/Er) - (1-(tippoissonratio^2))/tipyoungmodulus); % Middle calculation step
                 E = (SampleEwithvin*(1-(samplepossionratio^2))); %Young's modulus in (GPa) (copied from Hannah Oliver and Parr)
-                updated_main_data_struct(file_loop).Youngs_Modulus = E;
+                updated_main_data_struct(file_loop).Modulus = E;
                 updated_main_data_struct(file_loop).Stiffness = data_input(file_loop,3);
                 updated_data_struct=updated_main_data_struct;
 

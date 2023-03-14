@@ -3,8 +3,14 @@ function[histogram_figs_zoom]=histogramfunction_zoom(struct, Output_Type, output
 clf
 hist_variable=[struct.(Output_Type)];
 
+units_reference=["Hardness", "GPa"; "Modulus", "GPa"; "Reduced Modulus", "GPa"; "Stiffness", "μN/nm"; "Maximum Load", "μN"; "Maximum Displacement", "nm"; "Hardness Divided By Modulus", " "; "Stiffness Squared Divided By Load", "GPa"];
+
+
+
 output_type_seperate=strsplit(Output_Type,"_");
 output_type_space=strjoin(output_type_seperate," ");
+row_for_unit=find(output_type_space==units_reference);
+unit=units_reference(row_for_unit,2);
 
 % for letter=1:length(output_type_seperate)
 %     if Output_Type(letter)== '_'
@@ -12,7 +18,7 @@ output_type_space=strjoin(output_type_seperate," ");
 %     end
 % end
 
-nbins=10; %set number of bins in histogram as before MATLAB wasn't doing many!!
+nbins=20; %set number of bins in histogram as before MATLAB wasn't doing many!!
 histogram_plot=histogram(hist_variable,nbins);
 hist_mean=mean(hist_variable, 'omitnan');
 hist_std=std(hist_variable, 'omitnan');
@@ -26,13 +32,12 @@ annotation('textbox',...
 
 hold on
 plot_mean= xline(hist_mean, 'Color', 'r', 'LineWidth', 2);
-xlabel(output_type_space, 'FontSize', 12)
+xlabel(strcat(output_type_space, ', ', unit), 'FontSize', 12)
 ylabel('Number of Indents', 'FontSize', 12)
 legend(plot_mean, {'Mean'}, 'FontSize', 10)
 lower_xlim=hist_mean-2*hist_std;
 upper_xlim=hist_mean+2*hist_std;
 xlim([lower_xlim upper_xlim]);
-
 
 
 title(strcat(output_type_space, ' histogram two standard deviations away from the mean'), 'FontSize', 14)
@@ -45,10 +50,5 @@ savefig(gcf,file_name_fig);
 
 histogram_figs_zoom=openfig(file_name_fig);
 
-% for letter=1:length(Output_Type) %I feel like we need to rewrite it back at the end of the code
-%     if Output_Type(letter)== ' '
-%         Output_Type(letter)= '_';
-%     end
-% end
 
 end 

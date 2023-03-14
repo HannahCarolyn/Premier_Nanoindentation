@@ -16,7 +16,7 @@ grid_coord(:,2)=X_append;
 grid_coord(:,3)=Y_append;
 
 %first red indents
-red=red_indents_list.'; %had to transpose to work
+red=(red_indents_list.')+1; %had to transpose to work %RT edit
  coord_red_x=zeros(length(red),1);
  coord_red_y=zeros(length(red),1);
 
@@ -29,7 +29,7 @@ red=red_indents_list.'; %had to transpose to work
 end 
 
  %then amber
- amber=amber_indents_list.'; %had to transpose to work
+ amber=(amber_indents_list.')+1; %had to transpose to work %RT
  coord_amber_x=zeros(length(amber),1);
  coord_amber_y=zeros(length(amber),1);
 

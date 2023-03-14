@@ -11,7 +11,7 @@ for j=1:noofindents % loop for each of the indents with zero correction
         %waitbar(completion_fraction); % Updates progress bar
         
 LoadingHardness=updated_data_struct(j).Hardness;
-LoadingModulus=updated_data_struct(j).Youngs_Modulus;
+LoadingModulus=updated_data_struct(j).Modulus;
 LoadingStiffness=updated_data_struct(j).Stiffness;
 LoadingPmax=updated_data_struct(j).Maximum_Load;
 

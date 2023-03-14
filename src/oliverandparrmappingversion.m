@@ -214,13 +214,13 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 for rowhc=1:length(values_of_H_and_E(:,1))
     load_displacement_data(rowhc).Hardness=values_of_H_and_E(rowhc,2);
     load_displacement_data(rowhc).Reduced_Modulus=values_of_H_and_E(rowhc,3);
-    load_displacement_data(rowhc).Youngs_Modulus=values_of_H_and_E(rowhc,4);
+    load_displacement_data(rowhc).Modulus=values_of_H_and_E(rowhc,4);
     load_displacement_data(rowhc).Stiffness=values_of_H_and_E(rowhc,5);
 end
     end
 end
 
-header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm)'}; %headers for the array
+header = {'No of indents','Hardness (GPa)','Reduced Modulus (GPa)' 'Modulus (GPa)' 'Stiffness (uN/nm)'}; %headers for the array
 valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
 
 

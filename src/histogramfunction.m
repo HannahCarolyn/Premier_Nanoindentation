@@ -4,14 +4,15 @@ function[histogramfigs]=histogramfunction(struct, Output_Type, output_file_direc
 
 hist_variable=[struct.(Output_Type)];
 
-% for letter=1:length(Output_Type) %rewrite for strings later 
-%     if Output_Type(letter)== '_'
-%         Output_Type(letter)= ' ';
-%     end
-% 
-% end
+units_reference=["Hardness", "GPa"; "Modulus", "GPa"; "Reduced Modulus", "GPa"; "Stiffness", "μN/nm"; "Maximum Load", "μN"; "Maximum Displacement", "nm"; "Hardness Divided By Modulus", " "; "Stiffness Squared Divided By Load", "GPa"];
+
+
 output_type_seperate=strsplit(Output_Type,"_");
 output_type_space=strjoin(output_type_seperate," ");
+
+row_for_unit=find(output_type_space==units_reference);
+unit=units_reference(row_for_unit,2);
+
 %% 
 nbins=20; %set number of bins in histogram as before MATLAB wasn't doing many!!
 
@@ -28,7 +29,7 @@ annotation('textbox',...
 
 hold on
 plot_mean= xline(hist_mean, 'Color', 'r', 'LineWidth', 2);
-xlabel(output_type_space, 'FontSize', 12)
+xlabel(strcat(output_type_space, ', ', unit), 'FontSize', 12)
 ylabel('Number of Indents', 'FontSize', 12)
 legend(plot_mean, {'Mean'}, 'FontSize', 10)
 title(strcat(output_type_space, ' Histogram'),'FontSize', 14) 
@@ -39,15 +40,8 @@ file_name_png=strcat(output_file_directory,'\',Output_Type,'_histogram.png');
 print(gcf,file_name_png,'-dpng','-r600');
 savefig(gcf,file_name_fig);
 
-% file_name=strcat(output_file_directory, Output_Type, '.fig'); %need to check this works
-% savefig(histogram_plot, file_name)
+
 
 histogramfigs=openfig(file_name_fig);
 
-for letter=1:length(Output_Type) %I feel like we need to rewrite it back at the end of the code
-    if Output_Type(letter)== ' '
-        Output_Type(letter)= '_';
-    end
-
-end
 end 
