@@ -17,7 +17,7 @@ addpath Side_Quests
 
 % Enter the base file directory for your sample here - see README.txt for
 % how to structure your base file directory; use a \ on the end of the name
-base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\memorystick back up\premier\week8HT\indentssample1grid2100523\";
+base_file_directory = "C:\Users\hanna\OneDrive - Nexus365\Year 4\memorystick back up\premier\week5HT\L450sample6grid1\Indents100522\";
 % Specify whether the data is for an "xpm_indentation_map" or
 % "automated_indentation_grid_array"
 mapping_type = "automated_indentation_grid_array";
@@ -88,7 +88,7 @@ calculate_extra_values = "yes";
 
 % Specify here whether you'd like to use Hannah's Oliver and Parr method
 % using "yes" or "no"
-hannah_oliver_parr = "yes";
+hannah_oliver_parr = "no";
 
 % Fitting parameter for hannah_oliver_parr - see documentation if want to
 % change these pararmeters
@@ -173,20 +173,20 @@ if popin_fitting == "yes"
     end
 end
 %% Single curve popin 
-% MPH = 1.2;
-% cutofflow=20;
-% individual_indent_no=26;
-% [popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
+MPH = 1.2;
+cutofflow=20;
+individual_indent_no=190;
+[popinfittingsingle,naughty_indents_list,red_indents_list] = popincodesingle(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,individual_indent_no,numberofexpectedpopin);
 
 %% Popinsample
-% MPH = 1.4;
+% MPH = 1.2;
 % cutofflow=20;
 % samplesize=5;
 % [popinfittingsample,naughty_indents_list,red_indents_list] = popincodesample(base_file_directory,mapping_type,updated_main_data_struct,tolerancepopin,smoothingvalue,MPH,naughty_indents_list,red_indents_list,cutofflow,cutoffhigh,samplesize,numberofexpectedpopin);
 
 %% Hertizan fitting
 if popin_fitting == "yes"
-  [Tipradiusfitting,final_main_popin_data_struct] = hertzian2(base_file_directory, mapping_type,final_main_popin_data_struct,naughty_indents_list,red_indents_list,numberofexpectedpopin);
+  [Tipradiusfitting,final_main_popin_data_struct] = hertzian(base_file_directory, mapping_type,final_main_popin_data_struct,naughty_indents_list,red_indents_list,numberofexpectedpopin);
     else if popin_fitting == "no"
     end
 end

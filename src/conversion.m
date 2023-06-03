@@ -98,46 +98,46 @@ for x_coordinate_index = 1:length(possible_x_coordinates) % Loop through each po
 end
 close(progress_bar) % Closes progress bar
 
-%% Thirdly, convert fullres_additional to heat map orientation for nice excel output
-
-% o ---- y              y            fullres_orientated is only for visualisation in excel output and should never be used for code data handling
-% |            --->     |
-% |                     |
-% x                     o ---- x
-
-progress_bar = waitbar(0,"Generating Excel Data Output"); % Creates a progress bar
-for sheet_index = 1:9 % Loop through each fullres_additional sheet
-    completion_fraction = sheet_index/9; % Calculates fraction for progress bar
-    waitbar(completion_fraction); % Updates progress bar
-    for y_coordinate_index = 1:length(possible_y_coordinates) % Loop through each column (i.e. all x coordinates of a given y coordinate in ascending x)
-            given_y_coordinate_data_set = [fullres_additional(:,y_coordinate_index,sheet_index)]; % Gets all data values for given y coordinate in ascending x coordinate
-            fullres_orientated(end+1-y_coordinate_index,:,sheet_index) = given_y_coordinate_data_set; % Writes these values to rows in orientated version starting from bottom
-    end
-end
-close(progress_bar) % Closes progress bar
-
-%% Finally save files
-
-excel_file_name = strcat(output_conversion_file_directory,"\","Excel_Output.xlsx"); % Creates full file name
-% These write to excel sheets:
-xlswrite(excel_file_name,[fullres_orientated(:,:,1)],"Hardness (GPa)");
-xlswrite(excel_file_name,[fullres_orientated(:,:,2)],"Modulus (GPa)");
-xlswrite(excel_file_name,[fullres_orientated(:,:,3)],"Reduced Modulus (GPa)");
-xlswrite(excel_file_name,[fullres_orientated(:,:,4)],"Stiffness (uN nm^-1)");
-xlswrite(excel_file_name,[fullres_orientated(:,:,5)],"Maximum Load (uN)");
-xlswrite(excel_file_name,[fullres_orientated(:,:,6)],"Maximum Displacement (nm)");
-xlswrite(excel_file_name,[fullres_orientated(:,:,7)],"Surface Displacement (nm)");
-xlswrite(excel_file_name,[fullres_orientated(:,:,8)],"Hardness over Modulus");
-xlswrite(excel_file_name,[fullres_orientated(:,:,9)],"S^2 over P (uN (nm^2)^-1)");
-% Delete "sheet1"
-newExcel = actxserver('excel.application');
-newExcel.DisplayAlerts = false; % Hide are you sure pop-up
-excelWB = newExcel.Workbooks.Open(excel_file_name,0,false);
-excelWB.Sheets.Item(1).Delete;
-excelWB.Save();
-excelWB.Close();
-newExcel.Quit();
-delete(newExcel);
+% %% Thirdly, convert fullres_additional to heat map orientation for nice excel output
+% 
+% % o ---- y              y            fullres_orientated is only for visualisation in excel output and should never be used for code data handling
+% % |            --->     |
+% % |                     |
+% % x                     o ---- x
+% 
+% progress_bar = waitbar(0,"Generating Excel Data Output"); % Creates a progress bar
+% for sheet_index = 1:9 % Loop through each fullres_additional sheet
+%     completion_fraction = sheet_index/9; % Calculates fraction for progress bar
+%     waitbar(completion_fraction); % Updates progress bar
+%     for y_coordinate_index = 1:length(possible_y_coordinates) % Loop through each column (i.e. all x coordinates of a given y coordinate in ascending x)
+%             given_y_coordinate_data_set = [fullres_additional(:,y_coordinate_index,sheet_index)]; % Gets all data values for given y coordinate in ascending x coordinate
+%             fullres_orientated(end+1-y_coordinate_index,:,sheet_index) = given_y_coordinate_data_set; % Writes these values to rows in orientated version starting from bottom
+%     end
+% end
+% close(progress_bar) % Closes progress bar
+% 
+% %% Finally save files
+% 
+% excel_file_name = strcat(output_conversion_file_directory,"\","Excel_Output.xlsx"); % Creates full file name
+% % These write to excel sheets:
+% xlswrite(excel_file_name,[fullres_orientated(:,:,1)],"Hardness (GPa)");
+% xlswrite(excel_file_name,[fullres_orientated(:,:,2)],"Modulus (GPa)");
+% xlswrite(excel_file_name,[fullres_orientated(:,:,3)],"Reduced Modulus (GPa)");
+% xlswrite(excel_file_name,[fullres_orientated(:,:,4)],"Stiffness (uN nm^-1)");
+% xlswrite(excel_file_name,[fullres_orientated(:,:,5)],"Maximum Load (uN)");
+% xlswrite(excel_file_name,[fullres_orientated(:,:,6)],"Maximum Displacement (nm)");
+% xlswrite(excel_file_name,[fullres_orientated(:,:,7)],"Surface Displacement (nm)");
+% xlswrite(excel_file_name,[fullres_orientated(:,:,8)],"Hardness over Modulus");
+% xlswrite(excel_file_name,[fullres_orientated(:,:,9)],"S^2 over P (uN (nm^2)^-1)");
+% % Delete "sheet1"
+% newExcel = actxserver('excel.application');
+% newExcel.DisplayAlerts = false; % Hide are you sure pop-up
+% excelWB = newExcel.Workbooks.Open(excel_file_name,0,false);
+% excelWB.Sheets.Item(1).Delete;
+% excelWB.Save();
+% excelWB.Close();
+% newExcel.Quit();
+% delete(newExcel);
 
 % Create any extra variables needed for CMM:
 X = fullresloc(:,:,1);

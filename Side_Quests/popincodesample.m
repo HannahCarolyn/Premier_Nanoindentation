@@ -102,7 +102,7 @@ legend 'Displacement Change Fit'
 title("Sample Indent Peak Finding")
 % MPH=0.4;
 [PKS,LOCS]=findpeaks(changeindisp,'MinPeakHeight',MPH);
-popindex=LOCS;
+popindex=LOCS-1;
 no_of_popinindex=numel(popindex);
 
 

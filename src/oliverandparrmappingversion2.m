@@ -1,36 +1,7 @@
-function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrarray(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
+function [Fitting,naughty_indents_list,red_indents_list] = oliverandparrmappingversion2(base_file_directory,load_displacement_data,epsilon,samplepossionratio,tolerance,cutofdatavalue,cutofunloadingtoplim,cutofunloadingbottomlim,naughty_indents_list,red_indents_list)
 
-%     %code for importing the data for the displacement and load
-%     %https://www.sciencedirect.com/topics/engineering/oliver-pharr-method
-%     %link above for the method for oliver-parr method example
-%     clear
-%     close all
-%     clc
-%     
-%     for k=0:9 %This for loop opens the first 10 files (note first indent is called indent 0)
-%         filenames= sprintf('301122X65NG_0000%d.txt',k);%writes filename as string
-%         indentnostring= sprintf('indent_%04d',k); %wrtie field name
-%         indent_no= readtable(filenames, 'VariableNamingRule','preserve');%open file as table
-%         indent_k=table2array(indent_no);
-%         load_displacement_data.(indentnostring)=indent_k;%write into a structure
-%     end
-%     
-%     %The following for loop is the same as before but accoutns for the 2
-%     %digits by having 1 less 0 in the file name.
-%     
-%     for k=10:35
-%         filenames= sprintf('301122X65NG_000%d.txt',k);
-%         indent_no= readtable(filenames, 'VariableNamingRule','preserve');
-%         indent_k=table2array(indent_no);
-%         indentnostring= sprintf('indent_%04d',k);
-%         load_displacement_data.(indentnostring)=indent_k;
-%     end
-%     %array of the filenames
-%      fnms = fieldnames(load_displacement_data)
-    %defining variables
-%     epsilon=0.75; %indenter geometry function e.g. 0.75 
-    %This opens the ara file (you have to convert it to a text file to get it
-    %work)
+
+
 
 area_function_path= strcat(base_file_directory,"Area_Function");
 folder_info = dir(fullfile(area_function_path, '/*.txt'));
@@ -73,7 +44,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         indentsnostring= sprintf('indent_%04d',i); %string of the field name
 %         h=load_displacement_data.(indentsnostring)(:,1);%extracting displacement data from the array (nm)
 %         P=(load_displacement_data.(indentnostring)(:,2)); %extracting load data from the array (uN)
-        loading_P_h_data=load_displacement_data(j).Displacement_Load_Data;
+        loading_P_h_data=load_displacement_data(j).Unloading_Segment;
         h=loading_P_h_data(:,1);
         P=loading_P_h_data(:,2);
         maximumh=max(h);
@@ -87,23 +58,25 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
     % finding the unloading segment by finding when the gradient is below a
     % tolerance and then taking the max value of this index
 %     
-%     tolerance=0.01; 
-        index = find( abs(gradient(P)) < tolerance );
+% %     tolerance=0.01; %put back in for the CMX indents
+%         index = find( abs(gradient(P)) < tolerance );
+%         noofdatappoint=numel(P);
+% %     cutofdatavalue=0.95;
+%         limit=round(noofdatappoint*cutofdatavalue); %The user may want to edit this value
+%         indexcatch= find(index < limit);
+%         index =index(indexcatch);
+%         Pmaxindex=max(index);
+%         saving_Pmaxindex(j,1)=Pmaxindex;
         noofdatappoint=numel(P);
-%     cutofdatavalue=0.95;
-        limit=round(noofdatappoint*cutofdatavalue); %The user may want to edit this value
-        indexcatch= find(index < limit);
-        index =index(indexcatch);
-        Pmaxindex=max(index);
-        saving_Pmaxindex(j,1)=Pmaxindex;
-        
+        Pmaxindex=1;
     
 %         try %dodgy indent for when it doesn't go below zero
         unloadingP=P(Pmaxindex:noofdatappoint); %extracting the unloading section of load
         unloadingh=h(Pmaxindex:noofdatappoint); % extracting the unloading section of load
-        Pintercept = find(unloadingP < 10); %find the point where load is below zero %HC fudge editted 
-        findinghf=unloadingh(Pintercept); %from the index of the points where load is less than zero
-        hf=max(findinghf); %find the maximum point of this array in order to extract the fitting parameter hf
+%         Pintercept = find(unloadingP < 5); %find the point where load is below zero %HC fudge editted 
+%         findinghf=unloadingh(Pintercept); %from the index of the points where load is less than zero
+%         hf=max(findinghf); %find the maximum point of this array in order to extract the fitting parameter hf
+        hf=unloadingh(end);
         unloadinghminushf=unloadingh-hf; %this is value needed for the power law fit
         savinghf(j,1)= hf;
 %         catch
@@ -125,7 +98,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         indextoplim=round(noofunloadingdatapoints*cutofunloadingtoplim); %This crops the top off the top 5% of the unloading data for the fit. The user may want to change this
         indexbottomlim=round(noofunloadingdatapoints*(1-cutofunloadingbottomlim)); %This crops off the bottom 25% of the unlodaing data for the fit. The user may want to change this
         unloadingPlim=unloadingP(indextoplim:indexbottomlim); %Getting the limited set from unloading load
-        unloadinghminushflim=unloadinghminushf(indextoplim:indexbottomlim); %Getting the limited set from unloading diaplsement takeaway hf
+        unloadinghlim=unloadingh(indextoplim:indexbottomlim); %Getting the limited set from unloading diaplsement takeaway hf
 %         catch
 %          values_of_H_and_E(j,2) = NaN;
 %         values_of_H_and_E(j,1) = i;
@@ -134,8 +107,12 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 %         values_of_H_and_E(j,5)=NaN;
 %         end
 
+        Pmax=max(unloadingP); %maximum of the the unloading load array
+        FindPmax= find(unloadingP == Pmax);%finding the value of the maximum load
+        hmax=unloadingh(FindPmax); %find the value of h at Pmax
+
     %powerlawfit 
-        [xData, yData] = prepareCurveData( unloadinghminushflim, unloadingPlim );
+      [xData, yData] = prepareCurveData( unloadinghlim, unloadingPlim );
         xData=flipud(xData); %This flips the data set so it goes from the smallest to the largest number
         yData=flipud(yData);
     
@@ -143,10 +120,10 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
      
         try
             % Set up fittype and options.
-            ft = fittype( 'power1' );
+            ft = fittype( 'a*(x-c)^b', 'independent', 'x', 'dependent', 'y' );
             opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
             opts.Display = 'Off';
-            opts.StartPoint = [78.6937525155057 1.49509087940554];
+            opts.StartPoint = [0 1 (hmax*0.75)];
             %opts.Weights = (w);
             % Fit model to data.
             [fitresult, gof] = fit( xData, yData, ft, opts );
@@ -195,17 +172,12 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         S=derivativeofpowerlaw(1); %stiffness
         savings(j,1)=S;
     
-        Pmax=max(unloadingP); %maximum of the the unloading load array
-        FindPmax= find(unloadingP == Pmax);%finding the value of the maximum load
-        hmax=unloadingh(FindPmax); %find the value of h at Pmax
+       
 %     
-     %plotting the gradient line
+%      %plotting the gradient line
 %      c=Pmax-(S*hmax);
 %     lineplot=(S*h)+c;
-       (fig1)
-       unloadingh(hfindex)
-       plot(hf,Pf,"red o")
-       holdon
+%      figure(fig1)
 %      plot(h,lineplot,"red :",LineWidth=1.2);
 %      Pmaxrange= Pmax+200;
 %      ylim([0 Pmaxrange])
@@ -232,9 +204,7 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
          values_of_H_and_E(j,5)= NaN;
      end
 
-        header = {'No of indents','Hardness (GPa)','Reduced Young Modulus (GPa)' 'Young Modulus (GPa)' 'Stiffness (uN/nm'}; %headers for the array
-        valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
-        writecell (valuesofHandEoutput,'H&Eoutput') %change the file name
+      
     
 
     load_displacement_data(j).Maximum_Displacement=hmax;
@@ -246,11 +216,24 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
 for rowhc=1:length(values_of_H_and_E(:,1))
     load_displacement_data(rowhc).Hardness=values_of_H_and_E(rowhc,2);
     load_displacement_data(rowhc).Reduced_Modulus=values_of_H_and_E(rowhc,3);
-    load_displacement_data(rowhc).Youngs_Modulus=values_of_H_and_E(rowhc,4);
+    load_displacement_data(rowhc).Modulus=values_of_H_and_E(rowhc,4);
     load_displacement_data(rowhc).Stiffness=values_of_H_and_E(rowhc,5);
 end
     end
 end
+
+header = {'No of indents','Hardness (GPa)','Reduced Modulus (GPa)' 'Modulus (GPa)' 'Stiffness (uN/nm)'}; %headers for the array
+valuesofHandEoutput = [header; num2cell(values_of_H_and_E)]; %make an array for outputting data;
+
+
+output_file_directory = strcat((base_file_directory),"Hannah_OP_fitting"); % Generates path for output folder
+mkdir (output_file_directory); % Creates output folder in base path
+filename=fullfile(output_file_directory,"\","OP_fitting_outputs.txt");
+writecell(valuesofHandEoutput,filename); 
+
+%file_name=strcat(output_file_directory,'\','OP_fitting_outputs.txt'); 
+
+
  
 Fitting=load_displacement_data;
 close(progress_bar); % Closes progress bar
@@ -259,8 +242,3 @@ Important_Popup= imread("Importantpopup.png");
 imshow(Important_Popup);
 
 end % Function end
-
-
-
-
-

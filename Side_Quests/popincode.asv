@@ -59,10 +59,8 @@ for i=0:noofindents-1 % loop for each of the indents with zero corrections
         loadingPabovezeroindex=find(loadingP<0);
         loadingPjustbelowzeroindex=max(loadingPabovezeroindex);
         loadingParoundzero=[loadingP(loadingPjustbelowzeroindex) loadingP(loadingPjustbelowzeroindex+1)];
-        loadingharoundzero=[loadingh(loadingPjustbelowzeroindex) loadingh(loadingPjustbelowzeroindex+1)];
+        loadingharoundzero=[loadingh(loadingPjustbelowzeroindex) loadingh(loadingPjustbelowzeroindex+1)]; %this averages the final point between just below and above zero to figure out the zero error on the h measurement
         loadinghatzero=interp1(loadingParoundzero,loadingharoundzero,0);
-        saving_hoindex(j,1)=loadinghatzero;
-        updated_main_data_struct(j).hzeroerror=saving_hoindex(j,:);
 
       else if mapping_type == "xpm_indentation_map"
                   indentsnostring= sprintf('indent_%04d',i); %string of the field name

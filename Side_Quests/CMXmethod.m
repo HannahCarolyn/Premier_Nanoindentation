@@ -14,9 +14,9 @@ for file_loop = 1:initial_number_of_data
     raw_input(:) = data_input(:,15);%storagemodulus
     sizeofraw_input=numel(raw_input);
     for n=1:sizeofraw_input
-        if raw_input(n)<1000000000 && raw_input(n)>0
+        if raw_input(n)<500 && raw_input(n)>0
             clean_input(n,3)=raw_input(n);
-        else if raw_input(n)>1000000000
+        else if raw_input(n)>500
              clean_input(n,3)=NaN;
         else if raw_input(n)<0
              clean_input(n,3)=NaN;
