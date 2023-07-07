@@ -147,7 +147,7 @@ filename = folders(end-1);
 resultsdir = output_conversion_file_directory;
 
 % Save selected variables in workspace file
-workspace_file = strcat(output_conversion_file_directory,"\", "Workspace_Output_2");
+workspace_file = strcat(output_conversion_file_directory,"\", "Workspace_Output");
 save(workspace_file,"filename","resultsdir","X","Y","fullres");
 
 disp("All data converted to appropriate formats.")

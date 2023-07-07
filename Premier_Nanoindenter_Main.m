@@ -66,7 +66,8 @@ noofsegments=3;
 % - Negative displacement tolerance is how negative a displacement (in um) 
 %   needs to go for an indent for it to count as dodgy (xpm mapping only)
 % Red errors:
-% - Minimum load tolerance is how close an indent needs to get to zero load
+% - Note that this first red error is no longer a problem legancy code.
+%   Minimum load tolerance is how close an indent needs to get to zero load
 %   in unloading for it to be used in Oliver and Parr calculations (a
 %   higher number excludes less indents but the calculations will be less
 %   accurate for ALL indents) - load units are in uN
@@ -259,6 +260,11 @@ if mapping_type == "xpm_indentation_map"
     end
    
 end
+
+% Save final struct
+workspace_file = strcat(base_file_directory,"\", "Main_data_struct"); %save as Main_data_struct
+save(workspace_file,"updated_main_data_struct"); %save the data struct into the base file directory.
+
 
 close all
 

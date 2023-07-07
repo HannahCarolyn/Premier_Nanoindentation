@@ -56,16 +56,16 @@ amber_indents_list = []; % List for storing index of dodgy amber indents
 % Red warning: indent load never drops below zero
 progress_bar = waitbar(0,"Checking for Problem Indents - Red Warning"); % Creates a progress bar
 red_indents_list = []; % List for storing index of dodgy indents
-for indent_loop = 1:initial_number_of_data % For count through each remaining indent
-    completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
-    waitbar(completion_fraction); % Updates progress bar
-    load_data_test = original_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all load data for indent
-    minimum_load_test = min(load_data_test(20:end)); % Excludes first few points in case those are also negative
-    if minimum_load_test > minimum_load_tolerance % If minimum load below threshold for bad data
-        red_indents_list(end+1) = original_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
-        original_load_displacement (indent_loop).Error_Code = strcat("Red: Load does not drop below ",string(minimum_load_tolerance)," um when unloading."); % Writes error code to struct
-    end
-end
+% for indent_loop = 1:initial_number_of_data % For count through each remaining indent
+%     completion_fraction = indent_loop/initial_number_of_data; % Calculates fraction for progress bar
+%     waitbar(completion_fraction); % Updates progress bar
+%     load_data_test = original_load_displacement(indent_loop).Displacement_Load_Data(:,2); % Gets all load data for indent
+%     minimum_load_test = min(load_data_test(20:end)); % Excludes first few points in case those are also negative
+%     if minimum_load_test > minimum_load_tolerance % If minimum load below threshold for bad data
+%         red_indents_list(end+1) = original_load_displacement(indent_loop).Indent_Index; % Appends bad indent index to naughty list
+%         original_load_displacement (indent_loop).Error_Code = strcat("Red: Load does not drop below ",string(minimum_load_tolerance)," um when unloading."); % Writes error code to struct
+%     end
+% end
 close(progress_bar)
 number_dodgy = length(red_indents_list);
 disp(strcat("Number of dodgy indents in red category due to unloading load not dropping below ",string(minimum_load_tolerance)," um is ",string(number_dodgy)," indents."))
